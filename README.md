@@ -61,7 +61,8 @@ theoretical_pcf_vals <- pcf_cscp_theoretical(r_vals, lambda = 100, phi = 1.5, s 
 
 plot(pcf(cscp_pp, correction = "isotropic", divisor = "a",
                         zerocor = "JonesFoster", bw = 0.02), 
-     ylim = c(0.8, 3), legend = F, main = "Example of MC CSCP fit (lambda = 100, phi = 1.5, s = 0.05)")
+     ylim = c(0.8, 3), legend = F, 
+     main = "Example of MC CSCP fit (lambda = 100, phi = 1.5, s = 0.05)")
 lines(r_vals, theoretical_pcf_vals, col = "forestgreen", lwd = 2)
 lines(r_vals, fitted_pcf_vals, col = "red", lwd = 2)
 legend("topright", legend = c("Empirical", "True", "Fitted"), 
