@@ -1,0 +1,64 @@
+# Model Setup
+
+:::callout-note
+Bit of a nothing burger section
+:::
+
+In the previous section, we observed that LGCPs and CSCPs can produce remarkably
+similar second-order structure when their parameters are suitably chosen. We now
+formalise this comparison and investigate the extent to which the two models can
+be distinguished.
+
+To isolate the role of second-order structure, we restrict attention to
+stationary and isotropic models with exponential correlation function
+$$
+\rho(r) = \exp\left(-\frac{r}{s}\right),
+$$
+where $s > 0$ is a scale parameter.
+
+Throughout, we consider the shifted single-component CSCP with intensity
+$$
+\Lambda(u) = \mu + Z(u)^2,
+$$
+where $Z(u)$ is a mean-zero Gaussian random field.
+
+For both the CSCP and LGCP, we adopt the parameterisation $(\lambda, \phi, s)$,
+where:
+
+- $\lambda$ is the first-order intensity,
+- $\phi = g(0) - 1$ measures clustering strength,
+- $s$ is a scale parameter governing the decay of dependence.
+
+This parameterisation is particularly convenient, as $\lambda$ and $\phi$
+have a common interpretation across both models, allowing for a direct comparison
+of their second-order structure.
+
+Under this parameterisation, the CSCP satisfies:
+- First-order intensity:
+  $$
+  \lambda = \mu + \sigma^2,
+  $$
+- Pair correlation function:
+  $$
+  g(r) = 1 + \phi \exp\left(-\frac{2r}{s}\right).
+  $$
+
+For comparison, we also consider the LGCP with intensity
+$$
+\Lambda(u) = \exp(Z(u)),
+$$
+where $Z(u)$ is a Gaussian random field with mean $\mu$ and exponential
+correlation function
+$$
+\rho(r) = \exp\left(-\frac{r}{s}\right).
+$$
+
+Under the parameterisation $(\lambda, \phi, s)$, the LGCP has pair correlation
+function
+$$
+g(r) = \exp\left(\log(1+\phi)\, \exp\left(-\frac{r}{s}\right)\right).
+$$
+
+Thus, both models are fully characterised by $(\lambda, \phi, s)$ at the level
+of first- and second-order structure, but induce different functional forms for
+the pair correlation function. <- Eh

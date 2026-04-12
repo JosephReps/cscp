@@ -1,0 +1,6 @@
+# Parameterizations - Derivations
+
+Don't know whether I will include the derivations here. I think I will end up
+just putting them in the last section inside call-outs, and also add sub-sections 
+interpreting each parameterization. 
+

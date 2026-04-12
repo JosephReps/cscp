@@ -1,0 +1,215 @@
+# Exercises
+
+## Random Fields & Covariance Functions
+
+---
+
+### 1. Finite-dimensional distributions
+
+Let $\{Z(u): u \in \mathbb{R}^d\}$ be a Gaussian random field.
+
+(a) State precisely what it means for $Z(u)$ to be Gaussian.
+
+(b) Let $u_1, \dots, u_n$ be fixed locations. Write down the joint distribution of
+$$
+(Z(u_1), \dots, Z(u_n)).
+$$
+
+(c) Show that this distribution is completely determined by the mean vector and covariance matrix.
+
+---
+
+### 2. Stationarity of a random field
+
+Let $Z(u)$ be a random field with mean function $m(u)$ and covariance $C(u,v)$.
+
+(a) Write down the definition of second-order stationarity.
+
+(b) Show that under stationarity,
+$$
+\mathrm{Var}(Z(u)) = C(0)
+$$
+is constant.
+
+(c) Give an example of a mean function $m(u)$ that violates stationarity.
+
+---
+
+### 3. Covariance vs correlation
+
+Let $C(h)$ be a covariance function with variance $\sigma^2$.
+
+(a) Define the correlation function $\rho(h)$.
+
+(b) Show that
+$$
+|\rho(h)| \le 1.
+$$
+
+(c) Explain why $\rho(h)$ is often more interpretable than $C(h)$.
+
+---
+
+### 4. Positive definiteness
+
+Let $C(h)$ be a candidate covariance function.
+
+(a) State the definition of positive definiteness.
+
+(b) Show that if $C(h)$ is a valid covariance function, then for any $u_1, \dots, u_n$,
+the matrix
+$$
+[C(u_i - u_j)]_{i,j}
+$$
+is non-negative definite.
+
+(c) Consider the function
+$$
+C(h) = \exp(\|h\|).
+$$
+Explain why this cannot be a valid covariance function.
+
+---
+
+### 5. Isotropy
+
+Let $Z(u)$ be a stationary random field.
+
+(a) Define isotropy in terms of the covariance function.
+
+(b) Show that isotropy implies
+$$
+C(h) = C(\|h\|).
+$$
+
+(c) Give an example of a covariance function that is stationary but not isotropic.
+
+---
+
+### 6. Exponential covariance structure
+
+Consider the covariance function
+$$
+C(r) = \sigma^2 \exp(-r/s).
+$$
+
+(a) Show that $C(0) = \sigma^2$.
+
+(b) Compute the correlation function $\rho(r)$.
+
+(c) Interpret the role of the parameter $s$.
+
+---
+
+### 7. From covariance to PCF (LGCP)
+
+Let $Z(u)$ be a mean-zero Gaussian random field with covariance $C(r)$, and define
+$$
+\Lambda(u) = \exp(Z(u)).
+$$
+
+(a) Show that
+$$
+\mathbb{E}[\Lambda(u)] = \exp\left(\frac{1}{2} C(0)\right).
+$$
+
+(b) Show that
+$$
+\mathbb{E}[\Lambda(u)\Lambda(v)] = \exp\left(C(0) + C(u-v)\right).
+$$
+
+(c) Deduce that the pair correlation function is
+$$
+g(r) = \exp(C(r)).
+$$
+
+---
+
+### 8. From covariance to PCF (CSCP)
+
+Let $Z(u)$ be a mean-zero Gaussian random field with variance $\sigma^2$ and correlation $\rho(r)$, and define
+$$
+\Lambda(u) = Z(u)^2.
+$$
+
+(a) Show that
+$$
+\mathbb{E}[\Lambda(u)] = \sigma^2.
+$$
+
+(b) Show that
+$$
+\mathbb{E}[Z(u)^2 Z(v)^2] = \sigma^4 (1 + 2\rho(r)^2).
+$$
+
+(c) Deduce that
+$$
+g(r) = 1 + 2\rho(r)^2.
+$$
+
+---
+
+### 9. Comparing functional forms
+
+Consider the two PCFs:
+
+$$
+g_{\text{LGCP}}(r) = \exp(C(r)), \quad
+g_{\text{CSCP}}(r) = 1 + 2\rho(r)^2.
+$$
+
+(a) Let $C(r) = \sigma^2 \rho(r)$. Show that for small $\sigma^2$,
+$$
+g_{\text{LGCP}}(r) \approx 1 + \sigma^2 \rho(r).
+$$
+
+(b) Compare this approximation with the CSCP form.
+
+(c) Explain why the two models may be difficult to distinguish based on second-order structure alone.
+
+---
+
+### 10. Effect of covariance choice
+
+Consider two covariance functions:
+
+- Exponential: $C_1(r) = \sigma^2 e^{-r/s}$
+- Gaussian: $C_2(r) = \sigma^2 e^{-r^2/s^2}$
+
+(a) Sketch (qualitatively) both functions.
+
+(b) Describe how the decay rate differs.
+
+(c) Explain how this would affect clustering in a Cox process driven by these fields.
+
+---
+
+### 11. Range of dependence
+
+Let $C(r)$ be a covariance function.
+
+(a) Define what is meant by the *range* of dependence.
+
+(b) For the exponential covariance, find $r$ such that
+$$
+\rho(r) = 0.05.
+$$
+
+(c) Interpret this value in terms of spatial dependence.
+
+---
+
+### 12. Structural insight
+
+Consider two Cox processes driven by the same Gaussian random field $Z(u)$ but with different transformations:
+
+$$
+\Lambda_1(u) = \exp(Z(u)), \quad
+\Lambda_2(u) = Z(u)^2.
+$$
+
+(a) Explain why both processes inherit the same covariance structure from $Z(u)$.
+
+(b) Explain why their pair correlation functions differ.
+
+(c) Discuss why these differences may be difficult to detect in practice.

@@ -1,0 +1,199 @@
+# Gaussian Random Fields
+
+In many spatial models, randomness is not attached directly to points, but to an
+underlying field over space.
+
+:::callout-note
+Why?
+:::
+
+These are known as *random fields*.
+
+Random fields play a central role in Cox processes, where they are used to 
+construct random intensity functions.
+
+## Defintion
+
+A *random field* on $\mathbb{R}^d$ is a collection of random variables:
+
+$$
+\{ Z(u) : u \in \mathbb{R}^d\}
+$$
+
+That is, each location $u$ is associated with a random variable $Z(u)$.
+
+Intuitively, a random field can be thought of as:
+
+> A random surface over a space.
+
+- In 1D, a random curve
+- In 2D, a random surface
+- In higher dimensions, a random function
+
+Each realization gives a deterministic function, but the function itself is 
+random.
+
+## Mean and covaraince functions
+
+The distribution of a random field is characterised (at second order) by:
+
+**Mean function**
+
+$$
+m(u) = \mathbb{E}[Z(u)]
+$$
+
+**Covariance function**
+
+$$
+C(u, v) = \mathrm{Cov}(Z(u),Z(v))
+$$
+
+## Stationarity 
+
+A random field is second-order stationary if:
+
+- $m(u) = m$ (constant)
+- $C(u, v) = C(u - v)$
+
+## Isotropy
+
+A stationary random field is isotropic if:
+
+$$
+C(u, v) = C(\|u - v\|)
+$$
+
+So covariance depends only on distance.
+
+## Gaussian random fields
+
+A random field is *Gaussian* if:
+
+> Any finite collection $(Z(u_1), \dots, Z(u_n))$ has a multivariate normal distribution.
+
+We write:
+
+$$
+Z(u) \sim \mathcal{GP}(m(u), C(u, v))
+$$
+
+## Why Gaussian fields
+
+Gaussian random fields are widely used because:
+
+- They are fully characterized by the mean and covariance
+
+- Mathematically tractable
+
+- Flexible via choice of covariance function
+
+## Common covariance functions
+
+A common choice (used throughout these notes) is the *exponential covariance*:
+
+$$
+C(r) = \sigma^2 \exp(\frac{-r}{s})
+$$
+
+where:
+
+- $\sigma^2$ controls variance  
+- $s$ controls correlation range  
+
+## Correlation function
+
+Often we write:
+
+$$
+\rho(r) = \frac{C(r)}{\sigma^2}
+$$
+
+so that:
+
+$$
+C(r) = \sigma^2 \rho(r)
+$$
+
+## Sample paths
+
+A realization of a random field is called a *sample path*.
+
+## Connection to Cox Processes
+
+Random fields are used to define **random intensity functions**:
+
+- Log-Gaussian Cox process (LGCP):
+  $$
+  \Lambda(u) = \exp(Z(u))
+  $$
+
+- Chi-square Cox process (CSCP):
+  $$
+  \Lambda(u) = \mu + Z(u)^2
+  $$
+
+- Shot-noise Cox process:
+  $$
+  \Lambda(u) = \sum_{i} k(u - x_i)
+  $$
+
+where $\{x_i\}$ are random locations and $k(\cdot)$ is a kernel function.
+
+- Gamma Cox process:
+  $$
+  \Lambda(u) \sim \text{Gamma random field}
+  $$
+
+- Permanental Cox process:
+  $$
+  \Lambda(u) = \sum_{i=1}^k Z_i(u)^2
+  $$
+
+where $Z_i(u)$ are independent Gaussian random fields.
+
+::: {.callout-note}
+Different choices of random field and transformation lead to different clustering 
+behaviour, even when the underlying spatial correlation structure is similar.
+:::
+
+## Summary
+
+A random field is:
+
+- A collection of random variables indexed by space  
+- Characterized by mean and covariance  
+- Often assumed stationary and isotropic  
+
+Gaussian random fields are particularly important, as they provide the foundation 
+for many Cox process models.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

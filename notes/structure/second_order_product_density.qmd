@@ -1,0 +1,171 @@
+# Second-Order Product Density
+
+## Motivation
+
+In the previous chapter, we introduced the intensity function, $\lambda(u)$, 
+which describes the "first-order structure" of a point process (how the 
+expected number of points vary over space).
+
+However intensity alone is not sufficient to describe spatial structure.
+
+Two point processes may have the same intensity function, but exhibit very 
+different spatial behavior:
+
+- points may appear independently (as in a Poisson process),
+- or may exhibit clustering or repulsion
+
+To capture this, we need to study how pairs of points interact.
+
+This leads us to the second-order product density.
+
+
+## Definition
+
+Let $X$ be a point process on a region $W \subset \mathbb{R}^2$.
+
+The second-order product density $\lambda^{(2)}(u,v)$ is defined such that
+
+$$
+\mathbb{E}[N(du)N(dv)] = \lambda^{(2)}(u,v) \ du \ dv, \quad u \neq v
+$$
+
+where:
+
+- $N(du)$ is the number of points in an infinitesimal region around $u$,
+- $du, dv$ are the infinitesimal areas.
+
+::: {.callout-note}
+Strictly speaking, the definition applies for $u \neq v$, since a (simple) point process 
+does not place multiple points at exactly the same location.
+:::
+
+
+## Interpretation
+
+The second order product density describes:
+
+> The expected joint occurrence of points near $u$ and $v$.
+
+More precisely:
+
+- $\lambda^{(2)}(u,v) \ du \ dv$ is approximately the probability of 
+observing both a point in a small region around $u$ AND a point in a small 
+region around $v$.
+
+Also note that $\lambda^{(2)}(u,v)$ is symmetric:
+
+$$
+\lambda^{(2)}(u,v) = \lambda^{(2)}(v,u)
+$$
+
+which reflects that the joint occurrence of points at $u$ and $v$ does not depend
+on order.
+
+
+## Relation to intensity
+
+Recall that intensity satisfies:
+
+$$
+\mathbb{E}[N(du)] = \lambda(u) \ du
+$$
+
+If points are completely independent, we would expect:
+
+$$
+\mathbb{E}[N(du)N(dv)] = \mathbb{E}[N(du)]\mathbb{E}[N(dv)] = \lambda(u)\lambda(v) \ du \ dv
+$$
+
+That is,
+
+$$
+\lambda^{(2)}(u,v) = \lambda(u)\lambda(v)
+$$
+
+This is exactly the case for a Poisson process.
+
+:::callout-note
+The key idea is that:
+
+- $\lambda(u)$ tells us *how many points* we expect.
+
+- $\lambda^{(2)}(u,v)$ tells us *how points co-occur*.
+
+Second-order density captures dependence between locations.
+:::
+
+## Detecting interaction
+
+Comparing $\lambda^{(2)}(u,v)$ to $\lambda(u)\lambda(v)$ reveals spatial 
+structure:
+
+- $\lambda^{(2)}(u,v) > \lambda(u)\lambda(v)$ is indicative of clustering.
+
+- $\lambda^{(2)}(u,v) < \lambda(u)\lambda(v)$ is indicative of repulsion.
+
+- $\lambda^{(2)}(u,v) = \lambda(u)\lambda(v)$ is indicative of no interaction.
+
+
+## Limitations
+
+While the second-order product density is fundamental, it is not always easy to
+directly interpret.
+
+In particular:
+
+- Its scale depends on the intensity $\lambda(u)$
+- It is difficult to compare across different processes
+- It does not provide an immediately intuitive mesure of interaction
+
+:::callout-note
+Exemplify...
+:::
+
+For example, even under independence, we have:
+
+$$
+\lambda^{(2)}(u,v) = \lambda(u)\lambda(v)
+$$
+
+is constant unless the intensity is constant.
+
+This makes it difficult to distinguish between:
+
+- variation due to intensity and 
+- variation due to interaction.
+
+
+## Towards a normalised Measure
+
+To better understand spatial interaction, we would like  quantity that:
+
+- removes the effect of first-oreder intensity, and
+- isolates pure interaction between points.
+
+This leads to the definition of the pair correlation function (PCF), which we
+introduce in the next section.
+
+## Summary
+
+- The second-order product density $\lambda^{(2)}(u,v)$ describes the joint 
+occurrence of points at two locations.
+- It generalizes the intensity to pairs of locations.
+- Comparing $\lambda^{(2)}(u,v)$ to $\lambda(u)\lambda(v)$ reveals:
+  - clustering,
+  - repulsion,
+  - or independence.
+- However, it is not easy to interpret directly, motivating a normalized measure of interaction.
+
+
+
+
+
+
+
+
+
+
+
+
+
+

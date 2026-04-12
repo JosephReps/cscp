@@ -1,0 +1,157 @@
+# Covariance Functions
+
+In the previous section, we introduced Gaussian random fields and saw that they 
+are fully characterized by their mean and covariance functions.
+
+In practice, the choice of covariance function plays a central role, as it 
+determines the *spatial dependence structure* of the field.
+
+## Definition
+
+A function $C : \mathbb{R}^d \to \mathbb{R}$ is called a *covariance function* 
+if there exists a random field $Z(u)$ such that
+
+$$
+C(u,v) = \mathrm{Cov}(Z(u), Z(v)).
+$$
+
+Under stationarity, this reduces to:
+
+$$
+C(u,v) = C(u - v) = C(h).
+$$
+
+
+## Positive Definiteness
+
+Not every function is a valid covariance function.
+
+A function $C(h)$ is valid if and only if it is *positive definite*, meaning that 
+for any points $u_1, \dots, u_n$ and coefficients $a_1, \dots, a_n$,
+
+$$
+\sum_{i=1}^n \sum_{j=1}^n a_i a_j C(u_i - u_j) \ge 0.
+$$
+
+::: {.callout-note}
+This condition ensures that the covariance matrix of $(Z(u_1), \dots, Z(u_n))$ 
+is always non-negative definite.
+:::
+
+## Variance and Correlation
+
+At zero lag:
+
+$$
+C(0) = \mathrm{Var}(Z(u)) = \sigma^2.
+$$
+
+We often define the **correlation function**:
+
+$$
+\rho(h) = \frac{C(h)}{\sigma^2},
+$$
+
+so that:
+
+- $\rho(0) = 1$
+- $|\rho(h)| \le 1$
+
+## Isotropy
+
+If the field is isotropic, then:
+
+$$
+C(h) = C(\|h\|) = C(r).
+$$
+
+So the covariance depends only on distance.
+
+## Common Covariance Functions
+
+### Exponential covariance
+
+$$
+C(r) = \sigma^2 \exp\left(-\frac{r}{s}\right)
+$$
+
+- Short-range dependence  
+- Non-smooth sample paths  
+- Used throughout these notes  
+
+### Gaussian covariance
+
+$$
+C(r) = \sigma^2 \exp\left(-\frac{r^2}{s^2}\right)
+$$
+
+- Very smooth fields  
+- Rapid decay of correlation  
+
+### Matérn covariance
+
+$$
+C(r) = \sigma^2 \frac{2^{1-\nu}}{\Gamma(\nu)} \left( \frac{r}{s} \right)^\nu K_\nu\left(\frac{r}{s}\right)
+$$
+
+- $\nu$ controls smoothness  
+- Includes exponential and Gaussian as special/limiting cases  
+
+## Interpretation
+
+The covariance function controls:
+
+- *Strength of dependence* via $\sigma^2$  
+- *Range of dependence* via $s$  
+- *Smoothness of the field* via functional form  
+
+## Connection to Pair Correlation Functions
+
+The covariance structure of the underlying field directly determines the 
+second-order properties of Cox processes.
+
+For example:
+
+- LGCP:
+  $$
+  g(r) = \exp(C(r))
+  $$
+
+- CSCP (mean-zero, single component):
+  $$
+  g(r) = 1 + 2\rho(r)^2
+  $$
+
+## Key Insight
+
+Different models can produce very similar pair correlation functions when driven by the **same covariance structure**.
+
+For example, if
+
+$$
+C(r) = \sigma^2 \exp(-r/s),
+$$
+
+then:
+
+- LGCP:
+  $$
+  g(r) = \exp(\sigma^2 e^{-r/s})
+  $$
+
+- CSCP:
+  $$
+  g(r) = 1 + 2 e^{-2r/s}
+  $$
+
+These can be very similar in shape for suitable parameter choices.
+
+## Summary
+
+- Covariance functions determine spatial dependence in random fields  
+- Valid covariance functions must be positive definite  
+- Under isotropy, they depend only on distance  
+- The choice of covariance function directly influences the PCF of Cox processes  
+
+Understanding covariance functions is therefore essential for modelling and 
+interpreting spatial clustering.

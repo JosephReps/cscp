@@ -1,0 +1,262 @@
+# The Non-Central Model
+
+A natural starting point is to construct the process by applying squaring a 
+Gaussian random field. This is analogous to the log-Gaussian 
+Cox process, where the exponential transformation is used, and will result in 
+the marginal distribution of the intensity field being exactly a Chi-square distribution.
+
+## Definition
+
+Motivated by this, we consider the model
+
+$$
+\Lambda(u) = Z(u)^2,
+$$
+
+where $Z(u)$ is a Gaussian random field (GRF) defined on a spatial domain 
+$W \subset \mathbb{R}^2$.
+
+Notice that at each location $u$, the intensity is given by the square of a 
+Gaussian random variable, and hence follows a (scaled?) non-central chi-square 
+distribution with one degree of freedom.
+
+Conditional on $\Lambda(\cdot)$, the point process $X$ is an inhomogeneous 
+Poisson process with intensity function $\Lambda(u)$.
+
+The Gaussian random field $Z(u)$ is characterised by its mean function
+
+$$
+m(u) = \mathbb{E}[Z(u)]
+$$
+
+and covariance function
+
+$$
+C(u,v) = \mathrm{Cov}(Z(u), Z(v)),
+$$
+
+for $u, v \in W$.
+
+In many cases, it is convenient to express dependence using the correlation function
+
+$$
+\rho(u, v) = 
+\frac{C(u,v)}{\sqrt{C(u,u)}\sqrt{C(v,v)}}.
+$$
+
+## First-order intensity
+
+We have seen previously, that for any Cox process, the first order intensity
+has the form
+
+$$
+\lambda(u) = \mathbb{E}[\Lambda(u)]
+$$
+
+So we have
+
+$$
+\begin{align}
+\lambda(u) &= \mathbb{E}[\Lambda(u)]\\
+&= \mathbb{E}[Z(u)^2]\\
+&= \mathrm{Var}(Z(u)) + \mathbb{E}[Z(u)]^2\\
+&= C(u,u) + m(u)^2
+\end{align}
+$$
+
+## Second-order intensity
+
+We have also seen that for any Cox process, the second-order intensity can be
+found as
+
+$$
+\begin{align}
+\lambda^{(2)}(u, v) &= \mathbb{E}[\Lambda(u) \Lambda(v)]
+\end{align}
+$$
+
+Applying the Gaussian 4th moment identity, we arrive at 
+
+$$
+\begin{align}
+\lambda^{(2)}(u, v) &= \mathbb{E}[\Lambda(u) \Lambda(v)]\\
+&= \mathbb{E}[Z(u)^2 Z(v)^2]\\
+&= (C(u, u) + m(u)^2)(C(v, v) + m(v)^2) + 2 C(u, v)^2 + 4 m(u) m(v) C(u, v)\\
+&= \lambda(u)\lambda(v) + 2 C(u, v)^2 + 4 m(u) m(v) C(u, v)
+\end{align}
+$$
+
+::: {.callout-note collapse="true"}
+### Proof of the Gaussian 4th moment identity
+
+Need to add proof.
+
+Let $(X, Y)$ be bivariate normal with,
+
+$$
+\begin{align*}
+&\mu_X = \mathbb{E}[X],\qquad \mu_Y = \mathbb{E}[Y],\\
+&\sigma_X^2 = \text{Var}(X),\quad \sigma_Y^2 = \text{Var}(Y)\\
+&\sigma_{XY} = \text{Cov}(X, Y)
+\end{align*}
+$$
+
+Then
+
+$$
+\mathbb{E}[X^2 Y^2] = (\sigma_X^2 + \mu_X^2)(\sigma_Y^2 + \mu_Y^2) 
++ 2\sigma_{XY}^2 + 4\mu_X\mu_Y\sigma_{XY}
+$$
+:::
+
+The first term corresponds to the baseline Poisson component, while the remaining 
+terms capture clustering induced by the covariance structure of the underlying field. 
+In particular, the quadratic term $2 C(u,v)^2$
+reflects purely second-order dependence, while the linear term 
+$4 m(u)m(v)C(u,v)$ arises from interaction between the mean and covariance structure.
+
+It is immediately obvious if there is no covariance between $Z(u)$ and $Z(v)$
+(i.e. $C(u, v) = 0$), that the second order structure is simply the 
+first-order intensity ($\lambda(u)\lambda(v)$), consistent with CSR.
+
+::: {.callout-note collapse="true"}
+## Alternative derivation of second-order intensity
+
+Easier way (??? doesn't really seem that much easier), using the identity:
+
+$$
+\mathbb{E}[AB] = \mathrm{Cov}(A,B) + \mathbb{E}[A]\mathbb{E}[B]
+$$
+
+with $A=\Lambda(u)$ and $B=\Lambda(v)$, which gives
+ 
+$$
+\lambda^{(2)}(u,v)
+=
+\mathbb{E}[\Lambda(u)\Lambda(v)]
+=
+\mathrm{Cov}(\Lambda(u),\Lambda(v))
++
+\lambda(u)\lambda(v)
+$$
+ 
+So then we just need to compute $\mathrm{Cov}(\Lambda(u),\Lambda(v))$. And since
+
+$$
+\Lambda(u)=\sum_{i=1}^k Z_i(u)^2, \qquad \Lambda(v)=\sum_{j=1}^k Z_j(v)^2,
+$$
+ 
+biliniearity of covariance gives
+ 
+$$
+\mathrm{Cov}(\Lambda(u),\Lambda(v))
+=
+\sum_{i=1}^k\sum_{j=1}^k
+\mathrm{Cov}(Z_i(u)^2,Z_j(v)^2).
+$$
+
+...Continues on
+
+:::
+
+## PCF
+
+The PCF follows directly from the above derivations:
+
+$$
+\begin{align}
+g(u, v) &= \frac{\lambda^{(2)}(u, v)}{\lambda(u)\lambda(v)}\\
+&= \frac{\lambda(u)\lambda(v) + 2 C(u, v)^2 + 4 m(u) m(v) C(u, v)}{\lambda(u)\lambda(v)}\\
+&= 1 + \frac{2 C(u, v)^2 + 4 m(u) m(v) C(u, v)}{\lambda(u)\lambda(v)}\\
+\end{align}
+$$
+
+It is immediately apparent from the form of the PCF, that the *mean* of the GRF
+$Z(u)$ has a direct effect on the clustering behavior of the process.
+
+In contrast to the LGCP, where clustering is driven solely by the covariance 
+structure of the underlying field, the mean of the GRF here directly influences 
+the clustering behaviour.
+
+## K-function
+
+[To be added.]
+
+## Stationary and isotropic case
+
+In many practical settings, it is natural to assume that the underlying Gaussian 
+random field is stationary and isotropic. In this case:
+
+- the mean is constant:
+
+$$
+m(u) = m
+$$
+
+- the variance is constant:
+
+$$
+C(u,u) = \sigma^2
+$$
+
+- the covariance only depends on distance:
+
+$$
+C(u, v) = C(r) = \sigma^2 \rho(r), \quad r = \|u - v\|
+$$
+
+Under these assumptions, we have first-order intensity
+
+$$
+\lambda(u) = \lambda = \sigma^2 + m^2,
+$$
+
+and PCF
+
+$$
+\begin{align}
+g(r) &= 1 + \frac{2C(r)^2 + 4m^2C(r)}{(\sigma^2 + m^2)^2}\\ 
+&= 1 + \frac{2\sigma^4\rho(r)^2 + 4m^2\sigma^2\rho(r)}{(\sigma^2 + m^2)^2}
+\end{align}
+$$
+
+This expression reveals that the pair correlation function is composed of both 
+a quadratic term in $\rho(r)$ and a linear term in $\rho(r)$, in contrast to the 
+centered case considered later.
+
+## Thoughts on this construction
+
+While the non-central construction provides a valid and flexible model, the 
+resulting expressions for the second-order structure are somewhat difficult to 
+interpret. In particular, the pair correlation function contains both linear and 
+quadratic terms in the correlation function $\rho(r)$, arising from interaction 
+between the mean and covariance structure of the underlying field.
+
+This complicates interpretation, as it is not immediately clear how changes in 
+the mean function $m(u)$ and covariance function $C(u,v)$ separately influence 
+the clustering behaviour of the process. Moreover, the presence of mixed terms 
+makes it difficult to isolate the contribution of second-order dependence alone.
+
+For these reasons, it is natural to consider a simplified version of the model 
+in which the Gaussian random field is centered, ($m(u) = 0$). As we will see, 
+this leads to a significantly cleaner and more interpretable form of the 
+second-order structure.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

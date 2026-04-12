@@ -1,0 +1,167 @@
+# Exercises
+
+These exercises are designed to build intuition and practical understanding of
+the intensity function and its estimation.
+
+---
+
+## Conceptual questions
+
+1. What does the intensity function λ(u) represent?
+
+2. Explain the relationship between the intensity function and the mean measure.
+
+3. What is the difference between:
+   a. homogeneous intensity  
+   b. inhomogeneous intensity  
+
+4. Can two point processes have the same intensity function but very different spatial structures? Explain.
+
+5. Why is the intensity function considered a first-order summary?
+
+---
+
+## Basic derivations
+
+6. Show that for a homogeneous process with intensity λ,
+   E[N(B)] = λ |B|.
+
+7. Let λ(u) be an intensity function. Show that:
+   E[N(W)] = ∫_W λ(u) du.
+
+8. Suppose λ(u) = 2 + u₁ in ℝ². Compute E[N(W)] for:
+   a. W = [0,1]²  
+   b. W = [0,2]²  
+
+---
+
+## Kernel estimation
+
+9. Write down the kernel intensity estimator and explain each term.
+
+10. Explain why kernel estimation can be viewed as a smoothed version of the moving window estimator.
+
+11. Describe the effect of bandwidth h on:
+   a. bias  
+   b. variance  
+
+---
+
+## Practical exercises (R / spatstat)
+
+12. Simulate a homogeneous Poisson process:
+
+```r
+library(spatstat.random)
+X <- rpoispp(lambda = 1, win = owin(c(0,10), c(0,10)))
+plot(X)
+```
+
+a. Compute the global intensity estimate N(W)/|W|  
+b. Compare it to the true value λ = 1  
+
+---
+
+13. Bandwidth comparison:
+
+```r
+library(spatstat.explore)
+lambda_small  <- density(X, sigma = 0.1)
+lambda_medium <- density(X, sigma = 0.5)
+lambda_large  <- density(X, sigma = 1)
+```
+
+a. Plot all three estimates side-by-side  
+b. Which estimate appears over-smoothed?  
+c. Which appears too noisy?  
+d. Which bandwidth would you choose, and why?  
+
+---
+
+14. Inhomogeneous intensity recovery:
+
+```r
+f <- function(x, y) { 2 + x/5 }
+X <- rpoispp(f, win = owin(c(0,10), c(0,10)))
+plot(X)
+```
+
+a. Estimate the intensity using sigma = 0.5  
+b. Does the estimate recover the increasing trend in x?  
+c. How does the estimate change if sigma = 0.1 vs sigma = 1?  
+
+---
+
+15. Explicit edge correction comparison:
+
+Using the same dataset X, compute:
+
+```r
+lambda_no_edge <- density(X, sigma = 0.3, edge = FALSE)
+lambda_edge    <- density(X, sigma = 0.3, edge = TRUE)
+```
+
+a. Plot both estimates  
+b. Compare the estimated intensity near the boundary of the window  
+c. Which estimate appears biased near the edges?  
+d. Explain why this bias occurs  
+
+---
+
+16. Edge correction methods:
+
+```r
+lambda_iso  <- density(X, sigma = 0.3, edge = TRUE, diggle = FALSE)
+lambda_dig  <- density(X, sigma = 0.3, edge = TRUE, diggle = TRUE)
+```
+
+a. Plot both estimates  
+b. How do the two correction methods differ near the boundary?  
+c. Which appears more stable?  
+
+---
+
+17. Sample size effect:
+
+Simulate processes with λ = 0.5, 1, and 5.
+
+a. Estimate intensity for each  
+b. Compare variability of the estimates  
+c. Which dataset produces the most stable estimate, and why?  
+
+---
+
+## Thinking questions
+
+18. Suppose you observe a hotspot in an estimated intensity surface.
+
+a. Could this be caused by a small bandwidth?  
+b. Could it be random variation?  
+c. How would you distinguish between the two?  
+
+---
+
+19. Suppose you ignore edge correction.
+
+a. What systematic bias would you expect?  
+b. Where in the window would it be strongest?  
+
+---
+
+20. Suppose you choose a bandwidth that is too large.
+
+a. What important features might be lost?  
+b. How might this affect later analysis (e.g. clustering detection)?  
+
+---
+
+21. Why is intensity estimation typically only the first step in spatial point pattern analysis?
+
+---
+
+## Extension (optional)
+
+22. Simulate an inhomogeneous Poisson process with known λ(u), estimate λ(u),
+and compute the mean squared error over a grid for different bandwidths.
+
+Which bandwidth minimises the error?

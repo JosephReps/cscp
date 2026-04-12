@@ -1,0 +1,361 @@
+# Intensity function
+
+## Motivation
+
+In the previous chapter, we introduced point processes as random counting 
+mechanisms.
+
+A natural next question is:
+
+> How do we describe where points tend to occur?
+
+At the most basic level, we want to measure the average concentration of points
+across space.
+
+This leads to the concept of first-order structure.
+
+Roughly speaking, first-order structure describes how the expected number of 
+points varies from place to place.
+
+- If points are equally likely everywhere, the process is spatially uniform.
+
+- If some regions tend to contain more points than others, the process is 
+spatially inhomogeneous.
+
+## From expected counts to local rate
+
+Let $X$ be a point process on a spatial domain $W \subset \mathbb{R}^d$, and let
+$N(B)$ denote the number of points falling in a region $B \subset W$.
+
+One way to summarize the average behavior is through expected count in a region:
+
+$$
+\mathbb{E}[N(B)].
+$$
+
+This tells us the expected number of points $B$, but it does not yet describe how
+that expectation is distributed across space.
+
+To get a *local* version of this, we ask:
+
+> What is the expected number of points in a very small region around location $u$?
+
+This motivates the intensity function.
+
+## Definition of intensity function
+
+Informally, the intensity function $\lambda(u)$ gives the expected number of 
+points per unit area near location $u$.
+
+Formally, if it exists, the intensity function is defined by
+
+$$
+\lambda(u) = \lim_{du \to 0}\frac{\mathbb{E}[N(du)]}{|du|}
+$$
+
+where $du$ denotes a small region containing $u$, and $|du|$ is its volume (area in 2D).
+
+:::callout-note
+Interpretation:
+
+- $\mathbb{E}[N(du)]$ is the expected number of points in a tiny region near $u$
+- dividing by $|du|$ converts this into an expected number of points **per unit area**
+- so $\lambda(u)$ is a **local average density of points**
+:::
+
+Equivalently, for a sufficiently small region $du$ around $u$, 
+
+$$
+\mathbb{E}[N(du)] \approx \lambda(u)\,|du|
+$$
+
+:::callout-note
+"sufficiently small" yucky.
+:::
+
+This approximation is often the most useful way to think about intensity.
+
+## Mean measure
+
+Before introducing $\lambda(u)$, it is useful to define the mean measure.
+
+For any region $B \subset W$, define
+
+$$
+\mu(B) = \mathbb{E}[N(B)]
+$$
+
+The function $\mu(\cdot)$ is called the mean measure of the point process.
+
+It records the expected number of points in every region.
+
+If this mean measure admits a density with respect to volume, then that density
+is precisely the intensity function:
+
+$$
+\mu(B) = \int_B \lambda(u)\ du
+$$
+
+So the intensity function is just the spatial density of the mean measure.
+
+::: {.callout-tip}
+This is exactly analogous to ordinary probability:
+
+- a distribution function gives total probability of sets
+- a density function gives probability *per unit length/area/volume*
+
+Here:
+
+- the mean measure $\mu(B)$ gives expected count in a set
+- the intensity $\lambda(u)$ gives expected count per unit area at location $u$
+:::
+
+:::callout-note
+Straight booty cheeks not intuitive at all right now:
+
+>If this mean measure admits a density with respect to volume
+
+????? Really?
+
+And if $\mu(B) = \mathbb{E}[N(B)]$, why even define it as its own thing?????
+:::
+
+## Interpretation of $\lambda(u)$
+
+The intensity function is a first-order summary.
+
+It describes the average abundance of points across space, but it does **not**
+describe the interaction between points.
+
+For example, two processes can have the same intensity function but one may be 
+clustered, while the other may be regular.
+
+So the intensity tells us about where points are expected to occur on average,
+but not whether they attract or repel one another.
+
+That is why it belongs to the first-order structure, rather than the second-order
+structure.
+
+## Homogeneous intensity
+
+The simplest case is when the intensity is constant:
+
+$$
+\lambda(u) = \lambda \quad \forall u \in W.
+$$
+
+In this case, the process is aid to have constant first-order structure, or to
+be first-order homogeneous.
+
+Then for any region $B$,
+
+$$
+\mathbb{E}[N(B)] = \int_B \lambda(u)\ du = \lambda \int_B 1\ du = \lambda |B|
+$$
+
+So the expected number of points in a region depends only on its size, not on 
+its location in $W$.
+
+::: {.callout-note}
+Interpretation:
+
+If $\lambda(u)$ is constant, then no location is favored over any other in terms
+of average point density.
+
+This does **not** automatically mean the process is Poisson.
+
+It only means that the first-order structure is spatially uniform.
+:::
+
+## Inhomogeneous intensity
+
+More generally, the intensity may vary with location:
+
+$$
+\lambda(u) \neq \lambda(v) \quad \text{for some} \ u, v \in W
+$$
+
+In this case, the process is inhomogeneous.
+
+Then the expected count in a region is
+
+$$
+\mathbb{E}[N(B)] = \int_B \lambda(u)\ du
+$$
+
+Regions where $\lambda(u)$ is larger are expected to contain more points, on
+average.
+
+This allows us to model spatial trends such as:
+
+- envionmental gradients
+- varying population density
+- spatial covariate effects
+- boundary effects or hotspots
+
+## Example: Poisson processes
+
+The intensity function already appeared in the previous chapter for Poisson processes.
+
+### Homogeneous Poisson process
+
+For a homogeneous Poisson process with parameter $\lambda$,
+
+$$
+\mathbb{E}[N(B)] = \lambda |B|
+$$
+
+so the intensity function is simply
+
+$$
+\lambda(u) = \lambda
+$$
+
+### Inhomogeneous Poisson process
+
+For an inhomogeneous Poisson process with intensity function $\lambda(u)$,
+
+$$
+\mathbb{E}[N(B)] = \int_B \lambda(u)\ du
+$$
+
+So in the Poisson case, the intensity function fully determines the first-order
+structure.
+
+:::callout-note
+Still not clear to me what **exactly** first-order structure is?
+
+Like is it LITERALLY just $\mathbb{E}[N(B)]$???
+:::
+
+However, outside of a Poisson setting, many different point processes may share
+the same intensity function.
+
+## Why intensity matters
+
+The intensity function is important because it is usually the first quantity we
+try to understand from spatial point pattern data.
+
+:::callout-note
+The intensity function is important because we try to understand it first?????
+
+Dog water
+:::
+
+It helps answer questions such as:
+
+- Are points more common in some parts of the window than others?
+- Is there a large-scale spatial trend?
+- Is the pattern approximately uniform?
+- Should we remove first-order inhomogeneity before studying clustering?
+
+In practice, estimating $\lambda(u)$ is often the first step in spatial point
+process analysis.
+
+## What the intensity does *not* tell us
+
+It is important to not over-interpret the intensity function.
+
+A high value of $\lambda(u)$ means that points are more common *on average* near
+$u$, but it does not mean that points are interacting there.
+
+For example, a process may have:
+
+- constant intensity, but strong clustering
+- varying intensity, but no interaction
+- both inhomogeneity and clustering
+
+So the intensity alone is not enough to describe the full spatial structure.
+
+To study dependence between points, we need **second-order summaries**, which we
+will introduce in later chapters.
+
+## Uncertainty in intensity estimation
+
+Estimating $\lambda(u)$ from a single realisation introduces variability.
+
+For simple estimators based on local counts, variability arises from the
+randomness in the number of observed points.
+
+Under a Poisson assumption, we have
+
+$$
+\mathrm{Var}(N(B)) = \mathbb{E}[N(B)],
+$$
+
+which suggests that
+
+$$
+\mathrm{Var}(\hat{\lambda}(u)) \propto \frac{\lambda(u)}{|B(u,r)|}.
+$$
+
+For kernel estimators, the variance depends on the bandwidth $h$, with smaller
+values of $h$ leading to more variable estimates.
+
+::: {.callout-note}
+Key idea:
+
+There is a bias–variance trade-off:
+
+- small bandwidth → low bias, high variance
+- large bandwidth → high bias, low variance
+:::
+
+In practice, uncertainty in intensity estimates is often assessed using
+simulation-based methods, such as parametric bootstrap.
+
+However, in many applications, intensity estimation is primarily used as a
+descriptive tool rather than for formal inference.
+
+:::callout-note
+I would like to flesh this out a bit.
+
+Especially: WHY are simulation based methods preferred in practice?
+
+A: Simulation-based methods are preferred because analytic uncertainty is either 
+unavailable, unreliable, or too complicated once you leave the Poisson world.
+
+Analytic expressions for uncertainty quickly become intractable in spatial 
+point processes due to dependence between points, edge effects, and smoothing. 
+Simulation-based methods provide a flexible alternative that naturally accounts 
+for these complexities.
+:::
+
+## Summary
+
+The intensity function $\lambda(u)$ is the fundamental descriptor of
+first-order structure in a point process.
+
+It tells us the expected number of points per unit area near location $u$, and
+satisfies
+
+$$
+\mathbb{E}[N(B)] = \int_B \lambda(u)\,du.
+$$
+
+- If $\lambda(u)$ is constant, the process is first-order homogeneous.
+- If $\lambda(u)$ varies with $u$, the process is inhomogeneous.
+
+The intensity function describes average spatial abundance, but not
+interaction between points.
+
+That is why it is only the beginning of the structural description of a point
+process.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

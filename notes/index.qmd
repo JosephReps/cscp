@@ -1,0 +1,366 @@
+<!-- Complete dogshit here -->
+<div id="pp-wrap" style="width:100%; display:flex; justify-content:center; margin:0; padding:0; margin-bottom: -16px;">
+  <canvas id="pp-canvas" style="display:block; width:100%; max-width:980px; height:auto; cursor:pointer;"></canvas>
+</div>
+
+<script>
+(() => {
+  // ============================================================
+  // Tunable settings
+  // ============================================================
+  const WIDTH = 980;
+  const HEIGHT = 350;
+
+  // Mask generation
+  const MASK_RES = 1;
+  const NOISE_SCALE_1 = 0.010;
+  const NOISE_SCALE_2 = 0.022;
+  const NOISE_SCALE_3 = 0.055;
+  const THRESHOLD = 0.485;
+  const WARP = 45;
+  const BLUR_PASSES = 2;
+
+  // Point process
+  const LAMBDA = 115;
+  const MEAN_LIFETIME = 8.5;
+  const MAX_POINTS = 500;
+  const POINT_RADIUS = 5.6;
+  const STROKE_WIDTH = 1.7;
+  const POINT_FILL = "#f2f2f2";
+  const POINT_STROKE = "#2b2b2b";
+
+  // Appearance
+  const BORDER_COLOR = "#666";
+  const BORDER_WIDTH = 1.5;
+  const BLACK = "#000000";
+  const WHITE = "#ffffff";
+
+  // ============================================================
+  // Setup
+  // ============================================================
+  const canvas = document.getElementById("pp-canvas");
+  const ctx = canvas.getContext("2d");
+  canvas.width = WIDTH;
+  canvas.height = HEIGHT;
+
+  const off = document.createElement("canvas");
+  const offCtx = off.getContext("2d");
+  off.width = WIDTH;
+  off.height = HEIGHT;
+
+  const maskCanvas = document.createElement("canvas");
+  const maskCtx = maskCanvas.getContext("2d");
+
+  const maskW = Math.floor(WIDTH / MASK_RES);
+  const maskH = Math.floor(HEIGHT / MASK_RES);
+  maskCanvas.width = maskW;
+  maskCanvas.height = maskH;
+
+  let spawnMask = new Uint8Array(maskW * maskH);
+  let whitePixels = [];
+  let valueGrid = new Map();
+  let rng = null;
+
+  // ============================================================
+  // RNG
+  // ============================================================
+  function mulberry32(a) {
+    return function() {
+      let t = a += 0x6D2B79F5;
+      t = Math.imul(t ^ (t >>> 15), t | 1);
+      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  function reseed(seed = (Date.now() ^ Math.floor(Math.random() * 1e9)) >>> 0) {
+    rng = mulberry32(seed);
+    valueGrid = new Map();
+  }
+
+  // ============================================================
+  // Noise helpers
+  // ============================================================
+  function hash2(ix, iy) {
+    const key = `${ix},${iy}`;
+    if (!valueGrid.has(key)) valueGrid.set(key, rng());
+    return valueGrid.get(key);
+  }
+
+  function smoothstep(t) {
+    return t * t * (3 - 2 * t);
+  }
+
+  function lerp(a, b, t) {
+    return a + (b - a) * t;
+  }
+
+  function valueNoise(x, y, scale) {
+    const sx = x * scale;
+    const sy = y * scale;
+
+    const x0 = Math.floor(sx);
+    const y0 = Math.floor(sy);
+    const x1 = x0 + 1;
+    const y1 = y0 + 1;
+
+    const tx = smoothstep(sx - x0);
+    const ty = smoothstep(sy - y0);
+
+    const v00 = hash2(x0, y0);
+    const v10 = hash2(x1, y0);
+    const v01 = hash2(x0, y1);
+    const v11 = hash2(x1, y1);
+
+    const a = lerp(v00, v10, tx);
+    const b = lerp(v01, v11, tx);
+    return lerp(a, b, ty);
+  }
+
+  function fbm(x, y) {
+    return (
+      0.56 * valueNoise(x, y, NOISE_SCALE_1) +
+      0.29 * valueNoise(x + 173.1, y - 91.7, NOISE_SCALE_2) +
+      0.15 * valueNoise(x - 71.3, y + 44.2, NOISE_SCALE_3)
+    );
+  }
+
+  // ============================================================
+  // Mask generation
+  // ============================================================
+  function generateMask() {
+    const img = maskCtx.createImageData(maskW, maskH);
+    const data = img.data;
+    const raw = new Float32Array(maskW * maskH);
+
+    for (let j = 0; j < maskH; j++) {
+      for (let i = 0; i < maskW; i++) {
+        const idx = j * maskW + i;
+        const x = i * MASK_RES;
+        const y = j * MASK_RES;
+
+        const wx = x + WARP * (fbm(x + 400, y + 100) - 0.5);
+        const wy = y + WARP * (fbm(x - 200, y + 700) - 0.5);
+
+        let z = fbm(wx, wy);
+
+        const ridges =
+          Math.abs(fbm(wx + 80, wy - 120) - 0.5) +
+          0.8 * Math.abs(fbm(wx - 250, wy + 40) - 0.5);
+
+        z = 0.72 * z + 0.28 * ridges;
+        raw[idx] = z;
+      }
+    }
+
+    let cur = raw;
+    for (let pass = 0; pass < BLUR_PASSES; pass++) {
+      const nxt = new Float32Array(maskW * maskH);
+      for (let j = 0; j < maskH; j++) {
+        for (let i = 0; i < maskW; i++) {
+          let sum = 0;
+          let cnt = 0;
+          for (let dy = -1; dy <= 1; dy++) {
+            for (let dx = -1; dx <= 1; dx++) {
+              const xx = i + dx;
+              const yy = j + dy;
+              if (xx >= 0 && xx < maskW && yy >= 0 && yy < maskH) {
+                sum += cur[yy * maskW + xx];
+                cnt++;
+              }
+            }
+          }
+          nxt[j * maskW + i] = sum / cnt;
+        }
+      }
+      cur = nxt;
+    }
+
+    whitePixels = [];
+
+    for (let j = 0; j < maskH; j++) {
+      for (let i = 0; i < maskW; i++) {
+        const idx = j * maskW + i;
+        const v = cur[idx];
+
+        const isWhite = v < THRESHOLD ? 1 : 0;
+        spawnMask[idx] = isWhite;
+
+        if (isWhite) whitePixels.push(idx);
+
+        const c = isWhite ? 255 : 0;
+        const k = idx * 4;
+        data[k] = c;
+        data[k + 1] = c;
+        data[k + 2] = c;
+        data[k + 3] = 255;
+      }
+    }
+
+    maskCtx.putImageData(img, 0, 0);
+  }
+
+  function drawBackground() {
+    offCtx.clearRect(0, 0, WIDTH, HEIGHT);
+    offCtx.fillStyle = WHITE;
+    offCtx.fillRect(0, 0, WIDTH, HEIGHT);
+    offCtx.imageSmoothingEnabled = true;
+    offCtx.drawImage(maskCanvas, 0, 0, WIDTH, HEIGHT);
+    offCtx.lineWidth = BORDER_WIDTH;
+    offCtx.strokeStyle = BORDER_COLOR;
+    offCtx.strokeRect(0.5, 0.5, WIDTH - 1, HEIGHT - 1);
+  }
+
+  // ============================================================
+  // Point process
+  // ============================================================
+  function sampleSpawnPoint() {
+    if (whitePixels.length === 0) return null;
+
+    const idx = whitePixels[Math.floor(rng() * whitePixels.length)];
+    const j = Math.floor(idx / maskW);
+    const i = idx - j * maskW;
+
+    return {
+      x: (i + rng()) * MASK_RES,
+      y: (j + rng()) * MASK_RES
+    };
+  }
+
+  function expSample(mean) {
+    return -mean * Math.log(1 - rng());
+  }
+
+  const points = [];
+  let lastTime = performance.now();
+
+  function refillPoints() {
+    points.length = 0;
+    for (let i = 0; i < Math.round(LAMBDA * 0.9); i++) {
+      const pt = sampleSpawnPoint();
+      if (pt) {
+        const lifetime = expSample(MEAN_LIFETIME);
+        points.push({
+          x: pt.x,
+          y: pt.y,
+          age: rng() * lifetime,
+          lifetime
+        });
+      }
+    }
+  }
+
+  function maybeSpawn(dt) {
+    const birthRate = LAMBDA / MEAN_LIFETIME;
+    let expectedBirths = birthRate * dt;
+
+    while (expectedBirths > 0) {
+      const p = Math.min(1, expectedBirths);
+      if (rng() < p) {
+        const pt = sampleSpawnPoint();
+        if (pt && points.length < MAX_POINTS) {
+          points.push({
+            x: pt.x,
+            y: pt.y,
+            age: 0,
+            lifetime: expSample(MEAN_LIFETIME)
+          });
+        }
+      }
+      expectedBirths -= 1;
+    }
+  }
+
+  function update(dt) {
+    maybeSpawn(dt);
+
+    for (let i = points.length - 1; i >= 0; i--) {
+      points[i].age += dt;
+      if (points[i].age >= points[i].lifetime) {
+        points.splice(i, 1);
+      }
+    }
+  }
+
+  function drawPoints() {
+    for (const p of points) {
+      const t = p.age / p.lifetime;
+      let alpha = 1;
+      if (t < 0.08) alpha = t / 0.08;
+      else if (t > 0.88) alpha = (1 - t) / 0.12;
+
+      ctx.globalAlpha = Math.max(0, Math.min(1, alpha));
+
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, POINT_RADIUS, 0, Math.PI * 2);
+      ctx.fillStyle = POINT_FILL;
+      ctx.fill();
+      ctx.lineWidth = STROKE_WIDTH;
+      ctx.strokeStyle = POINT_STROKE;
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  function frame(now) {
+    const dt = Math.min(0.05, (now - lastTime) / 1000);
+    lastTime = now;
+
+    update(dt);
+
+    ctx.clearRect(0, 0, WIDTH, HEIGHT);
+    ctx.drawImage(off, 0, 0);
+    drawPoints();
+
+    requestAnimationFrame(frame);
+  }
+
+  // ============================================================
+  // Regenerate on click
+  // ============================================================
+  function regenerate() {
+    reseed();
+    generateMask();
+    drawBackground();
+    refillPoints();
+  }
+
+  canvas.addEventListener("click", regenerate);
+
+  // ============================================================
+  // Initialise
+  // ============================================================
+  regenerate();
+  requestAnimationFrame(frame);
+})();
+</script>
+
+# Preface {.unnumbered}
+
+This webpage serves as both documentation for the `cscp` package, as well as 
+an up-to-date reference for my thesis progress.
+
+::: {.callout-note collapse="true"}
+### For thesis material, see the CSCP I section here.
+:::
+
+::: {.callout-note collapse="true"}
+### For documentation of the `cscp` package, see the Docs section here.
+:::
+
+## Installation
+
+You can install the `cscp` package using `devtools::install_github()`:
+
+```{r eval = FALSE}
+devtools::install_github("https://github.com/JosephReps/coxLab.git")
+```
+
+## Usage
+
+Under construction...
+
+
+
+
+

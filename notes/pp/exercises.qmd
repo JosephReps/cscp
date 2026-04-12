@@ -1,0 +1,185 @@
+# Exercises
+
+These exercises are designed to reinforce understanding of point processes and the Poisson process.
+They should be attempted **without notes first**, then refined.
+
+---
+
+## A. Core Definitions
+   
+1. What is a **counting measure**?  
+   - Give both a formal definition and an intuitive interpretation.
+
+::: {.callout-note collapse="true" title="Show Answer"}
+**Formal definition:**  
+A counting measure $N(\cdot)$ assigns to each set $B \subset W$ the number of points in $B$:
+
+$$
+N(B) = \sum_{i=1}^n \mathbf{1}\{x_i \in B\}.
+$$
+
+**Intuition:**  
+A counting measure simply counts how many points fall inside any region $B$.
+:::
+
+2. What is a **point process**?
+
+   * (a) Definition via counting measure
+   * (b) Definition via random set / configuration
+
+3. What does it mean for a point process to be **simple**?
+
+4. What is a **Poisson process**?
+
+   * (a) Definition via counts
+   * (b) Definition via conditional construction
+
+5. What is the difference between:
+
+   * a **homogeneous Poisson process (HPPP)**
+   * an **inhomogeneous Poisson process (IPPP)**?
+
+---
+
+## B. Interpretation & Intuition
+
+6. What does the intensity parameter ( \lambda ) represent in a Poisson process?
+
+7. Why is the Poisson process called **complete spatial randomness (CSR)**?
+
+8. What does **independent increments** mean, and why is it important?
+
+9. Why can’t a **density function** model a spatial point pattern?
+
+10. Explain the difference between:
+
+* randomness in **counts**
+* randomness in **locations**
+
+11. Give an example of:
+
+* (a) clustered data
+* (b) regular (inhibited) data
+  that would violate a Poisson process assumption.
+
+---
+
+## C. Basic Derivations
+
+12. Show that for a homogeneous Poisson process:
+    [
+    \mathbb{E}[N(B)] = \lambda |B|
+    ]
+
+13. Show that:
+    [
+    \mathrm{Var}(N(B)) = \lambda |B|
+    ]
+
+14. Show that for disjoint sets ( B_1, B_2 ):
+    [
+    \mathrm{Cov}(N(B_1), N(B_2)) = 0
+    ]
+
+15. For an inhomogeneous Poisson process, show that:
+    [
+    \mathbb{E}[N(B)] = \int_B \lambda(u),du
+    ]
+
+---
+
+## D. Conditional Structure
+
+16. Show that for a HPPP, conditional on ( N = n ), the points are i.i.d. uniform on ( W ).
+
+17. Write down the joint density:
+    [
+    \mathbb{P}(N=n, x_1,\dots,x_n)
+    ]
+    for a homogeneous Poisson process.
+
+18. Explain why the Poisson process can be viewed as:
+
+* random number of points
+* i.i.d. locations given the count
+
+---
+
+## E. Construction & Simulation
+
+19. Describe how to simulate a homogeneous Poisson process using the **count-first method**.
+
+20. Describe how to simulate an inhomogeneous Poisson process using **thinning**.
+
+21. Explain why thinning works.
+
+22. Explain why the Poisson process avoids the **variable dimension problem**.
+
+---
+
+## F. R Coding Exercises
+
+23. Write R code to simulate a homogeneous Poisson process on a rectangular window.
+
+24. Write R code to simulate an inhomogeneous Poisson process using thinning.
+
+25. Modify your code to:
+
+* simulate multiple realisations
+* compute the average number of points
+
+26. Plot:
+
+* a single realisation
+* several realisations side-by-side
+
+27. Empirically verify that:
+    [
+    \mathbb{E}[N(W)] \approx \lambda |W|
+    ]
+    by simulation.
+
+28. Simulate an IPPP with intensity:
+    [
+    \lambda(u) = 100 \cdot \exp(-|u|)
+    ]
+    and plot the resulting point pattern.
+
+---
+
+## G. Conceptual Understanding
+
+29. Compare:
+
+* Poisson process vs general point process
+
+30. Compare:
+
+* Poisson process vs random field
+
+31. Explain how a **Cox process** generalises a Poisson process (no formulas required).
+
+32. What assumption of the Poisson process is violated if:
+
+* points appear in clusters?
+* points repel each other?
+
+---
+
+## H. Stretch Exercises
+
+33. Show that independent increments imply no interaction between points.
+
+34. Explain why the Poisson process has no second-order structure.
+
+35. Explain what kind of statistical summaries would detect deviations from a Poisson process.
+
+---
+
+## I. Oral / Conceptual Practice
+
+36. Explain the Poisson process to a non-statistician in under 2 minutes.
+
+37. Describe what a Poisson point pattern “looks like”.
+
+38. Why is the Poisson process used as a baseline in spatial statistics?

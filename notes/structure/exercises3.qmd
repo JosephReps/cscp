@@ -1,0 +1,173 @@
+# Exercises
+
+## Stationarity & Isotropy
+
+---
+
+### 1. Translation invariance
+
+Let $X$ be a point process on $\mathbb{R}^d$.
+
+(a) Write down the formal definition of stationarity using counting measures.
+
+(b) Show that if $X$ is stationary, then for any bounded set $B$,
+
+$$
+\mathbb{E}[N(B)] = \mathbb{E}[N(B + h)]
+$$
+
+for all $h \in \mathbb{R}^d$.
+
+(c) Explain in words what this implies about the spatial distribution of points.
+
+---
+
+### 2. Constant intensity
+
+Suppose $X$ is stationary and admits an intensity function $\lambda(u)$.
+
+(a) Starting from the definition of intensity, show that
+
+$$
+\lambda(u) = \lambda(u + h)
+$$
+
+for all $h$.
+
+(b) Deduce that $\lambda(u)$ must be constant.
+
+(c) Give an example of a process with constant intensity that is **not** stationary.
+
+---
+
+### 3. Second-order structure under stationarity
+
+Let $X$ be stationary with second-order product density $\lambda^{(2)}(u,v)$.
+
+(a) Show that
+
+$$
+\lambda^{(2)}(u,v) = \lambda^{(2)}(u + h, v + h)
+$$
+
+for all $h$.
+
+(b) Let $h = u - v$. Show that there exists a function $\gamma$ such that
+
+$$
+\lambda^{(2)}(u,v) = \gamma(u - v).
+$$
+
+(c) Explain why this reduces a function of two variables to one.
+
+---
+
+### 4. From stationarity to the PCF
+
+Assume stationarity and that $\lambda(u) = \lambda$.
+
+(a) Show that the pair correlation function can be written as
+
+$$
+g(u,v) = \frac{\lambda^{(2)}(u-v)}{\lambda^2}.
+$$
+
+(b) Explain why this is still a function of a **vector**, not a scalar.
+
+---
+
+### 5. Rotational invariance
+
+Let $X$ be stationary.
+
+(a) Write down the formal definition of isotropy using rotations.
+
+(b) Show that if $X$ is isotropic, then for any rotation $R$,
+
+$$
+\lambda^{(2)}(h) = \lambda^{(2)}(Rh).
+$$
+
+(c) Explain what this implies about directional dependence.
+
+---
+
+### 6. Reduction to distance
+
+Assume stationarity and isotropy.
+
+(a) Show that there exists a function $f$ such that
+
+$$
+\lambda^{(2)}(u,v) = f(\|u - v\|).
+$$
+
+(b) Deduce that the pair correlation function can be written as
+
+$$
+g(r), \quad r = \|u - v\|.
+$$
+
+(c) Explain why this reduction is crucial for practical estimation.
+
+---
+
+### 7. Interpreting anisotropy
+
+Consider a point pattern where clustering is stronger in the horizontal direction than the vertical direction.
+
+(a) Would this process be stationary? Justify your answer.
+
+(b) Would this process be isotropic? Justify your answer.
+
+(c) Sketch (qualitatively) what $g(u,v)$ might look like in this case.
+
+---
+
+### 8. When assumptions fail
+
+Suppose a process has intensity
+
+$$
+\lambda(u) = 2 + \sin(u_1),
+$$
+
+where $u = (u_1, u_2)$.
+
+(a) Is the process stationary? Why or why not?
+
+(b) Could the process be isotropic? Explain.
+
+(c) Suggest a transformation or modelling approach to handle this situation.
+
+---
+
+### 9. Connection to practice
+
+You are given an observed point pattern and its estimated PCF $\hat g(r)$.
+
+(a) What assumptions are required for $\hat g(r)$ to be a valid summary?
+
+(b) What would go wrong if the process were strongly anisotropic?
+
+(c) Suggest one way to diagnose anisotropy from data.
+
+---
+
+### 10. Linking assumptions together
+
+Complete the following chain of simplifications:
+
+$$
+g(u,v)
+\;\longrightarrow\;
+g(\,\_\_\_\_)
+\;\longrightarrow\;
+g(\,\_\_\_\_)
+$$
+
+(a) Fill in the missing expressions.
+
+(b) State the assumption used at each step.
+
+(c) Briefly explain why this chain is central to spatial statistics.

@@ -1,0 +1,415 @@
+# Exercises
+
+These exercises are intended to consolidate the general theory of Cox processes before moving to specific models such as the log-Gaussian Cox process.
+
+Throughout, let $X$ denote a Cox process driven by a non-negative random intensity field $\Lambda(u)$ on a window $W \subset \mathbb{R}^d$, so that
+
+$$
+X \mid \Lambda \sim \text{Poisson process with intensity } \Lambda(u).
+$$
+
+Unless stated otherwise, assume all required expectations exist.
+
+---
+
+## 1. Conditional vs unconditional structure
+
+Let $X$ be a Cox process driven by $\Lambda(u)$.
+
+1. Explain carefully what is meant by the statement
+   $$
+   X \mid \Lambda \sim \text{Poisson process with intensity } \Lambda(u).
+   $$
+
+2. Show that conditional on $\Lambda$, counts in disjoint sets are independent.
+
+3. Explain why this does **not** imply that counts in disjoint sets are independent unconditionally.
+
+4. Give an intuitive explanation for why a Cox process may appear clustered even though it is conditionally Poisson.
+
+---
+
+## 2. Mean measure of a Cox process
+
+Let $B \subset W$ be a Borel set.
+
+1. Show that
+   $$
+   \mathbb{E}[N(B)\mid \Lambda] = \int_B \Lambda(u)\,du.
+   $$
+
+2. Deduce that
+   $$
+   \mathbb{E}[N(B)] = \mathbb{E}\left[\int_B \Lambda(u)\,du\right].
+   $$
+
+3. Under suitable regularity conditions, justify the interchange of expectation and integration, and conclude that
+   $$
+   \mathbb{E}[N(B)] = \int_B \mathbb{E}[\Lambda(u)]\,du.
+   $$
+
+4. Interpret this result in words.
+
+---
+
+## 3. Deriving the intensity function
+
+Using only the conditional Poisson definition of a Cox process, derive from first principles that
+
+$$
+\lambda(u) = \mathbb{E}[\Lambda(u)].
+$$
+
+Your derivation should begin with a small region $du$ around $u$ and should make clear where the approximation enters.
+
+::: {.callout-note}
+The goal here is not just to state the formula, but to derive it in the same style used for ordinary point-process intensities.
+:::
+
+---
+
+## 4. Deriving the second-order product density
+
+Let $u \neq v$.
+
+1. Starting from disjoint infinitesimal regions $du$ and $dv$, derive
+   $$
+   \lambda^{(2)}(u,v) = \mathbb{E}[\Lambda(u)\Lambda(v)].
+   $$
+
+2. Identify exactly where conditional independence is used.
+
+3. Show that this implies
+   $$
+   \lambda^{(2)}(u,v)
+   =
+   \lambda(u)\lambda(v) + \mathrm{Cov}(\Lambda(u),\Lambda(v)).
+   $$
+
+4. Explain why this decomposition is important for understanding clustering in Cox processes.
+
+---
+
+## 5. Pair correlation function of a Cox process
+
+Starting from the definition
+
+$$
+g(u,v) = \frac{\lambda^{(2)}(u,v)}{\lambda(u)\lambda(v)},
+\qquad u \neq v,
+$$
+
+show that for a Cox process,
+
+$$
+g(u,v)
+=
+\frac{\mathbb{E}[\Lambda(u)\Lambda(v)]}
+{\mathbb{E}[\Lambda(u)]\mathbb{E}[\Lambda(v)]}
+=
+1 + \frac{\mathrm{Cov}(\Lambda(u),\Lambda(v))}
+{\mathbb{E}[\Lambda(u)]\mathbb{E}[\Lambda(v)]}.
+$$
+
+Then answer the following:
+
+1. What does the case $g(u,v)=1$ correspond to?
+2. Why do Cox processes typically satisfy $g(u,v)\ge 1$ for nearby locations?
+3. Can a Cox process ever have $g(u,v)<1$? Discuss carefully.
+
+---
+
+## 6. Poisson process as a special case
+
+Suppose $\Lambda(u)=\lambda(u)$ is deterministic.
+
+1. Show that the Cox process reduces to an inhomogeneous Poisson process.
+2. Verify directly that
+   $$
+   \lambda(u)=\lambda(u), \qquad
+   \lambda^{(2)}(u,v)=\lambda(u)\lambda(v), \qquad
+   g(u,v)=1.
+   $$
+3. Explain why this confirms that Cox processes are a genuine generalisation of Poisson processes.
+
+---
+
+## 7. Stationary and isotropic Cox processes
+
+Suppose $\Lambda(u)$ is stationary, so that $\mathbb{E}[\Lambda(u)]=\lambda$ is constant and
+$\mathrm{Cov}(\Lambda(u),\Lambda(v))$ depends only on $u-v$.
+
+1. Show that the Cox process $X$ is stationary at first and second order.
+
+2. If $\Lambda(u)$ is also isotropic, show that
+   $$
+   g(r)
+   =
+   1 + \frac{\mathrm{Cov}(\Lambda(u),\Lambda(v))}{\lambda^2},
+   \qquad r=\|u-v\|.
+   $$
+
+3. Explain why, in this case, the pair correlation function is essentially a rescaled covariance function of the latent intensity field.
+
+4. Why is this observation so useful when constructing parametric Cox process models?
+
+---
+
+## 8. A shifted exponential random-field Cox process
+
+Suppose the random intensity field is
+
+$$
+\Lambda(u) = \mu + Y(u),
+\qquad \mu > 0,
+$$
+
+where $Y(u)$ is a non-negative random field with mean $m(u)$ and covariance function $C_Y(u,v)$.
+
+1. Derive $\lambda(u)$.
+
+2. Derive $\lambda^{(2)}(u,v)$.
+
+3. Derive $g(u,v)$.
+
+4. Suppose now that $Y(u)$ is stationary with mean $m$ and covariance $C_Y(r)$. Write $g(r)$ explicitly.
+
+5. What happens to $g(r)$ as $\mu \to \infty$? Interpret this result.
+
+---
+
+## 9. A binary-environment Cox process
+
+Let $Z(u)$ be a random field taking values in $\{0,1\}$, and define
+
+$$
+\Lambda(u)=\lambda_0 + \alpha Z(u),
+\qquad \lambda_0>0,\ \alpha>0.
+$$
+
+This may be interpreted as a model with random “on/off” environmental hotspots.
+
+1. Derive $\lambda(u)$ in terms of $\mathbb{E}[Z(u)]$.
+
+2. Derive $\lambda^{(2)}(u,v)$ in terms of $\mathbb{E}[Z(u)Z(v)]$.
+
+3. Derive the pair correlation function $g(u,v)$.
+
+4. Show that if $Z(u)$ and $Z(v)$ are positively correlated, then the Cox process is clustered.
+
+5. Compare this model conceptually with a Cox process driven by a Gaussian random field. What kinds of latent environments might each be better suited to represent?
+
+---
+
+## 10. Quadratic transformation of a Gaussian random field
+
+Let $Z(u)$ be a mean-zero Gaussian random field with variance $\sigma^2$ and correlation function $\rho(u,v)$, and define
+
+$$
+\Lambda(u)=\mu + Z(u)^2,
+\qquad \mu \ge 0.
+$$
+
+1. Show that
+   $$
+   \lambda(u)=\mu+\sigma^2.
+   $$
+
+2. Using Gaussian moment identities, show that
+   $$
+   \mathbb{E}[Z(u)^2 Z(v)^2]
+   =
+   \sigma^4 + 2\,\mathrm{Cov}(Z(u),Z(v))^2.
+   $$
+
+3. Deduce that
+   $$
+   \lambda^{(2)}(u,v)
+   =
+   (\mu+\sigma^2)^2 + 2\,\mathrm{Cov}(Z(u),Z(v))^2.
+   $$
+
+4. If $Z$ is stationary and isotropic with
+   $$
+   \mathrm{Cov}(Z(u),Z(v))=\sigma^2\rho(r),
+   $$
+   show that
+   $$
+   g(r)
+   =
+   1 + \frac{2\sigma^4}{(\mu+\sigma^2)^2}\rho(r)^2.
+   $$
+
+5. Explain why squaring the Gaussian field produces a qualitatively different PCF form from a model whose PCF is linear in $\rho(r)$.
+
+---
+
+## 11. A higher-order transformed Cox process
+
+Let $Z(u)$ be a mean-zero Gaussian random field, and consider the intensity
+
+$$
+\Lambda(u)=\mu + Z(u)^4,
+\qquad \mu \ge 0.
+$$
+
+This is a valid Cox process whenever $\Lambda(u)\ge 0$ almost surely.
+
+1. Derive $\lambda(u)$.
+
+2. Write down an expression for $\lambda^{(2)}(u,v)$ in terms of the joint moments of $(Z(u),Z(v))$.
+
+3. Show that the resulting pair correlation function depends on moments up to order eight.
+
+4. Explain why transformed Gaussian-field Cox processes quickly become algebraically complicated as the transformation becomes more nonlinear.
+
+5. Discuss whether increasing the nonlinearity of the transformation is likely to make the process easier or harder to distinguish from other Cox models using only second-order structure.
+
+::: {.callout-note}
+You do not need to fully simplify the eighth-order Gaussian moments unless you want an additional challenge.
+:::
+
+---
+
+## 12. Clustering without interaction
+
+A recurring theme in Cox processes is that clustering is induced by the latent intensity field rather than by direct attraction between points.
+
+1. Explain carefully why points in a Cox process do **not** interact directly.
+
+2. Show how the formula
+   $$
+   g(u,v)
+   =
+   1 + \frac{\mathrm{Cov}(\Lambda(u),\Lambda(v))}
+   {\mathbb{E}[\Lambda(u)]\mathbb{E}[\Lambda(v)]}
+   $$
+   formalises this idea.
+
+3. Give an example of a real-world situation where a Cox process would be a natural modelling choice.
+
+4. Give an example of a situation where a Cox process may be inappropriate because direct interaction between points is scientifically important.
+
+5. Briefly describe what class of point-process models is typically used in the latter case.
+
+---
+
+## 13. Simulation algorithm for a Cox process
+
+Suppose you want to simulate a Cox process on a bounded window $W$.
+
+1. Describe a generic simulation algorithm based on the conditional Poisson representation.
+
+2. What must be simulated first?
+
+3. Once a realisation of $\Lambda(u)$ is available on $W$, how can a point pattern be generated?
+
+4. If $\Lambda(u)$ is only available on a fine grid, how might you approximately simulate the process?
+
+5. What numerical issues arise if the field is highly variable or strongly peaked?
+
+---
+
+## 14. Implementation exercise: empirical verification of the first-order moment identity
+
+Using R and `spatstat`, design a simulation study to verify empirically that for a Cox process,
+
+$$
+\lambda(u)=\mathbb{E}[\Lambda(u)].
+$$
+
+Your task should include:
+
+1. choosing a specific Cox model,
+2. simulating many realisations,
+3. estimating the average number of points per unit area,
+4. comparing this empirical estimate with the theoretical value.
+
+Your write-up should state:
+
+- the window used,
+- the model parameters,
+- how many simulations were run,
+- how the empirical intensity estimate was computed,
+- what discrepancies you would expect for finite sample sizes.
+
+---
+
+## 15. Implementation exercise: empirical estimation of the PCF
+
+Choose a stationary Cox process model and investigate how well the empirical pair correlation function recovers the theoretical one.
+
+1. Simulate a point pattern from the model.
+
+2. Estimate the empirical PCF using a nonparametric estimator.
+
+3. Plot the empirical and theoretical PCFs together.
+
+4. Repeat this for at least two different window sizes.
+
+5. Discuss:
+   - the effect of sample size,
+   - instability near $r=0$,
+   - behaviour at large $r$,
+   - the impact of bandwidth choice.
+
+---
+
+## 16. Comparing two Cox models through second-order structure
+
+Consider two different Cox process models with the same first-order intensity $\lambda$.
+
+1. Explain why they may still produce very similar empirical point patterns.
+
+2. Show that if their pair correlation functions are very similar, then they will be difficult to distinguish using only second-order methods.
+
+3. Why is this especially relevant when fitting models by minimum contrast to an estimated PCF?
+
+4. Suggest at least two possible ways one might try to distinguish such models beyond second-order structure.
+
+---
+
+## 17. From latent-field moments to model construction
+
+Suppose you would like to construct a Cox process with a prescribed first-order intensity $\lambda$ and a desired pair correlation function $g(r)$.
+
+1. Using the general Cox process formulas, derive the condition that the latent field must satisfy.
+
+2. Explain why not every arbitrary function $g(r)$ can necessarily arise from a valid Cox process.
+
+3. What properties must the covariance function of the latent intensity field satisfy?
+
+4. Why does this make random-field theory important for Cox process construction?
+
+---
+
+## 18. Theory-style challenge: covariance and clustering
+
+Let $X$ be a Cox process and let $A,B \subset W$ be disjoint Borel sets.
+
+1. Show that
+   $$
+   \mathrm{Cov}(N(A),N(B))
+   =
+   \mathrm{Cov}\left(\int_A \Lambda(u)\,du,\ \int_B \Lambda(v)\,dv\right).
+   $$
+
+2. Deduce that disjoint counts in a Cox process are generally positively correlated when the latent field has positive spatial dependence.
+
+3. Explain why this is impossible for an ordinary Poisson process.
+
+4. Interpret this result as a large-scale analogue of the pair correlation function formula.
+
+---
+
+## Summary questions
+
+These are intended as short synthesis questions rather than full derivations.
+
+1. In one sentence, what distinguishes a Cox process from a Poisson process?
+
+2. In one sentence, where does clustering come from in a Cox process?
+
+3. In one sentence, why is the pair correlation function of a Cox process determined by the moments of $\Lambda(u)$?
+
+4. In one sentence, why can two different Cox process models be difficult to distinguish using only second-order statistics?

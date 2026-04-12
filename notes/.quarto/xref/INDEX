@@ -1,0 +1,161 @@
+{
+  "index.qmd": {
+    "index.html": "45596c3e"
+  },
+  "pp/introduction.qmd": {
+    "introduction.html": "9a0e7bf2"
+  },
+  "pp/point_process_definition.qmd": {
+    "point_process_definition.html": "79fa4006"
+  },
+  "pp/poisson_process.qmd": {
+    "poisson_process.html": "d816a78f"
+  },
+  "pp/exercises.qmd": {
+    "exercises.html": "b075de3c"
+  },
+  "structure/intensity_function.qmd": {
+    "intensity_function.html": "ca072f96"
+  },
+  "structure/intensity_estimation.qmd": {
+    "intensity_estimation.html": "aa1bc169"
+  },
+  "structure/exercises1.qmd": {
+    "exercises1.html": "9c4fbdb0"
+  },
+  "structure/second_order_product_density.qmd": {
+    "second_order_product_density.html": "9eb9c662"
+  },
+  "structure/pcf.qmd": {
+    "pcf.html": "748d41cd"
+  },
+  "structure/k_function.qmd": {
+    "k_function.html": "b8fe3367"
+  },
+  "structure/second_order_estimation.qmd": {
+    "second_order_estimation.html": "e596f6ef"
+  },
+  "structure/exercises2.qmd": {
+    "exercises2.html": "fea44593"
+  },
+  "structure/stationarity.qmd": {
+    "stationarity.html": "c84ad131"
+  },
+  "structure/isotropy.qmd": {
+    "isotropy.html": "685a87cb"
+  },
+  "structure/exercises3.qmd": {
+    "exercises3.html": "de435599"
+  },
+  "rf/gaussian_random_fields.qmd": {
+    "gaussian_random_fields.html": "508ad062"
+  },
+  "rf/covariance_functions.qmd": {
+    "covariance_functions.html": "4c8b1f59"
+  },
+  "rf/exercises.qmd": {
+    "exercises.html": "b79ec79a"
+  },
+  "cox/cox_process_definition.qmd": {
+    "cox_process_definition.html": "3d901157"
+  },
+  "cox/moment_properties.qmd": {
+    "moment_properties.html": "dcccf4be"
+  },
+  "cox/exercises.qmd": {
+    "exercises.html": "69688406"
+  },
+  "lgcp/lgcp_definition.qmd": {
+    "lgcp_definition.html": "ce5eceb1"
+  },
+  "lgcp/lgcp_moments.qmd": {
+    "lgcp_moments.html": "875e9f09"
+  },
+  "lgcp/lgcp_pcf.qmd": {
+    "lgcp_pcf.html": "ee4957ca"
+  },
+  "lgcp/exercises.qmd": {
+    "exercises.html": "532c8f1b"
+  },
+  "inference/likelihood.qmd": {
+    "likelihood.html": "1ac3ba37"
+  },
+  "inference/minimum_contrast.qmd": {
+    "minimum_contrast.html": "3f0f040a"
+  },
+  "inference/composite_likelihood.qmd": {
+    "composite_likelihood.html": "809807b4"
+  },
+  "inference/pseudolikelihood.qmd": {
+    "pseudolikelihood.html": "42532e9b"
+  },
+  "inference/exercises.qmd": {
+    "exercises.html": "82c240f2"
+  },
+  "thesis/true_PCF_comparison.qmd": {
+    "true_PCF_comparison.html": "170ab219"
+  },
+  "thesis/preface.qmd": {
+    "preface.html": "7fe50d1a"
+  },
+  "thesis/cscp_definition.qmd": {
+    "cscp_definition.html": "86d4cf32"
+  },
+  "thesis/cscp_moments.qmd": {
+    "cscp_moments.html": "50ce8b24"
+  },
+  "thesis/cscp_pcf.qmd": {
+    "cscp_pcf.html": "169347bc"
+  },
+  "thesis/cscp_parameterisations.qmd": {
+    "cscp_parameterisations.html": "3396763e"
+  },
+  "thesis/cscp_linear_estimator.qmd": {
+    "cscp_linear_estimator.html": "3d244a2c"
+  },
+  "thesis/cscp_definition2.qmd": {
+    "cscp_definition2.html": "a43f75aa"
+  },
+  "thesis/cscp_definition3.qmd": {
+    "cscp_definition3.html": "8bd4ca74"
+  },
+  "thesis/cscp_parameterisations_derivations.qmd": {
+    "cscp_parameterisations_derivations.html": "596ec293"
+  },
+  "thesis/cscp_verdict.qmd": {
+    "cscp_verdict.html": "8e234d50"
+  },
+  "thesis/cscp_model_selection.qmd": {
+    "cscp_model_selection.html": "713ad872"
+  },
+  "thesis/cscp_preface.qmd": {
+    "cscp_preface.html": "af76c836"
+  },
+  "thesis/lgcp_identifiability.qmd": {
+    "lgcp_identifiability.html": "f511177b"
+  },
+  "thesis/lgcp_motivation.qmd": {
+    "lgcp_motivation.html": "55af62c3"
+  },
+  "thesis/lgcp_PCF_comparison.qmd": {
+    "lgcp_PCF_comparison.html": "10274075"
+  },
+  "thesis/lgcp_PCF_comparison_emp.qmd": {
+    "lgcp_PCF_comparison_emp.html": "696a8451"
+  },
+  "thesis/lgcp_alternatives.qmd": {
+    "lgcp_alternatives.html": "195d8e6a"
+  },
+  "thesis/lgcp_PCF_study.qmd": {
+    "lgcp_PCF_study.html": "3cacf88a"
+  },
+  "thesis/third_introduction.qmd": {
+    "third_introduction.html": "85d40760"
+  },
+  "package_docs/basics.qmd": {
+    "basics.html": "05bc5fd9"
+  },
+  "package_docs/minimum_contrast.qmd": {
+    "minimum_contrast.html": "dc2308d5"
+  }
+}

@@ -1,0 +1,272 @@
+# Minimum Contrast Estimation
+
+## Motivation
+
+In the previous chapter, we saw that likelihood-based inference for Cox processes 
+takes the form
+
+$$
+L(\theta;X)
+=
+\mathbb{E}_\Lambda\left[
+\exp\left(-\int_W \Lambda(u)\,du\right)
+\prod_{i=1}^n \Lambda(x_i)
+\right].
+$$
+
+Although this expression is well-defined, it involves an expectation over an 
+entire random field $\Lambda(u)$, which is generally difficult to evaluate in practice.
+
+This motivates the search for alternative estimation procedures.
+
+## Replacing the likelihood
+
+Rather than working with the full likelihood, we may instead attempt to match 
+certain **summary characteristics** of the process.
+
+Recall that a point process can be described through:
+
+- first-order structure (intensity $\lambda(u)$)
+- second-order structure (pair correlation function $g(r)$ or $K$-function)
+
+The key idea behind minimum contrast estimation is:
+
+:::{.callout-important}
+Instead of maximizing a likelihood, we choose parameters so that 
+a **model-based summary function** matches its **empirical estimate** as 
+closely as possible.
+:::
+
+## General minimum contrast framework
+
+Let:
+
+- $T(r)$ be a theoretical summary function (depending on parameters $\theta$)
+- $\hat{T}(r)$ be an empirical estimate computed from the observed point pattern
+
+We define a **contrast function**:
+
+$$
+C(\theta)
+=
+\int_{r_{\min}}^{r_{\max}}
+w(r)\,
+\left[
+\hat{T}(r) - T(r;\theta)
+\right]^2
+\,dr,
+$$
+
+where:
+
+- $w(r)$ is a weight function
+- $[r_{\min}, r_{\max}]$ is a chosen fitting range
+
+The minimum contrast estimator is then
+
+$$
+\hat{\theta}
+=
+\arg\min_\theta C(\theta).
+$$
+
+## Interpretation
+
+This is essentially a **functional least squares problem**.
+
+- $\hat{T}(r)$ plays the role of observed data
+- $T(r;\theta)$ is the model prediction
+- we choose $\theta$ to make the two curves as close as possible
+
+:::{.callout-note}
+Minimum contrast estimation replaces the likelihood with a distance between functions.
+:::
+
+## Choice of summary function
+
+The most common choices are:
+
+- the $K$-function
+- the pair correlation function (PCF)
+
+Both describe second-order structure, but differ in form:
+
+- $K(r)$ accumulates interaction over distances $\le r$
+- $g(r)$ describes interaction at distance exactly $r$
+
+In this work, we focus primarily on the **pair correlation function**, 
+since it provides a more direct description of clustering at specific scales.
+
+## PCF-based minimum contrast
+
+Let:
+
+- $\hat{g}(r)$ be the estimated PCF
+- $g(r;\theta)$ be the theoretical PCF under the model
+
+Then the contrast function becomes:
+
+$$
+C(\theta)
+=
+\int_{r_{\min}}^{r_{\max}}
+w(r)\,
+\left[
+\hat{g}(r) - g(r;\theta)
+\right]^2
+\,dr.
+$$
+
+## Log-transformed contrast
+
+In practice, it is often advantageous to work with a transformed version.
+
+A common choice is:
+
+$$
+C(\theta)
+=
+\int_{r_{\min}}^{r_{\max}}
+w(r)\,
+\left[
+\log \hat{g}(r) - \log g(r;\theta)
+\right]^2
+\,dr.
+$$
+
+### Why log-transform?
+
+The PCF typically satisfies:
+
+- $g(r) \to 1$ as $r \to \infty$
+- strong variation near $r=0$
+
+The log transform:
+
+- stabilizes variance
+- reduces the influence of large values
+- emphasizes relative differences
+
+## Weight functions
+
+The choice of weight function $w(r)$ can have a significant impact.
+
+Common choices include:
+
+- $w(r) = 1$ (uniform weighting)
+- $w(r) = r^p$ for some power $p$
+- weights based on variability of $\hat{g}(r)$
+
+In practice, weighting is often used to:
+
+- downweight noisy regions (typically large $r$)
+- avoid instability near $r=0$
+
+## Choice of fitting range
+
+The interval $[r_{\min}, r_{\max}]$ is crucial.
+
+### Small distances
+
+Near $r=0$:
+
+- $\hat{g}(r)$ is highly variable
+- edge effects are strongest
+
+So we typically take $r_{\min} > 0$.
+
+### Large distances
+
+At large $r$:
+
+- $g(r) \approx 1$
+- estimates become noisy
+- little information about clustering remains
+
+So we choose a moderate $r_{\max}$.
+
+:::{.callout-warning}
+The choice of fitting range can strongly influence parameter estimates.
+:::
+
+## Connection to Cox processes
+
+For Cox processes, the PCF is typically available in closed form.
+
+For example:
+
+### LGCP
+
+$$
+g(r)
+=
+\exp(C(r)),
+$$
+
+where $C(r)$ is the covariance function of the Gaussian field.
+
+### CSCP (single-component, mean-zero)
+
+$$
+g(r)
+=
+1 + A \rho(r)^2,
+$$
+
+where:
+
+- $\rho(r)$ is the correlation function
+- $A$ controls clustering strength
+
+This makes minimum contrast particularly attractive:
+
+- the theoretical PCF is simple
+- the empirical PCF is readily estimated
+- no integration over random fields is required
+
+## What information is being used?
+
+Minimum contrast estimation based on the PCF uses only **second-order information**.
+
+That is:
+
+- it depends on $\lambda^{(2)}(u,v)$
+- it does not use higher-order structure
+- it does not use the full likelihood
+
+:::{.callout-important}
+Minimum contrast estimators based on the PCF cannot distinguish between models 
+that share the same second-order structure.
+:::
+
+This point will be central to our later analysis.
+
+## Practical implementation
+
+In practice:
+
+1. Estimate $\hat{g}(r)$ from the observed point pattern
+2. Specify a theoretical form $g(r;\theta)$
+3. Choose $w(r)$ and $[r_{\min}, r_{\max}]$
+4. Minimize $C(\theta)$ numerically
+
+In \texttt{spatstat}, this is implemented via the `mincontrast` function.
+
+## Summary
+
+Minimum contrast estimation provides a practical alternative to likelihood-based 
+inference by replacing the likelihood with a distance between summary functions.
+
+For Cox processes, it is particularly convenient because:
+
+- theoretical PCFs are often available
+- empirical PCFs are easy to compute
+- no integration over latent fields is required
+
+However, this convenience comes at a cost:
+
+- only second-order information is used
+- different models may become indistinguishable under this framework
+
+This limitation will play an important role in the comparison between LGCP and 
+CSCP models.

@@ -1,0 +1,11 @@
+_book/
+*.log
+*.aux
+*.toc
+*.out
+*.gz
+*.zip
+.DS_Store
+.Rhistory
+.RData
+.Rproj.user/

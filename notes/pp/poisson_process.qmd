@@ -1,0 +1,121 @@
+# The Poisson Process
+
+## Motivation: Complete Spatial Randomness
+
+In many applications, it is useful to have a baseline model representing no
+spatial structure.
+
+Intuitively, this corresponds to a situation where:
+
+- events occur independently of one another
+- there is no clustering or inhibition
+- the spatial distribution is entirely random
+
+This notation is formalized by the Poisson process, often referred to as a model
+of complete spatial randomness (CSR).
+
+## Definition (Informal)
+
+A Poisson process is a point process with two key properties:
+
+1. Counts in disjoint regions are independent
+
+2. The number of points in a region depends only on its size (or intensity).
+
+## Homogeneous Poisson Process
+
+We first consider the simplest case.
+
+A point process $N(\cdot)$ on $W \subset \mathbb{R}^d$  is called a homogeneous
+Poisson process (HPPP) with intensity $\lambda > 0$ if it satisfies:
+
+**(i) Poisson counts**
+
+For any region $B \subset W$:
+
+$$
+N(B) \sim \text{Poisson}(\lambda |B|)
+$$
+
+where $|B|$ is the volume (area in 2D) of $B$.
+
+**(ii) Independent increments**
+
+If $B_1, \dots, B_k$ are disjoint regions, then:
+
+$$
+N(B_1), \dots, N(B_k) \ \text{are independent}
+$$
+
+## Interpretation
+
+The parameter $\lambda$ has a clear meaning:
+
+- it represents the average number of points per area
+- and for any region $B$, we have:
+
+$$
+\mathbb{E}[N(B)] = \lambda |B|
+$$
+
+## Equivalent construction
+
+The Poisson process can be constructed by the following two steps:
+
+1. Draw the number of points:
+
+$$
+N \sim \text{Poisson}(\lambda |W|)
+$$
+
+2. Given $N = n$, sample locations:
+
+$$
+x_1, \dots, x_n \stackrel{\text{iid}}{\sim} \text{Uniform}(W)
+$$
+## Inhomogeneous Poisson process
+
+In many applications, the density of events varies across space.
+
+A point process is called an inhomogeneous Poisson point process (IPPP) with 
+intensity function $\lambda(u)$ if:
+
+**(i) Poisson counts**
+
+For any region $B \subset W$:
+
+$$
+N(B) \sim \text{Poisson}(\int_B \lambda(u)\ du)
+$$
+
+where $|B|$ is the volume (area in 2D) of $B$.
+
+**(ii) Independent increments**
+
+If $B_1, \dots, B_k$ are disjoint regions, then:
+
+$$
+N(B_1), \dots, N(B_k) \ \text{are independent}
+$$
+
+## Interpretation of $\lambda(u)$
+
+The function $\lambda(u)$ represents:
+
+> The expected number of points per unit area at location $u$
+
+More precisely, 
+
+$$
+\mathbb{E}[N(B)] = \int_B \lambda(u) \ du
+$$
+
+## Why the Poisson process matters
+
+The Poisson process plays a central role because:
+
+- it represents complete spatial randomness
+- it serves as a baseline for detecting structure
+- many summary statistics are defined relative to it
+
+

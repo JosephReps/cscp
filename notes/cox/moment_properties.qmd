@@ -1,0 +1,422 @@
+# Moment Properties
+
+## Motivation
+
+The defining feature of a Cox process is that its intensity function is itself 
+random.
+
+If $X$ is a Cox process driven by a random intensity field $\Lambda(u)$, then
+
+$$
+X \mid \Lambda \sim \text{Poisson process with intensity } \Lambda(u).
+$$
+
+So, conditional on $\Lambda$, the process is Poisson.
+
+But marginally, the process is no longer Poisson: its first- and second-order 
+structure now depends on the moments of the random field $\Lambda(u)$.
+
+:::callout-note
+Not exactly confident in the meaning of *marginal* here.
+:::
+
+This gives a very clean principle:
+
+::: {.callout-note}
+For a Cox process, the moments of the point process are determined by the 
+moments of the random intensity field.
+:::
+
+In this section, we derive the intensity, second-order product density, and 
+pair correlation function of a Cox process directly from this idea.
+
+## Setup
+
+Let $X$ be a Cox process on a spatial domain $W \subset \mathbb{R}^d$, driven by 
+a non-negative random field $\Lambda(u)$.
+
+Thus,
+
+$$
+X \mid \Lambda \sim \text{Poisson process with intensity } \Lambda(u).
+$$
+
+We write:
+
+- $\lambda(u)$ for the first-order intensity of $X$
+- $\lambda^{(2)}(u,v)$ for the second-order product density
+- $g(u,v)$ for the pair correlation function
+
+Our goal is to express each of these in terms of the moments of $\Lambda$.
+
+## First-order intensity
+
+Recall that the intensity function is defined so that, for a small region $du$ 
+around $u$,
+
+$$
+\mathbb{E}[N(du)] \approx \lambda(u)\ |du| 
+$$
+
+For a Cox process, we use conditioning:
+
+$$
+\mathbb{E}[N(du)]
+=
+\mathbb{E}\big[\mathbb{E}[N(du)\mid \Lambda]\big]
+$$
+
+Conditional on $\Lambda$, the process is Poisson with intensity $\Lambda(u)$, so
+
+$$
+\mathbb{E}[N(du)\mid \Lambda] \approx \Lambda(u)\ |du|
+$$
+
+Taking expectations gives
+
+$$
+\mathbb{E}[N(du)]
+\approx
+\mathbb{E}[\Lambda(u)]\,|du|
+$$
+
+Therefore,
+
+$$
+\lambda(u) = \mathbb{E}[\Lambda(u)]
+$$
+
+### Interpretation
+
+The intensity of a Cox process is just the *mean* of the random intensity field.
+
+::: {.callout-note}
+A Cox process may be highly clustered, but its first-order intensity only 
+records the average level of the latent field. It does not capture the 
+variability of $\Lambda(u)$.
+:::
+
+## Mean measure
+
+Integrating the intensity over a region $B \subset W$ gives
+
+$$
+\mathbb{E}[N(B)] = \int_B \lambda(u)\ du = \int_B \mathbb{E}[\Lambda(u)]\ du
+$$
+
+Equivalently,
+
+$$
+\mathbb{E}[N(B)] = \mathbb{E}\left[\int_B \Lambda(u)\ du\right]
+$$
+
+So the expected number of points in a region is the expected total latent 
+intensity over that region.
+
+:::callout-note
+Need to flesh this out a little, too condensed as is.
+:::
+
+## Second-order product density
+
+We now derive the second-order product density.
+
+Recall that for disjoint small regions $du$ around $u$ and $dv$ around $v$,
+
+$$
+\mathbb{E}[N(du)N(dv)] \approx \lambda^{(2)}(u,v)\ |du|\ |dv|
+$$
+
+Again, condition on $\Lambda$:
+
+$$
+\mathbb{E}[N(du)N(dv)]
+=
+\mathbb{E}\big[\mathbb{E}[N(du)N(dv)\mid \Lambda]\big] 
+$$
+
+Conditional on $\Lambda$, the process is Poisson, so counts in disjoint regions are independent. Hence
+
+$$
+\mathbb{E}[N(du)N(dv)\mid \Lambda]
+=
+\mathbb{E}[N(du)\mid \Lambda]\
+\mathbb{E}[N(dv)\mid \Lambda]
+$$
+
+Using the local Poisson approximation,
+
+$$
+\mathbb{E}[N(du)\mid \Lambda] \approx \Lambda(u)\ |du|,
+\qquad
+\mathbb{E}[N(dv)\mid \Lambda] \approx \Lambda(v)\ |dv|
+$$
+
+Therefore,
+
+$$
+\mathbb{E}[N(du)N(dv)\mid \Lambda]
+\approx
+\Lambda(u)\Lambda(v)\ |du|\ |dv|
+$$
+
+Taking expectations gives
+
+$$
+\mathbb{E}[N(du)N(dv)]
+\approx
+\mathbb{E}[\Lambda(u)\Lambda(v)]\ |du|\ |dv|
+$$
+
+Hence
+
+$$
+\lambda^{(2)}(u,v) = \mathbb{E}[\Lambda(u)\Lambda(v)], \qquad u \neq v
+$$
+
+### Interpretation
+
+The second-order product density is the *second moment* of the random intensity field.
+
+This is the key mechanism by which Cox processes generate clustering.
+
+If $\Lambda(u)$ and $\Lambda(v)$ tend to be simultaneously large, then points 
+near $u$ and $v$ tend to occur together more often than under independence.
+
+## Covariance form
+
+Using the identity
+
+$$
+\mathbb{E}[\Lambda(u)\Lambda(v)]
+=
+\mathrm{Cov}(\Lambda(u),\Lambda(v))
++
+\mathbb{E}[\Lambda(u)]\mathbb{E}[\Lambda(v)],
+$$
+
+we obtain
+
+$$
+\lambda^{(2)}(u,v)
+=
+\lambda(u)\lambda(v)
++
+\mathrm{Cov}(\Lambda(u),\Lambda(v))
+$$
+
+This decomposition is extremely useful.
+
+It shows that the second-order structure of a Cox process is equal to:
+
+- the Poisson baseline $\lambda(u)\lambda(v)$
+- plus an extra covariance term induced by the latent field
+
+::: {.callout-important}
+A Cox process differs from a Poisson process at second order precisely through 
+the covariance structure of its random intensity field.
+:::
+
+If $\Lambda(u)$ is deterministic, then $\mathrm{Cov}(\Lambda(u),\Lambda(v)) = 0$, 
+and we recover the Poisson case.
+
+## Pair correlation function
+
+Recall that the pair correlation function is defined by
+
+$$
+g(u,v)
+=
+\frac{\lambda^{(2)}(u,v)}{\lambda(u)\lambda(v)},
+\qquad u \neq v.
+$$
+
+Substituting the Cox process formulas gives
+
+$$
+g(u,v)
+=
+\frac{\mathbb{E}[\Lambda(u)\Lambda(v)]}
+{\mathbb{E}[\Lambda(u)]\,\mathbb{E}[\Lambda(v)]}.
+$$
+
+Using the covariance form above, we can also write
+
+$$
+g(u,v)
+=
+1
++
+\frac{\mathrm{Cov}(\Lambda(u),\Lambda(v))}
+{\mathbb{E}[\Lambda(u)]\,\mathbb{E}[\Lambda(v)]}.
+$$
+
+### Consequences
+
+Since covariance can be positive, zero, or negative, this formula describes how 
+dependence in the latent field affects dependence in the point process.
+
+For most Cox process models used in practice, nearby values of 
+$\Lambda(u)$ and $\Lambda(v)$ are positively correlated, so
+
+$$
+g(u,v) > 1
+$$
+
+for small distances.
+
+This corresponds to clustering.
+
+Moreover, if $\Lambda(u)$ and $\Lambda(v)$ are uncorrelated, then
+
+$$
+g(u,v) = 1
+$$
+
+So the PCF of a Cox process is directly determined by the covariance structure 
+of the random intensity field.
+
+## Stationary Cox processes
+
+Suppose now that the Cox process is stationary.
+
+Then:
+
+- $\lambda(u) = \lambda$ is constant
+- $\lambda^{(2)}(u,v)$ depends only on $u-v$
+- $g(u,v)$ depends only on $u-v$
+
+If the process is also isotropic, then these depend only on the distance
+
+$$
+r = \|u-v\|
+$$
+
+In that case, we write
+
+$$
+g(r)
+=
+\frac{\mathbb{E}[\Lambda(u)\Lambda(v)]}{\lambda^2}
+=
+1 + \frac{\mathrm{Cov}(\Lambda(u),\Lambda(v))}{\lambda^2},
+\qquad r=\|u-v\|.
+$$
+
+Thus, under stationarity and isotropy, the PCF is just a rescaled version of 
+the covariance function of the latent intensity field.
+
+::: {.callout-note}
+This is one of the main reasons Cox processes are so convenient: once the moment 
+structure of $\Lambda$ is known, the PCF follows immediately.
+:::
+
+## Why Cox processes cluster
+
+We can now make the source of clustering explicit.
+
+Conditional on $\Lambda$, the process is Poisson, so there is no interaction between points.
+
+But marginally, two nearby locations may both lie in a region where the latent intensity is large.
+
+This creates positive dependence in the counts, and hence clustering.
+
+So for a Cox process:
+
+- points do **not** attract each other directly
+- clustering arises because points respond to the same random environment
+
+This is exactly what the formula
+
+$$
+g(u,v)
+=
+1
++
+\frac{\mathrm{Cov}(\Lambda(u),\Lambda(v))}
+{\mathbb{E}[\Lambda(u)]\,\mathbb{E}[\Lambda(v)]}
+$$
+
+is telling us.
+
+## Example: Log-Gaussian Cox process
+
+Let
+
+$$
+\Lambda(u) = \exp(Z(u)),
+$$
+
+where $Z(u)$ is a Gaussian random field.
+
+Then the intensity and PCF can be derived from Gaussian moment formulas.
+
+In particular, if $Z$ is stationary with covariance function $C(r)$, then
+
+$$
+g(r) = \exp(C(r)).
+$$
+
+So for an LGCP, the PCF is an exponential transformation of the covariance function of the underlying Gaussian random field.
+
+## Example: Chi-square Cox process
+
+Let
+
+$$
+\Lambda(u) = \mu + Z(u)^2,
+\qquad \mu \ge 0,
+$$
+
+where $Z(u)$ is a Gaussian random field.
+
+Then:
+
+- the intensity depends on $\mathbb{E}[Z(u)^2]$
+- the second-order product density depends on $\mathbb{E}[Z(u)^2 Z(v)^2]$
+- the PCF depends on fourth moments of the Gaussian field
+
+For a mean-zero stationary Gaussian random field with variance $\sigma^2$ and 
+correlation function $\rho(r)$, this leads to a PCF of the form
+
+$$
+g(r)
+=
+1 + \frac{2\sigma^4}{(\mu+\sigma^2)^2}\rho(r)^2.
+$$
+
+So unlike the LGCP case, the PCF now depends on a quadratic function of the correlation structure.
+
+## Summary
+
+For a Cox process driven by a random intensity field $\Lambda(u)$:
+
+$$
+\lambda(u) = \mathbb{E}[\Lambda(u)]
+$$
+
+$$
+\lambda^{(2)}(u,v) = \mathbb{E}[\Lambda(u)\Lambda(v)]
+$$
+
+$$
+g(u,v)
+=
+\frac{\mathbb{E}[\Lambda(u)\Lambda(v)]}
+{\mathbb{E}[\Lambda(u)]\mathbb{E}[\Lambda(v)]}
+=
+1
++
+\frac{\mathrm{Cov}(\Lambda(u),\Lambda(v))}
+{\mathbb{E}[\Lambda(u)]\mathbb{E}[\Lambda(v)]}
+$$
+
+These identities are fundamental.
+
+They show that:
+
+- first-order structure is determined by the **mean** of $\Lambda$
+- second-order structure is determined by the **second moments** of $\Lambda$
+- clustering in a Cox process is induced by **covariation in the latent intensity field**
+
+This makes Cox processes a natural bridge between random fields and clustered point processes.

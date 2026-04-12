@@ -1,0 +1,125 @@
+# 🚧 Identifiability Beyond Second-Order Structure
+
+Second-order summaries are insufficient to distinguish LGCP and CSCP in practice.
+
+We now investigate what additional structure may allow these models to be separated.
+
+The central question of this section is:
+
+> Given that second-order structure alone is not sufficient to distinguish between
+LGCP and CSCP models, what additional features of the point pattern can be used
+to identify the underlying generating process?
+
+## Plan
+
+Second-order structure captures only *pairwise* interactions between points.
+
+To distinguish between models, we must therefore consider features that encode
+additional information. In particular, we explore:
+
+- the marginal distribution of the intensity field $\Lambda(u)$;
+- higher-order interactions (third- and fourth-order structure);
+- likelihood-based and conditional approaches.
+
+## Marginal distribution of $\Lambda(u)$
+
+A natural first avenue is to examine the marginal distribution of the random
+intensity field $\Lambda(u)$.
+
+At any fixed location $u \in W$, the LGCP has
+
+$$
+\Lambda(u) = \exp(Z(u)), \qquad Z(u) \sim \mathcal{N}(\mu, \sigma^2),
+$$
+
+so that
+
+$$
+\Lambda(u) \sim \mathrm{logNormal}(\mu, \sigma^2).
+$$
+
+In contrast, under the CSCP formulation
+
+$$
+\Lambda(u) = \mu + Z(u)^2, \qquad Z(u) \sim \mathcal{N}(0, \sigma^2),
+$$
+
+we have
+
+$$
+\Lambda(u) \sim \mu + \sigma^2 \chi^2_1,
+$$
+
+that is, a shifted and scaled chi-square distribution.
+
+These distributions are fundamentally different. The LGCP produces a log-normal
+intensity field with heavy right tails, while the CSCP produces a more concentrated
+but still skewed distribution.
+
+This suggests that, even if the second-order structure is similar, differences may
+be detectable through summaries that reflect the marginal distribution of the
+intensity, such as quadrat counts or local intensity estimates.
+
+## Higher-order structure
+
+Another possibility is to consider higher-order interaction structure.
+
+While the pair correlation function captures only second-order (pairwise)
+dependence, higher-order summaries involve interactions between three or more
+points, and therefore contain additional information about the underlying process.
+
+Since the LGCP is driven by a Gaussian random field, while the CSCP is based on
+a squared Gaussian field, their higher-order moment structures differ. These
+differences are not visible at the level of the PCF, but may become apparent
+when considering third- or fourth-order interactions.
+
+In principle, this provides a route to distinguishing between the models.
+
+:::callout-note
+I feel like I have been told in general the PCF estimation is somewhat unreliable. 
+
+Does this mean we expect third/fourth-order estimation to be even more unreliable?
+:::
+
+## Likelihood-based inference
+
+A further approach is to consider likelihood-based methods.
+
+Unlike minimum contrast estimation, which relies only on second-order summaries,
+likelihood-based inference incorporates the full distributional structure of the
+model. In principle, this provides access to information beyond the PCF, and may
+allow the two models to be distinguished.
+
+However, for Cox processes the likelihood is typically intractable, and must be
+approximated using techniques such as composite likelihood or numerical methods.
+
+## Next up cuhhhh
+
+To begin, we look at the marginal distribution.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

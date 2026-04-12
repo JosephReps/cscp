@@ -1,0 +1,92 @@
+# The Shifted Model
+
+The centered construction considered previously, while analytically convenient, is 
+highly restrictive. In particular, the pair correlation function is fixed at 
+$g(0) = 3$, regardless of the choice of covariance function. This implies that 
+the model lacks any mechanism for controlling clustering strength, and so 
+cannot represent processes with weaker or stronger clustering behaviour.
+
+To address this limitation, we consider a simple modification of the model by 
+introducing a constant baseline intensity. Specifically, we define
+
+$$
+\Lambda(u) = \mu + Z(u)^2,
+$$
+
+where $\mu \ge 0$ is a constant, and $Z(u)$ is a mean-zero Gaussian random field.
+
+As we will see, this modification restores the flexibility in the clustering 
+structure, while still maintaining a simple and interpretable form for the second-order 
+properties.
+
+## First-order intensity
+
+Under this model, the first-order intensity is
+
+$$
+\lambda(u) = \mathbb{E}[\Lambda(u)] = \mu + C(u,u).
+$$
+
+## Second-order intensity
+
+Similarly, the second-order intensity is given by
+
+$$
+\lambda^{(2)}(u,v)
+= \mathbb{E}[\Lambda(u)\Lambda(v)]
+= \lambda(u)\lambda(v) + 2C(u,v)^2.
+$$
+
+## Pair correlation function
+
+The pair correlation function becomes
+
+$$
+g(u,v) = 1 + \frac{2C(u,v)^2}{\lambda(u)\lambda(v)}.
+$$
+
+## Stationary and isotropic case
+
+Under stationarity and isotropy, we have
+
+$$
+\lambda = \mu + \sigma^2, \quad C(r) = \sigma^2 \rho(r),
+$$
+
+and hence
+
+$$
+g(r) = 1 + \frac{2\sigma^4 \rho(r)^2}{(\mu + \sigma^2)^2}.
+$$
+
+Evaluating at $r = 0$, we obtain
+
+$$
+g(0) = 1 + \frac{2\sigma^4}{(\mu + \sigma^2)^2}.
+$$
+
+Unlike the centered case, the clustering strength is no longer fixed. Instead, it 
+depends on the relative magnitude of $\mu$ and $\sigma^2$, and can vary continuously 
+within the range
+
+$$
+1 \le g(0) \le 3.
+$$
+
+So, essentially introducing the baseline intensity $\mu$ restores flexibility in 
+the clustering behaviour of the model. Smaller values of $\mu$ 
+lead to stronger clustering, while larger values of $\mu$ reduce clustering 
+towards complete spatial randomness.
+
+This can be interpreted as a **dilution effect**: the deterministic component $\mu$ 
+reduces the relative influence of the stochastic fluctuations induced by $Z(u)^2$.
+
+## Closing remarks
+
+The shifted model provides a natural extension of the centered construction, 
+retaining its analytical simplicity while overcoming its key limitation. In contrast 
+to the centered case, the clustering strength is no longer fixed, but instead governed 
+by model parameters, making the process suitable for statistical modelling.
+
+For this reason, we will adopt the shifted construction as the canonical form of the 
+single-component CSCP in the remainder of this work type shii type shii. 

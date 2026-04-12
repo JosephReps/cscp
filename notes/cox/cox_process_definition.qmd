@@ -1,0 +1,135 @@
+# Introduction to Cox Processes
+
+## Definition
+
+A Cox process (or doubly stochastic Poisson process) is a point process defined 
+as follows:
+
+Let $\Lambda(u)$ be a *non-negative random field* on a spatial domain 
+$W \subset \mathbb{R}^d$.
+
+Conditional on $\Lambda$, the point process $X$ is a Poisson process with 
+intensity function $\Lambda(u)$:
+
+$$
+X \mid \Lambda \sim \text{Poisson process with intensity } \Lambda(u)
+$$
+
+Equivalently, for any Borel set $A \subset W$:
+
+$$
+N(A) \mid \Lambda \sim \text{Poisson}\left(\int_A \Lambda(u)\,du\right),
+$$
+
+and counts in disjoint sets are conditionally independent given $\Lambda$.
+
+## Intuition
+
+A Cox process introduces two layers of randomness:
+
+1. A *random intensity surface* $\Lambda(u)$ is generated
+2. A *Poisson process is sampled* conditional on this surface
+
+::: {.callout-note}
+A Cox process can be interpreted as a Poisson process in a random environment.
+:::
+
+This contrasts with a standard Poisson process, where the intensity $\lambda(u)$ 
+is deterministic.
+
+:::callout-important
+I feel like this is EXTREMELY important.
+
+A Cox process allows clustering, but that clustering is asssumed to be due to 
+latent environment variables, **NOT because of attraction between points themselves.**
+
+This is why we have a Poisson process when conditioning on $\Lambda$.
+
+A question I don't know the answer to is: how do we model processes where there
+*is* attraction between the points themselves (see Gibbs processes?). 
+:::
+
+## Conditional vs Unconditional Perspectives
+
+### Conditional (given $\Lambda$)
+
+- $X$ is a Poisson process
+- All Poisson properties hold:
+  - Independent increments
+  - No interaction between points
+
+### Unconditional (marginal)
+
+- $X$ is *not* Poisson in general
+- Points exhibit *dependence*
+- Clustering arises through variation in $\Lambda(u)$
+
+::: {.callout-note}
+All dependence in a Cox process is induced by the shared random intensity field.
+
+(I guess this is just reiterating my callout above).
+:::
+
+## Connection to the Poisson Process
+
+The Poisson process is a special case of a Cox process where:
+
+$$
+\Lambda(u) = \lambda(u) \quad \text{(deterministic)}
+$$
+
+Thus, Cox processes generalise Poisson processes by allowing 
+*random intensity functions*.
+
+## Examples
+
+### Log-Gaussian Cox Process (LGCP)
+
+Let $Z(u)$ be a Gaussian random field. Define:
+
+$$
+\Lambda(u) = \exp(Z(u))
+$$
+
+- Ensures $\Lambda(u) > 0$
+- Widely used in applications
+- Leads to strong clustering
+
+### Chi-Square Cox Process (CSCP)
+
+Let $Z(u)$ be a Gaussian random field. Define:
+
+$$
+\Lambda(u) = \mu + Z(u)^2, \quad \mu \ge 0.
+$$
+
+- Quadratic transformation of a GRF
+- Produces interpretable clustering structure
+- Central to these notes
+
+## Interpretation via Random Fields
+
+Cox processes provide a direct link between:
+
+- *Random fields* (continuous stochastic structure)
+- *Point processes* (discrete event patterns)
+
+The random field $\Lambda(u)$ acts as a latent driver of spatial variation.
+
+::: {.callout-note}
+Regions where $\Lambda(u)$ is large produce higher point density, leading to clustering.
+:::
+
+## Consequences
+
+- First- and second-order properties of $X$ depend on the moments of $\Lambda(u)$
+- The pair correlation function is determined by the covariance structure of $\Lambda(u)$
+- Cox processes are a natural framework for modelling heterogeneity and clustering
+
+## Summary
+
+- A Cox process is a *Poisson process with random intensity*
+- Conditional on $\Lambda$, the process is Poisson
+- Marginally, it exhibits dependence and clustering
+- Key examples (LGCP, CSCP) arise from transformations of Gaussian random fields
+- All higher-order structure is driven by the random intensity field

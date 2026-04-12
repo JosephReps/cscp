@@ -1,0 +1,125 @@
+```{r include = FALSE}
+library(spatstat)
+```
+
+# Introduction to Point Processes
+
+## What is spatial data?
+
+> Spatial statistics is the branch of statistics concerned with the analysis and 
+modelling of data that are associated with locations in space.
+
+In many applications, the primary object of interest is not a continuous 
+surface, or a time series, but rather a collection of events, occurring at random 
+locations in space.
+
+Examples include:
+
+- the locations of trees in a forest
+- the positions of disease cases in a region
+- the epicenters of earthquakes
+- the positions of galaxies in the universe
+
+In each of these settings, the data consist of a set of points in a spatial 
+domain $W \subset \mathbb{R}^d$.
+
+## From deterministic points to randomness
+
+If the locations of events were fixed and deterministic, standard geometric or
+descriptive tools would suffice. For example, the following data, for whose points
+locations remain fixed, would not require any special tools:
+
+```{r echo = FALSE}
+par(mfrow = c(1,3), mar = c(1,1,1,1))
+set.seed(1)
+plot(rpoispp(win = owin(), lambda = 12), main = "")
+set.seed(1)
+plot(rpoispp(win = owin(), lambda = 12), main = "")
+set.seed(1)
+plot(rpoispp(win = owin(), lambda = 12), main = "")
+```
+
+However in most real world settings, the locations exhibit random variation.
+An example is might look like the following:
+
+```{r echo = FALSE}
+par(mfrow = c(1,3), mar = c(1,1,1,1))
+plot(rpoispp(win = owin(), lambda = 12), main = "")
+plot(rpoispp(win = owin(), lambda = 12), main = "")
+plot(rpoispp(win = owin(), lambda = 12), main = "")
+```
+
+This randomness raises fundamental questions:
+
+- How many events occur in a region?
+- Are events evenly clustered, or regularly spaced?
+- How does the density of events vary across space?
+
+To answer these questions, we require a probabilistic model for random point 
+patterns.
+
+## Point processes as random mechanisms
+
+A **point process** can is a mathematical object used to describe random 
+collections of points in space. 
+
+> [What is the informal definition in the spatstat book again?]
+
+Informally, a point process can be thought of as a random mechanism that generates
+a set of locations:
+
+$$
+X = \{x_1, x_2, \dots, x_n\} \subset .
+$$
+
+Unlike the usual random variables, which take values in $\mathbb{R}$, a point 
+process takes values in the space of finite subsets of $W$.
+
+## Why not just use densities?
+
+A question you might ask is, why not model the data using a probability density
+over space?
+
+The key issue is that a pattern contains two distinct sources of randomness:
+
+1. How many points occur (the count)
+2. Where those points are located
+
+A standard density function cannot simultaneously describe both of these 
+components.
+
+Point processes explicitly account for both:
+
+- the number of points in a region
+- the spatial arrangement of those points
+
+## First glimpse of structure
+
+Even at this informal level, we can begin to distinguish between different types
+of spatial behavior.
+
+- Complete spatial randomness (CSR) - Points occur independently and uniformly 
+across space.
+- Clustering - Points tend to appear in groups.
+- Regularity (inhibition) - Points tend to repel each other.
+
+Understanding and quantifying these behaviors is a central goal in spatial 
+statistics.
+
+## Roadmap
+
+In the chapters that follow, we will develop the mathematical framework needed 
+to study point processes in detail.
+
+We then develop tools to describe their structure, including:
+
+- first-order properties (intensity)
+- second-order properties (pair-correlation and $K$-function)
+
+These concepts will ultimately allow us to study more complex models, such as
+Cox processes and, in particular, log-Gaussian Cox processes (LGCPs).
+
+
+
+
+

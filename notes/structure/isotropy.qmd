@@ -1,0 +1,149 @@
+# Isotropy
+
+In the previous section, we assumed stationarity, which removes dependence on 
+absolute location.
+
+We now introduce a further structural assumption: isotropy.
+
+## Definition
+
+A stationary point process is said to be isotropic if its distribution is 
+invariant under rotations.
+
+Formally, for any rotation $R \in SO(d)$,
+
+$$
+X \overset{d}{=} R X,
+$$
+
+where
+$$
+R X := \{ R u : u \in X \}.
+$$
+
+
+## Intuition
+
+Isotropy means:
+
+> The process has no preferred direction.
+
+- Patterns look the same in all orientations  
+- There is no directional bias or anisotropy  
+- Only *distance*, not direction, matters
+
+## Consequences for Second-Order Structure
+
+From stationarity, we already have:
+
+$$
+\lambda^{(2)}(u,v) = \lambda^{(2)}(u - v).
+$$
+
+Let $h = u - v$.
+
+Under isotropy, this must be invariant under rotations of $h$:
+
+$$
+\lambda^{(2)}(h) = \lambda^{(2)}(R h).
+$$
+
+Therefore, $\lambda^{(2)}$ depends only on the length of $h$:
+
+$$
+\lambda^{(2)}(u,v) = \lambda^{(2)}(\|u - v\|).
+$$
+
+
+## Pair Correlation Function
+
+Recall:
+
+$$
+g(u,v) = \frac{\lambda^{(2)}(u,v)}{\lambda^2}
+$$
+
+Under stationarity and isotropy:
+
+$$
+g(u,v) = g(\|u - v\|) = g(r),
+$$
+
+where
+
+$$
+r = \|u - v\|
+$$
+
+## Why This Matters
+
+This is the key simplification:
+
+| Assumption | PCF form |
+|------------|----------|
+| None | $g(u,v)$ |
+| Stationary | $g(u - v)$ |
+| Stationary + isotropic | $g(r)$ |
+
+We have reduced:
+
+- A function of two locations to a function of one scalar distance
+
+This is what makes:
+
+- PCF plots possible  
+- Minimum contrast feasible  
+- Your entire CSCP vs LGCP comparison tractable
+
+## Interpretation of $g(r)$
+
+Under isotropy, $g(r)$ has a clean interpretation:
+
+- $g(r) = 1$ → no interaction at distance $r$  
+- $g(r) > 1$ → clustering at distance $r$  
+- $g(r) < 1$ → inhibition at distance $r$  
+
+Crucially:
+
+> These interpretations now depend only on distance, not direction.
+
+## Connection to $K$-Function
+
+Under isotropy, the $K$-function can be written as:
+
+$$
+K(r) = \int_0^r 2\pi s \, g(s) \, ds \quad \text{(in 2D)}.
+$$
+
+Thus:
+
+- $g(r)$ is the *derivative* of $K(r)$ (up to scaling)
+- Both summaries are now 1D functions of distance
+
+## Limitations
+
+Isotropy can fail in many real datasets:
+
+- Directional clustering (e.g. along roads, rivers)
+- Geological or environmental gradients
+- Wind or flow-driven processes
+
+In such cases, we may need:
+
+- Anisotropic models
+- Direction-dependent summaries (e.g. directional PCFs)
+
+## Summary
+
+Isotropy assumes:
+
+- No preferred direction in the process  
+- Dependence depends only on distance  
+
+Combined with stationarity, this yields:
+
+$$
+g(u,v) \rightarrow g(r),
+$$
+
+which is the foundation for nearly all practical second-order analysis in spatial statistics.

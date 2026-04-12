@@ -1,0 +1,500 @@
+# Likelihood
+
+## Motivation
+
+So far, we have described point processes through quantities such as:
+
+- the intensity function $\lambda(u)$
+- the second-order product density $\lambda^{(2)}(u,v)$
+- the pair correlation function $g(u,v)$
+- the $K$-function
+
+These summaries are extremely useful, since they describe the first- and 
+second-order structure of a point process.
+
+However, when we come to **statistical inference**, a more basic question arises:
+
+> Given an observed point pattern $X$, how do we write down the probability of 
+observing that pattern under a model with parameter $\theta$?
+
+This leads to the idea of a **likelihood function**.
+
+In ordinary parametric statistics, likelihood-based inference is often the default approach.  
+For point processes, the same idea applies, but the form of the likelihood is 
+slightly different, because the data consist of a **random configuration of points in space**, 
+rather than a finite-dimensional vector.
+
+:::{.callout-note}
+A likelihood function tells us how plausible the observed data are under 
+different parameter values.
+
+In a spatial point process setting, the observed data are typically the point 
+locations
+$$
+X = \{x_1,\dots,x_n\} \subset W,
+$$
+where $W \subset \mathbb{R}^d$ is the observation window.
+:::
+
+The aim of this chapter is to introduce the likelihood for point processes,
+beginning with the Poisson process, and then extending the discussion to Cox processes.
+
+## What is the data?
+
+Suppose we observe a point process in a bounded window $W \subset \mathbb{R}^d$.
+
+The data consist of:
+
+- the number of observed points, say $n$
+- the locations of those points, say $x_1,\dots,x_n$
+
+So the observed realization is
+
+$$
+X = \{x_1,\dots,x_n\}.
+$$
+
+Unlike ordinary data analysis, the sample size $n$ is itself random.
+
+This is one of the first conceptual differences between point process 
+likelihoods and more familiar likelihoods from regression or classical parametric models.
+
+
+## Likelihood in a point process setting
+
+Roughly speaking, the likelihood is the density of the observed configuration 
+$X$ under the model.
+
+For a point process observed on $W$, we write
+
+$$
+L(\theta; X)
+$$
+
+for the likelihood of parameter $\theta$ given the observed point pattern $X$.
+
+In general, one must be a little careful about exactly what this density is 
+taken **with respect to**.  
+For now, we will focus on the standard heuristic form of the likelihood, 
+which is the one most commonly used in spatial statistics.
+
+The key idea is simple:
+
+- we want the probability of observing points at $x_1,\dots,x_n$
+- and no points elsewhere in the window
+
+For the Poisson process, this can be derived explicitly.
+
+
+## Poisson process likelihood
+
+We begin with the most important benchmark case.
+
+Let $X$ be an inhomogeneous Poisson process on $W$ with intensity function $\lambda(u)$.
+
+We now derive its likelihood.
+
+
+## Heuristic derivation via a fine partition
+
+Partition the window $W$ into many small cells
+
+$$
+B_1,\dots,B_m
+$$
+
+with volumes $|B_j|$.
+
+Assume the partition is so fine that each cell contains at most one point with 
+high probability.
+
+For a Poisson process:
+
+1. counts in disjoint cells are independent
+2. for a small cell $B_j$,
+   $$
+   N(B_j) \sim \text{Poisson}\!\left(\int_{B_j}\lambda(u)\,du\right)
+   $$
+
+If the cell is very small, then
+
+$$
+\int_{B_j}\lambda(u)\,du \approx \lambda(u_j)|B_j|
+$$
+
+for some representative point $u_j \in B_j$.
+
+So for a tiny cell $B_j$:
+
+- probability of exactly one point:
+  $$
+  \mathbb{P}(N(B_j)=1)
+  \approx
+  \lambda(u_j)|B_j|\,\exp(-\lambda(u_j)|B_j|)
+  $$
+- probability of zero points:
+  $$
+  \mathbb{P}(N(B_j)=0)
+  \approx
+  \exp(-\lambda(u_j)|B_j|)
+  $$
+
+Now suppose the observed pattern has points in exactly $n$ cells, say those containing
+$x_1,\dots,x_n$, and zero points in all other cells.
+
+By independence of cell counts, the probability of this configuration is approximately
+
+$$
+\prod_{i=1}^n
+\Big[\lambda(x_i)|B_i|\,e^{-\lambda(x_i)|B_i|}\Big]
+\prod_{j \notin \{i_1,\dots,i_n\}}
+e^{-\lambda(u_j)|B_j|}.
+$$
+
+Combining the exponential terms gives
+
+$$
+\left(\prod_{i=1}^n \lambda(x_i)|B_i|\right)
+\exp\left(
+-\sum_{j=1}^m \lambda(u_j)|B_j|
+\right).
+$$
+
+As the partition becomes finer,
+
+$$
+\sum_{j=1}^m \lambda(u_j)|B_j|
+\to
+\int_W \lambda(u)\,du.
+$$
+
+Ignoring the small cell-volume factors, which belong to the underlying 
+reference measure, we obtain the likelihood
+
+$$
+L(\theta;X)
+\propto
+\exp\left(-\int_W \lambda(u)\,du\right)
+\prod_{i=1}^n \lambda(x_i).
+$$
+
+This gives the standard Poisson process likelihood:
+
+:::{.callout-important}
+For an inhomogeneous Poisson process with intensity $\lambda(u)$, the likelihood is
+
+$$
+L(\theta;X)
+=
+\exp\left(-\int_W \lambda(u)\,du\right)
+\prod_{i=1}^n \lambda(x_i).
+$$
+:::
+
+
+
+## Interpreting the Poisson likelihood
+
+The Poisson likelihood has two parts:
+
+$$
+L(\theta;X)
+=
+\exp\left(-\int_W \lambda(u)\,du\right)
+\prod_{i=1}^n \lambda(x_i).
+$$
+
+### The product term
+
+The factor
+
+$$
+\prod_{i=1}^n \lambda(x_i)
+$$
+
+rewards parameter values that assign high intensity to the observed point locations.
+
+So if many observed points lie in regions where $\lambda(u)$ is large, this 
+term becomes larger.
+
+### The exponential term
+
+The factor
+
+$$
+\exp\left(-\int_W \lambda(u)\,du\right)
+$$
+
+penalises models with large total expected count over the window.
+
+Recall that for a Poisson process,
+
+$$
+\mathbb{E}[N(W)] = \int_W \lambda(u)\,du.
+$$
+
+So this term accounts for the fact that we observed 
+**no additional points elsewhere in the window**.
+
+:::{.callout-note}
+The Poisson likelihood balances two things:
+
+- fitting the observed points well
+- not predicting too many unobserved points
+:::
+
+
+
+## Homogeneous Poisson process as a special case
+
+If the process is homogeneous, so that
+
+$$
+\lambda(u) \equiv \lambda,
+$$
+
+then
+
+$$
+\int_W \lambda(u)\,du = \lambda |W|,
+$$
+
+and the likelihood becomes
+
+$$
+L(\lambda;X)
+=
+e^{-\lambda |W|}\lambda^n.
+$$
+
+This is exactly what we would expect, since in the homogeneous case the 
+point locations are conditionally uniform given $N(W)=n$, and the main 
+contribution to the likelihood comes from the random count.
+
+## Log-likelihood
+
+In practice, one usually works with the log-likelihood rather than the likelihood itself.
+
+For the Poisson process,
+
+$$
+\ell(\theta;X)
+=
+\log L(\theta;X)
+=
+\sum_{i=1}^n \log \lambda(x_i)
+-
+\int_W \lambda(u)\,du.
+$$
+
+This is much easier to manipulate analytically and numerically.
+
+For example, if $\lambda(u)=\lambda$ is constant, then
+
+$$
+\ell(\lambda;X)= n\log\lambda - \lambda |W|.
+$$
+
+
+
+## Why the Poisson likelihood is tractable
+
+The Poisson process is special because its likelihood depends only on 
+the intensity function $\lambda(u)$.
+
+There is no interaction term involving pairs or higher-order groups of points.
+
+This tractability comes from the defining properties of the Poisson process:
+
+- conditional independence of counts in disjoint sets
+- absence of interaction between points
+
+This is one reason why Poisson processes play such a central role in spatial 
+statistics: they are both mathematically simple and inferentially convenient.
+
+
+
+## Moving to Cox processes
+
+A Cox process is more complicated.
+
+Recall that a Cox process is a Poisson process with a **random intensity field** 
+$\Lambda(u)$.
+
+That is,
+
+$$
+X \mid \Lambda \sim \text{Poisson process with intensity } \Lambda(u).
+$$
+
+So conditional on the latent field $\Lambda$, the likelihood is just the 
+Poisson likelihood with $\lambda(u)$ replaced by $\Lambda(u)$:
+
+$$
+L(\theta;X \mid \Lambda)
+=
+\exp\left(-\int_W \Lambda(u)\,du\right)
+\prod_{i=1}^n \Lambda(x_i).
+$$
+
+This is called the **conditional likelihood**.
+
+
+
+## Conditional versus marginal likelihood
+
+The important point is that the random field $\Lambda(u)$ is **not observed**.
+
+So the conditional likelihood is not yet the likelihood we can use directly for 
+inference.
+
+To obtain the actual likelihood of the observed point pattern, we must average 
+over all possible realizations of the latent field.
+
+This gives the **marginal likelihood**:
+
+$$
+L(\theta;X)
+=
+\mathbb{E}_\Lambda\left[
+\exp\left(-\int_W \Lambda(u)\,du\right)
+\prod_{i=1}^n \Lambda(x_i)
+\right].
+$$
+
+This expectation is taken with respect to the distribution of the random 
+intensity field $\Lambda$.
+
+:::{.callout-important}
+For a Cox process, the likelihood is obtained by integrating the Poisson 
+likelihood over the distribution of the latent random field.
+:::
+
+This is the key structural fact behind likelihood-based inference for Cox 
+processes.
+
+## Why this is already much harder
+
+Compare the two likelihoods.
+
+For a Poisson process:
+
+$$
+L(\theta;X)
+=
+\exp\left(-\int_W \lambda(u)\,du\right)
+\prod_{i=1}^n \lambda(x_i),
+$$
+
+where $\lambda(u)$ is deterministic.
+
+For a Cox process:
+
+$$
+L(\theta;X)
+=
+\mathbb{E}_\Lambda\left[
+\exp\left(-\int_W \Lambda(u)\,du\right)
+\prod_{i=1}^n \Lambda(x_i)
+\right],
+$$
+
+where $\Lambda(u)$ is random.
+
+The difficulty is that we are no longer evaluating a known function.  
+Instead, we must compute an expectation over an entire random field.
+
+This is a fundamentally harder problem.
+
+
+
+## Example: likelihood of an LGCP
+
+For a log-Gaussian Cox process,
+
+$$
+\Lambda(u)=\exp(Z(u)),
+$$
+
+where $Z(u)$ is a Gaussian random field.
+
+Substituting into the Cox process likelihood gives
+
+$$
+L(\theta;X)
+=
+\mathbb{E}_Z\left[
+\exp\left(-\int_W e^{Z(u)}\,du\right)
+\prod_{i=1}^n e^{Z(x_i)}
+\right].
+$$
+
+Equivalently,
+
+$$
+L(\theta;X)
+=
+\mathbb{E}_Z\left[
+\exp\left(
+-\int_W e^{Z(u)}\,du
++
+\sum_{i=1}^n Z(x_i)
+\right)
+\right].
+$$
+
+Even though $Z(u)$ is Gaussian, this expression is not easy to evaluate, 
+because of the nonlinear term
+
+$$
+\int_W e^{Z(u)}\,du.
+$$
+
+
+
+## Example: likelihood of a CSCP
+
+For a single-component chi-square Cox process,
+
+$$
+\Lambda(u)=\mu + Z(u)^2,
+$$
+
+where $Z(u)$ is a Gaussian random field.
+
+Then the likelihood becomes
+
+$$
+L(\theta;X)
+=
+\mathbb{E}_Z\left[
+\exp\left(-\int_W (\mu + Z(u)^2)\,du\right)
+\prod_{i=1}^n (\mu + Z(x_i)^2)
+\right].
+$$
+
+Again, the structure is clear, but explicit evaluation is difficult.
+
+
+
+## What this chapter has established
+
+The main message of this chapter is not yet that Cox process likelihoods are 
+impossible to use, but rather that they take a very different form from ordinary 
+Poisson likelihoods.
+
+We now have the following picture:
+
+1. For a Poisson process, the likelihood is explicit and tractable.
+2. For a Cox process, conditional on the latent field, the likelihood is still 
+Poisson.
+3. But the latent field is unobserved, so the marginal likelihood requires 
+integrating over all possible realizations of that field.
+
+This immediately suggests the central question for the next chapter:
+
+> Can this likelihood actually be evaluated in closed form, or even computed efficiently?
+
+In most interesting Cox process models, the answer is no.
+
+That is the subject of the next chapter.

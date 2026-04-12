@@ -1,0 +1,219 @@
+## Second-Order Estimation
+
+## Motivation
+
+The PCF $g(r)$ and the $K$-function $K(r)$ provide fundamental summaries of 
+spatial interaction.
+
+In practice, these quantities are unknown and must be estimated from the data.
+
+This section introduces the main classes of estimators used in practice, along 
+with their key ideas and trade-offs.
+
+## Observed data
+
+We observe a point pattern:
+
+$$
+X = \{x_1, \dots, x_n\}
+$$
+
+within a bounded window $W \subset \mathbb{R}^2$.
+
+All second-order estimators are based on pairwise distances:
+
+$$
+d_{i,j} = \|x_i - x_j \|, \quad i \neq j
+$$
+
+## Overview of estimator types
+
+There are two main approaches to second-order estimation:
+
+**Cumulative estimators**
+
+- Based on counting pairs of distances *up to* distance $r$
+- Example: $K$-function
+
+**Differential (density) estimators**
+
+- Based on estimating the *interaction at* distance $r$
+- Example: PCF $g(r)$
+
+
+::: {.callout-note}
+All second-order estimators are built from **pairwise distances**, but differ in how they summarise them:
+
+- cumulative (integrated)  
+- or local (smoothed)
+:::
+
+## Estimating the K-function
+
+### Basic Estimator
+
+The standard estimator of the $K$-function is:
+
+$$
+\hat{K}(r) = \frac{|W|}{n(n-1)} \sum_{i \neq j} 
+\mathbf{1}\{d_{ij} \le r\} \, w_{ij}^{-1},
+$$
+
+where $w_{ij}$ are edge correction weights.
+
+This estimator:
+
+- counts all pairs within distance $r$,
+- rescales by intensity,
+- corrects for missing neighbors near the boundary
+
+:::callout-note
+Absolute slop tbh. Such a poor explanation.
+:::
+
+### Variants
+
+Different estimators arise through different choices of $w_{ij}$:
+
+- Border correction (simple, but biased)
+- Isotropic correction (commonly used)
+- Translation correction (often more stable)
+
+## Estimating the PCF
+
+The PCF is a density-type quantity, and requires smoothing.
+
+### Kernel estimator
+
+A common estimator is:
+
+$$
+\hat{g}(r) = \frac{1}{2\pi r} \cdot \frac{|W|}{n(n-1)} 
+\sum_{i \neq j} k_h(d_{ij} - r) \, w_{ij}^{-1},
+$$
+
+where:
+
+- $k_h$ is a kernel with bandwidth $h$  
+- $w_{ij}$ are edge correction weights  
+
+This estimator:
+
+- places a smooth "bump" around each pairwise distance  
+- aggregates contributions near $r$  
+- produces a continuous estimate of interaction  
+
+:::callout-note
+Slop city again.
+:::
+
+### Alternative view
+
+The PCF can be interpreted as the derivative of the $K$-function:
+
+$$
+g(r) = \frac{1}{2\pi r} \frac{d}{dr} K(r)
+$$
+
+so estimating can be seen as:
+
+- differentiating $\hat{K}(r)$, or
+
+- directly smoothing pair distances.
+
+## Intensity Estimation
+
+Both $K$ and $g$ estimators depend on the intensity $\lambda$.
+
+In practice, this is replaced by:
+
+$$
+\hat{\lambda} = \frac{n}{|W|}
+$$
+
+For inhomogeneous processes, more complex estimators are required.
+
+## Inhomogeneous extensions
+
+When the intensity varies across space, standard estimators are biased.
+
+To address this, inhomogeneous versions are used.
+
+### Inhomogeneous K-function
+
+$$
+\hat{K}_{\text{inhom}}(r) =
+\sum_{i \neq j} \frac{\mathbf{1}\{d_{ij} \le r\}}{\hat{\lambda}(x_i)\hat{\lambda}(x_j)} \, w_{ij}^{-1}
+$$
+
+### Inhomogeneous PCF
+
+Similarly, the PCF can be adjusted using:
+
+$$
+\frac{1}{\hat{\lambda}(x_i)\hat{\lambda}(x_j)}
+$$
+
+These estimators attempt to remove variation due to intensity, isolating 
+interaction.
+
+## Edge effects
+
+A fundamental issue in second-order estimation is *boundary bias*.
+
+Points near the edge of $W$:
+
+- have unobserved neighbors outside the window
+- contribute fewer pairs
+
+This leads to systemic underestimation unless corrected.
+
+Some common strategies for correcting this are:
+
+- Weighting pairs ($w_{ij}$)
+- Ignoring edge points (border correction)
+
+## Bandwidth selection (PCF)
+
+The PCF estimator depends critically on the bandwidth hyper-parameter $h$:
+
+- small $h$ results in noisy estimates
+
+- large $h$ results in over smoothing
+
+There is no universally optimal choice, and results can be sensitive to $h$.
+
+## Practical implementation
+
+In `spatstat`, common estimators include:
+
+```{r eval = FALSE}
+Kest(X)
+pcf(X)
+
+# Inhomogeneous versions
+Kinhom(X)
+pcfinhom(X)
+```
+
+This section needs a LOT of work.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,375 @@
+# Moment Properties of the LGCP
+
+## Motivation
+
+For a Cox process, all first- and second-order structure is determined by the 
+moments of the random intensity field:
+
+$$
+\lambda(u) = \mathbb{E}[\Lambda(u)],
+\qquad
+\lambda^{(2)}(u,v) = \mathbb{E}[\Lambda(u)\Lambda(v)]
+$$
+
+For a log-Gaussian Cox process (LGCP), the intensity is
+
+$$
+\Lambda(u) = \exp(Z(u)),
+$$
+
+where $Z(u)$ is a Gaussian random field.
+
+So the problem reduces to computing expectations of the form:
+
+- $\mathbb{E}[\exp(Z(u))]$
+- $\mathbb{E}[\exp(Z(u)+Z(v))]$
+
+These can be derived using standard Gaussian moment identities.
+
+
+## Setup
+
+Let $Z(u)$ be a Gaussian random field with:
+
+- mean function:
+  $$
+  \mathbb{E}[Z(u)] = m(u)
+  $$
+- covariance function:
+  $$
+  \mathrm{Cov}(Z(u),Z(v)) = C(u,v)
+  $$
+
+Define the LGCP intensity:
+
+$$
+\Lambda(u) = \exp(Z(u))
+$$
+
+
+## A key Gaussian identity
+
+We will repeatedly use the following result:
+
+::: {.callout-important}
+If $X \sim \mathcal{N}(\mu, \sigma^2)$, then
+$$
+\mathbb{E}[\exp(X)] = \exp\left(\mu + \tfrac{1}{2}\sigma^2\right).
+$$
+:::
+
+More generally, if $(X,Y)$ is jointly Gaussian, then
+
+$$
+\mathbb{E}[\exp(X+Y)]
+=
+\exp\left(
+\mathbb{E}[X+Y]
++
+\tfrac{1}{2}\mathrm{Var}(X+Y)
+\right)
+$$
+
+## First-order intensity
+
+### Proposition
+
+For an LGCP,
+
+$$
+\lambda(u)
+=
+\exp\left(
+m(u) + \tfrac{1}{2}C(u,u)
+\right)
+$$
+
+### Proof
+
+Since $\Lambda(u) = \exp(Z(u))$, we have
+
+$$
+\lambda(u) = \mathbb{E}[\exp(Z(u))].
+$$
+
+Now $Z(u) \sim \mathcal{N}(m(u), C(u,u))$, so applying the Gaussian identity gives
+
+$$
+\lambda(u)
+=
+\exp\left(
+m(u) + \tfrac{1}{2}C(u,u)
+\right)
+$$
+
+
+### Interpretation
+
+The intensity is not $\exp(m(u))$, but is inflated by the variance term:
+
+$$
+\lambda(u) = \exp(m(u)) \times \exp\left(\tfrac{1}{2}C(u,u)\right)
+$$
+
+::: {.callout-note}
+Variability in the latent Gaussian field increases the expected intensity.
+:::
+
+## Second-order product density
+
+### Proposition
+
+For an LGCP,
+
+$$
+\lambda^{(2)}(u,v)
+=
+\exp\left(
+m(u) + m(v)
++
+\tfrac{1}{2}\big(C(u,u) + C(v,v)\big)
++
+C(u,v)
+\right)
+$$
+
+### Proof
+
+We compute:
+
+$$
+\lambda^{(2)}(u,v)
+=
+\mathbb{E}[\exp(Z(u))\exp(Z(v))]
+=
+\mathbb{E}[\exp(Z(u)+Z(v))]
+$$
+
+Since $(Z(u), Z(v))$ is jointly Gaussian, the sum $Z(u)+Z(v)$ is Gaussian with:
+
+- mean:
+  $$
+  m(u) + m(v)
+  $$
+- variance:
+  $$
+  \mathrm{Var}(Z(u)+Z(v))
+  =
+  C(u,u) + C(v,v) + 2C(u,v)
+  $$
+
+Applying the Gaussian identity gives
+
+$$
+\lambda^{(2)}(u,v)
+=
+\exp\left(
+m(u)+m(v)
++
+\tfrac{1}{2}\big(C(u,u)+C(v,v)+2C(u,v)\big)
+\right)
+$$
+
+Rearranging yields the result.
+
+## Pair correlation function
+
+### Proposition
+
+For an LGCP,
+
+$$
+g(u,v)
+=
+\exp\big(C(u,v)\big)
+$$
+
+### Proof
+
+Recall that
+
+$$
+g(u,v)
+=
+\frac{\lambda^{(2)}(u,v)}{\lambda(u)\lambda(v)}
+$$
+
+Substitute the expressions derived above.
+
+The numerator is
+
+$$
+\exp\left(
+m(u)+m(v)
++
+\tfrac{1}{2}(C(u,u)+C(v,v))
++
+C(u,v)
+\right),
+$$
+
+and the denominator is
+
+$$
+\exp\left(
+m(u)+\tfrac{1}{2}C(u,u)
+\right)
+\exp\left(
+m(v)+\tfrac{1}{2}C(v,v)
+\right)
+$$
+
+Cancelling terms gives
+
+$$
+g(u,v) = \exp(C(u,v))
+$$
+
+## Stationary LGCP
+
+Suppose $Z(u)$ is stationary with:
+
+$$
+\mathbb{E}[Z(u)] = m,
+\qquad
+\mathrm{Cov}(Z(u),Z(v)) = C(u-v)
+$$
+
+Then:
+
+- intensity:
+  $$
+  \lambda = \exp\left(m + \tfrac{1}{2}C(0)\right)
+  $$
+
+- pair correlation function:
+  $$
+  g(u,v) = \exp(C(u-v))
+  $$
+
+## Isotropic LGCP
+
+If $C(u,v)=C(r)$ with $r=\|u-v\|$, then
+
+$$
+g(r) = \exp(C(r))
+$$
+
+For example, with exponential covariance:
+
+$$
+C(r) = \sigma^2 \exp\left(-\frac{r}{s}\right),
+$$
+
+we obtain
+
+$$
+g(r)
+=
+\exp\left(
+\sigma^2 \exp\left(-\frac{r}{s}\right)
+\right)
+$$
+
+
+## Key consequences
+
+### Clustering is always positive
+
+Since $C(u,v) \ge 0$ for nearby points in typical covariance models,
+
+$$
+g(u,v) \ge 1.
+$$
+
+So LGCPs always exhibit clustering at short distances.
+
+### Nonlinear amplification
+
+The PCF is an exponential transformation:
+
+$$
+g(u,v) = \exp(C(u,v))
+$$
+
+So even moderate covariance can produce strong clustering.
+
+### Separation of roles
+
+- $m(u)$ controls overall intensity level
+- $C(u,v)$ controls clustering
+
+However, they are not fully independent:
+
+::: {.callout-note}
+The variance $C(u,u)$ affects the intensity $\lambda(u)$, so intensity and
+clustering are implicitly linked.
+:::
+
+### Connection to general Cox theory
+
+Comparing with the general Cox formula:
+
+$$
+g(u,v)
+=
+1 + \frac{\mathrm{Cov}(\Lambda(u),\Lambda(v))}
+{\mathbb{E}[\Lambda(u)]\mathbb{E}[\Lambda(v)]},
+$$
+
+we see that for LGCP,
+
+$$
+\mathrm{Cov}(\Lambda(u),\Lambda(v))
+=
+\lambda(u)\lambda(v)\big(\exp(C(u,v)) - 1\big)
+$$
+
+So the exponential structure emerges naturally from Gaussian moments.
+
+## Interpretation
+
+An LGCP transforms additive Gaussian dependence into multiplicative clustering.
+
+- Gaussian field:
+  - linear covariance structure
+- LGCP:
+  - exponential clustering structure
+
+This explains why LGCPs can produce very strong clustering behaviour.
+
+## Summary
+
+For an LGCP with $\Lambda(u)=\exp(Z(u))$:
+
+$$
+\lambda(u)
+=
+\exp\left(m(u) + \tfrac{1}{2}C(u,u)\right)
+$$
+
+$$
+\lambda^{(2)}(u,v)
+=
+\exp\left(
+m(u)+m(v)
++
+\tfrac{1}{2}(C(u,u)+C(v,v))
++
+C(u,v)
+\right)
+$$
+
+$$
+g(u,v)
+=
+\exp(C(u,v))
+$$
+
+These results show that:
+
+- first-order structure depends on both mean and variance of $Z(u)$
+- second-order structure depends directly on the covariance of $Z(u)$
+- clustering is an exponential transformation of Gaussian dependence
+
+This makes the LGCP one of the most tractable and widely used Cox process models.

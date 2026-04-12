@@ -1,0 +1,234 @@
+# Introduction to Log-Gaussian Cox Processes
+
+## Definition
+
+A *log-Gaussian Cox process (LGCP)* is a Cox process whose random intensity 
+field is obtained by exponentiating a Gaussian random field.
+
+Let $Z(u)$ be a Gaussian random field on $W \subset \mathbb{R}^d$. Define
+
+$$
+\Lambda(u) = \exp(Z(u))
+$$
+
+Then the point process $X$ defined by
+
+$$
+X \mid Z \sim \text{Poisson process with intensity } \Lambda(u) = \exp(Z(u))
+$$
+
+is called a *log-Gaussian Cox process*.
+
+## Why the exponential?
+
+The exponential transformation serves two key purposes:
+
+1. **Positivity**
+
+   Since intensities must satisfy $\Lambda(u) \ge 0$, exponentiation ensures validity:
+   $$
+   \Lambda(u) = \exp(Z(u)) > 0
+   $$
+
+2. **Flexible variability**
+
+   A Gaussian random field $Z(u)$ can take any real value, so exponentiation allows:
+
+   - small values of $Z(u)$ → very low intensity
+   - large values of $Z(u)$ → very high intensity
+
+::: {.callout-note}
+The exponential transformation turns additive Gaussian structure into 
+*multiplicative variation* in the intensity field.
+:::
+
+## Conditional vs unconditional structure
+
+**Conditional on $Z$**
+
+Given the Gaussian random field $Z(u)$:
+
+- $X$ is a Poisson process with intensity $\exp(Z(u))$
+- points are conditionally independent
+- no interaction between points
+
+**Unconditional (marginal)**
+
+Marginally:
+
+- $X$ is not Poisson
+- clustering arises through variation in $Z(u)$
+- dependence is entirely induced by the latent field
+
+::: {.callout-important}
+In an LGCP, points do not interact directly, they cluster because they 
+respond to the same Gaussian random field.
+:::
+
+## Gaussian random field specification
+
+To fully specify an LGCP, we must define the Gaussian random field $Z(u)$.
+
+Typically, we assume:
+
+- Mean function:
+  $$
+  \mathbb{E}[Z(u)] = m(u)
+  $$
+
+- Covariance function:
+  $$
+  \mathrm{Cov}(Z(u), Z(v)) = C(u,v)
+  $$
+
+## Stationary LGCP
+
+A common and important special case is when $Z(u)$ is **stationary**:
+
+$$
+\mathbb{E}[Z(u)] = m, \qquad
+\mathrm{Cov}(Z(u), Z(v)) = C(u-v)
+$$
+
+Then:
+
+- $\Lambda(u)$ is also stationary in distribution
+- the LGCP has constant first-order intensity
+- second-order structure depends only on $u-v$
+
+## Isotropic LGCP
+
+If, in addition, the covariance depends only on distance,
+
+$$
+C(u,v) = C(r), \qquad r = \|u-v\|,
+$$
+
+then the process is *isotropic*.
+
+A common choice is the exponential covariance function:
+
+$$
+C(r) = \sigma^2 \exp\left(-\frac{r}{s}\right),
+$$
+
+where:
+
+- $\sigma^2$ controls variability
+- $s$ controls spatial scale
+
+## Interpretation of parameters
+
+Although the LGCP is defined through $Z(u)$, interpretation is typically
+done through the induced intensity $\Lambda(u)$.
+
+- $m(u)$ (or $m$ under stationarity):
+  - controls the *baseline level* of the log-intensity
+
+- $C(u,v)$:
+  - controls the *spatial dependence* in the log-intensity
+  - determines the *clustering structure* of the point process
+
+::: {.callout-note}
+Unlike simpler models, LGCP parameters do not directly correspond to 
+intensity or clustering strength — these emerge after exponentiation.
+:::
+
+This is one reason why alternative parameterisations (e.g. in terms of 
+$\lambda$ and $g(0)$) are often useful in practice.
+
+## Log-intensity interpretation
+
+Taking logarithms gives
+
+$$
+\log \Lambda(u) = Z(u)
+$$
+
+So an LGCP can be viewed as:
+
+> A model where the *log-intensity is a Gaussian random field*.
+
+This interpretation is widely used in applications, especially in spatial
+statistics and machine learning.
+
+## Consequences (preview)
+
+Using the general Cox process moment formulas, we will show in the next sections that:
+
+- the intensity is
+  $$
+  \lambda(u) = \mathbb{E}[\exp(Z(u))]
+  $$
+
+- the pair correlation function takes the form
+  $$
+  g(u,v) = \exp(C(u,v))
+  $$
+
+under stationarity
+
+::: {.callout-important}
+For an LGCP, the pair correlation function is an exponential transformation of 
+the covariance function of the underlying Gaussian random field.
+:::
+
+This is a key structural property, and will be central to later comparisons 
+with other Cox processes.
+
+## Interpretation as a latent Gaussian model
+
+An LGCP can be viewed as a hierarchical model:
+
+1. Draw a Gaussian random field $Z(u)$
+2. Transform to obtain $\Lambda(u) = \exp(Z(u))$
+3. Generate a Poisson process with intensity $\Lambda(u)$
+
+This makes LGCPs a natural extension of:
+
+- Gaussian random fields (continuous structure)
+- Poisson processes (discrete events)
+
+## Advantages of LGCP
+
+LGCPs are widely used because they:
+
+- guarantee positivity of the intensity
+- allow flexible spatial dependence
+- are mathematically tractable (moments can be derived explicitly)
+- connect naturally to Gaussian process modelling
+
+## Limitations
+
+However, LGCPs also have important limitations:
+
+- parameters are not directly interpretable in terms of clustering
+- likelihood-based inference is computationally challenging
+- different LGCP parameter settings can produce very similar second-order structure
+
+::: {.callout-note}
+In particular, LGCPs can be difficult to distinguish from other Cox processes 
+using only second-order statistics.
+:::
+
+## Summary
+
+- An LGCP is a Cox process with intensity
+  $$
+  \Lambda(u) = \exp(Z(u))
+  $$
+  where $Z(u)$ is a Gaussian random field
+
+- Conditional on $Z$, the process is Poisson
+
+- Marginally, clustering arises from spatial dependence in $Z(u)$
+
+- The covariance structure of $Z(u)$ determines the clustering behaviour of the point process
+
+- LGCPs provide a flexible and widely used framework for modelling spatial clustering
+
+
+
+
+
+

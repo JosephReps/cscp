@@ -1,0 +1,268 @@
+# Composite Likelihood
+
+## Motivation
+
+In the previous chapter, we introduced minimum contrast estimation as a way to 
+avoid the difficulties of likelihood-based inference.
+
+However, minimum contrast replaces the likelihood entirely with a distance 
+between summary functions.  
+
+This raises a natural question:
+
+> Can we construct an approximation to the likelihood that is still closer 
+in spirit to the full probabilistic model?
+
+Composite likelihood provides one such approach.
+
+## The idea of composite likelihood
+
+The full likelihood of a point process depends on the joint distribution of all points:
+
+$$
+L(\theta; X) = f(x_1,\dots,x_n \mid \theta).
+$$
+
+For many spatial models, including Cox processes, this joint density is difficult to evaluate.
+
+The key idea of composite likelihood is to approximate the full likelihood 
+using **lower-dimensional marginal or conditional distributions**.
+
+:::{.callout-important}
+Composite likelihood replaces the full likelihood with a product of simpler 
+likelihood components.
+:::
+
+## General definition
+
+Let $\{A_k(X)\}_{k=1}^K$ be a collection of events or subsets of the data.
+
+A composite likelihood takes the form
+
+$$
+L_C(\theta; X)
+=
+\prod_{k=1}^K
+L_k(\theta; X),
+$$
+
+where each $L_k(\theta; X)$ is a likelihood contribution based on $A_k(X)$.
+
+Taking logs gives the composite log-likelihood:
+
+$$
+\ell_C(\theta)
+=
+\sum_{k=1}^K
+\log L_k(\theta; X).
+$$
+
+The estimator is defined as
+
+$$
+\hat{\theta}
+=
+\arg\max_\theta \ell_C(\theta).
+$$
+
+## Pairwise composite likelihood
+
+A common and important choice is the **pairwise composite likelihood**, which 
+uses information from pairs of points.
+
+Instead of modelling the full joint density, we use the joint behaviour of pairs $(x_i, x_j)$.
+
+## Second-order structure
+
+Recall that the second-order product density is defined as
+
+$$
+\lambda^{(2)}(u,v)
+=
+\lambda(u)\lambda(v) g(u,v),
+$$
+
+where $g(u,v)$ is the pair correlation function.
+
+This quantity describes the joint behaviour of two points.
+
+## Pairwise likelihood for point processes
+
+Heuristically, we can construct a likelihood using all unordered pairs:
+
+$$
+L_{\text{pair}}(\theta)
+\propto
+\prod_{i<j}
+\lambda^{(2)}(x_i,x_j).
+$$
+
+Substituting the factorization gives
+
+$$
+L_{\text{pair}}(\theta)
+\propto
+\prod_{i<j}
+\lambda(x_i)\lambda(x_j) g(x_i,x_j).
+$$
+
+This can be rearranged as
+
+$$
+L_{\text{pair}}(\theta)
+\propto
+\left(\prod_{i=1}^n \lambda(x_i)^{n-1}\right)
+\prod_{i<j} g(x_i,x_j).
+$$
+
+## Interpretation
+
+The pairwise likelihood consists of two components:
+
+- intensity contributions $\lambda(x_i)$
+- interaction contributions through $g(x_i,x_j)$
+
+However, unlike the full likelihood, this construction:
+
+- ignores higher-order interactions
+- overcounts information (since pairs overlap)
+- is not a true likelihood
+
+:::{.callout-note}
+Composite likelihoods are not exact likelihoods, but they often retain enough 
+structure to produce useful estimators.
+:::
+
+## Log pairwise likelihood
+
+Taking logs gives
+
+$$
+\ell_{\text{pair}}(\theta)
+=
+\sum_{i<j} \log \lambda^{(2)}(x_i,x_j).
+$$
+
+Using the factorization:
+
+$$
+\ell_{\text{pair}}(\theta)
+=
+\sum_{i<j}
+\left[
+\log \lambda(x_i)
++
+\log \lambda(x_j)
++
+\log g(x_i,x_j)
+\right].
+$$
+
+## Stationary and isotropic case
+
+If the process is stationary and isotropic:
+
+- $\lambda(u) \equiv \lambda$
+- $g(u,v) = g(r)$ where $r = \|u-v\|$
+
+Then
+
+$$
+\ell_{\text{pair}}(\theta)
+=
+\sum_{i<j}
+\left[
+2 \log \lambda + \log g(r_{ij})
+\right].
+$$
+
+where $r_{ij} = \|x_i - x_j\|$.
+
+## Connection to minimum contrast
+
+The pairwise composite likelihood depends on the pair correlation function $g(r)$.
+
+Similarly, minimum contrast estimation based on the PCF uses:
+
+$$
+\hat{g}(r) \approx g(r;\theta).
+$$
+
+So both methods are driven by the same underlying quantity:
+
+:::{.callout-important}
+Both pairwise composite likelihood and PCF-based minimum contrast rely on 
+second-order structure.
+:::
+
+The difference is:
+
+- minimum contrast compares functions
+- composite likelihood uses pairwise contributions directly
+
+## What information is being used?
+
+Pairwise composite likelihood uses:
+
+- all pairs of observed points
+- information encoded in $\lambda^{(2)}(u,v)$
+
+But it does not use:
+
+- triple interactions
+- higher-order dependencies
+- full joint structure
+
+## Implications for Cox processes
+
+For Cox processes:
+
+- the pair correlation function is available in closed form
+- second-order structure is easy to compute
+
+So pairwise composite likelihood is computationally attractive.
+
+However:
+
+:::{.callout-warning}
+If two models share the same second-order structure, they will be indistinguishable 
+under pairwise composite likelihood.
+:::
+
+This mirrors the limitation observed for minimum contrast estimation.
+
+## Practical considerations
+
+In practice, pairwise likelihoods are often modified:
+
+- include weights to reduce the influence of distant pairs
+- restrict to pairs with $r \le r_{\max}$
+- correct for edge effects
+
+These choices are similar in spirit to:
+
+- choosing a fitting range in minimum contrast
+- weighting the PCF
+
+## Summary
+
+Composite likelihood provides a compromise between:
+
+- full likelihood (intractable)
+- summary-based methods (such as minimum contrast)
+
+By focusing on lower-dimensional components, it offers:
+
+- a likelihood-like framework
+- computational tractability
+
+However, when based on pairs, it still relies only on second-order structure.
+
+As a result:
+
+- it shares many of the same limitations as minimum contrast
+- it cannot distinguish models that agree at the level of the pair correlation 
+function
+
+This observation will be important in understanding the limitations of inference 
+for Cox processes.

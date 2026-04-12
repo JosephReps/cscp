@@ -1,0 +1,172 @@
+# Point Process Definition
+
+## From Point patterns to counting
+
+In the previous section, we described a point pattern as a random set of locations:
+
+$$
+X = \{x_1, x_2, \dots, x_n\} \subset W.
+$$
+
+While this representation is intuitive, it is not mathematically convenient. In
+particular, it does not easily allow us to:
+
+- count the number of points in a region
+- define expectations
+- describe spatial structure
+
+To address this, we introduce an equivalent but more useful representation.
+
+## The counting measure
+
+Instead of working directly with the set of points, we define a function that 
+counts how many points fall inside any region.
+
+For a set $B \subset W$, define:
+
+$$
+N(B) = \text{number of points of X that lie in B}.
+$$
+
+This function $N(\cdot)$ is called the counting measure associated with the point 
+pattern.
+
+:::callout-note
+Example:
+
+- $N(B) = 0$: no points in $B$
+- $N(B) = 5$: 5 points in $B$
+- $N(W) = n$: total number of points
+:::
+
+## Definition of a point process
+
+A point process is a random mechanism that assigns a count to every region 
+$B \subset W$.
+
+Formally, a point process is a collection of random variables:
+
+$$
+\{N(B): B \subset W\}
+$$
+
+where $N(B)$ gives the number of points in a region $B$.
+
+:::callout-tip
+OK so a point process is just an infinite collection of random variables, indexed
+by every possible subset of the observation window $W$?
+
+Can it be a finite collection?
+
+If $W = \{1\}$, then is $\{N(1)\}$ a point process.
+
+A:
+"...infinite collection of random variables..."
+
+It is, but also with the requirement that the random variables are counting 
+variables (?).
+
+Technically, the example $W = \{1\}$, $\{N(1)\}$, *is* a point process, but it
+is a trivial one. 
+
+"A point process generalizes integer-valued random variables to spatial domains."
+:::
+
+:::callout-tip
+On that last quote there, is there a generalization of real-valued variables to 
+spatial domains?
+
+A: Right so this is literally how we arrive at *random fields*.
+
+>A point process models where events occur, while a random field models how an underlying quantity varies across space
+:::
+
+## Consistency properties
+
+The counting variables $N(B)$ must satisfy some natural properties:
+
+1. Non-negativity
+
+$$
+N(B) \in \{0,1,2,\dots\}
+$$
+
+2. Additivity
+
+If $B_1, B_2$ are disjoint, then:
+
+$$
+N(B_1 \cup B_2) = N(B_1) + N(B_2)
+$$
+
+3. Finite counts (locally finite)
+
+For bounded regions $B$, $N(B) < \infty$
+
+:::callout-tip
+Are these axioms or properties?
+
+Why not define point process as: 
+
+Collection of random variables $\{N(B): B \subset W\}$
+
+where $N(B)$ are counting variables (measures?) which satisfy (1, 2, 3) above.
+
+A: Yes this would be better if asked for the exact definition of a point process.
+:::
+
+## Equivalence with point patterns
+
+The counting measure representation and the set representation are equivalent.
+
+- Given a set of points $\{x_1, \dots, x_n \}$, we can define:
+
+$$
+N(B) = \sum_{i=1}^n\mathbb{1}\{x_i \in B\}
+$$
+
+- Conversely, given $N(\cdot)$, we can recover the point locations.
+
+This allows us to switch between:
+
+- a geometric view (points in space)
+- a measure-theoretic view (counts over regions)
+
+:::callout-tip
+So this is just explaining that, we *could* view the point process as a
+"random set of locations", but it is not as mathematically convenient, so instead
+we construct the counting-variable version?
+
+A: Yes this is correct.
+
+How would you explicitly construct the random set of locations version?
+
+Choose a random number of locations, and then choose each location independently?
+Or we would need a joint distribution? Possible over the count too?
+
+A: Basically yes.
+:::
+
+## Simple point process 
+
+In most applications, we assume the process is simple, meaning:
+
+- no two points occur at exactly the same location
+
+Formally:
+
+$$
+N(\{u\}) \in \{0, 1\}\quad \forall \ u \in W
+$$
+
+This rules out multiple points stacking on top of each other.
+
+
+
+
+
+
+
+
+
+

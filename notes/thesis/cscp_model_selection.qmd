@@ -1,0 +1,159 @@
+# Model interpretation
+
+We have considered a sequence of increasingly refined constructions for defining 
+a Cox process. 
+Beginning with the most general non-central formulation, we examined its 
+structural properties, identified limitations in interpretability, and 
+progressively imposed restrictions to obtain simpler and more tractable models.
+
+This process has revealed a trade-off between generality, interpretability, and 
+modelling flexibility, which we now summarise and use to guide the selection of a 
+preferred construction.
+
+## Summary of constructions
+
+We have considered three primary constructions:
+
+- The **non-central model**:
+  $$
+  \Lambda(u) = Z(u)^2, \quad \mathbb{E}[Z(u)] = m(u)
+  $$
+
+- The **centered model**:
+  $$
+  \Lambda(u) = Z(u)^2, \quad \mathbb{E}[Z(u)] = 0
+  $$
+
+- The **shifted model**:
+  $$
+  \Lambda(u) = \mu + Z(u)^2, \quad \mathbb{E}[Z(u)] = 0
+  $$
+
+Each of these models defines a valid Cox process, but differs in terms of interpretability and flexibility.
+
+## Interpretation of the constructions
+
+Each construction corresponds to a different interpretation of how spatial 
+variation in intensity is generated.
+
+In the **non-central model**, the intensity comes from a quadratic transformation 
+of a Gaussian field with non-zero mean. This leads to interaction between the mean 
+and covariance structure, resulting in a pair correlation function containing both 
+linear and quadratic terms in the correlation function. While flexible, the 
+interaction complicates interpretation, as it is difficult to untangle the 
+effects of first- and second-order structure. 
+
+In the **centered model**, the intensity is driven purely by stochastic fluctuations 
+of a mean-zero Gaussian field. This leads to a particularly simple form of the pair 
+correlation function, depending only on $\rho(r)^2$. However, this simplicity comes 
+at a cost: the clustering strength is fixed at $g(0) = 3$, and cannot be adjusted 
+through model parameters.
+
+In the **shifted model**, the intensity is decomposed into a deterministic baseline 
+component $\mu$ and a stochastic component $Z(u)^2$. This provides a natural 
+interpretation as a signal-plus-noise model, where $\mu$ represents background 
+intensity and $Z(u)^2$ introduces spatial clustering.
+
+:::callout-note
+Looking back on this, one thing I forget to mention is that a potential benefit 
+of the non-central over the shifted, is that the shifted model can only have intensity
+as low as the value of $\mu$, whereas the non-central allows intensity to drop
+all the way to 0.
+:::
+
+## Comparison of structural properties
+
+The key differences between the constructions can be summarised as follows:
+
+- **Interpretability**:
+  - Non-central: difficult due to mixed terms
+  - Centered: simple and interpretable
+  - Shifted: simple and interpretable
+
+- **Clustering behaviour**:
+  - Non-central: influenced by both mean and covariance
+  - Centered: fixed clustering strength ($g(0) = 3$)
+  - Shifted: clustering strength is parameter-dependent
+
+- **Flexibility**:
+  - Non-central: flexible within a bounded range
+  - Centered: highly restrictive
+  - Shifted: flexible within a bounded range
+
+- **Analytical tractability**:
+  - Non-central: slightly cumbersome
+  - Centered: squeaky clean
+  - Shifted: retains simplicity while improving flexibility
+  
+## Selection of the canonical construction
+
+From the above comparison, it is clear that the centered model, while elegant, is 
+too restrictive for practical use, as it does not allow control over clustering 
+strength. The non-central model, although more general, suffers from a lack of 
+interpretability due to the interaction between mean and covariance structure.
+
+The shifted model strikes a balance between these two extremes. It preserves the 
+analytical simplicity of the centered construction, while introducing sufficient 
+flexibility to model a range of clustering behaviours through the parameter $\mu$.
+
+For this reason, we adopt the shifted construction as the canonical form of the 
+single-component CSCP.
+
+## Final definition
+
+Throughout the remainder of this work, we define the single-component 
+Chi-square Cox process (CSCP) as the Cox process with random intensity
+
+$$
+\Lambda(u) = \mu + Z(u)^2,
+$$
+
+where $\mu \ge 0$ and $Z(u)$ is a mean-zero Gaussian random field with covariance 
+function $C(u,v)$.
+
+:::callout-note
+So I'm kind of fine with this part of the thesis overall, however there is one
+thing kind-of bothering me:
+
+We really only properly address 3 possible constructions of the CSCP.
+
+I'm fine with our justification as to why the construction we selected from the 
+three is preferred, however it is not exactly clear to me why the one we have 
+settled on might be the best of ALL possible constructions. For example, what if 
+a scaled and shifted CSCP is better, $\mu + \alpha Z(u)^2$? 
+
+(I guess this is just the same as shifted).
+
+Or any other possible transformation?
+
+I can understand if instead we are trying to go along with something like: "we 
+have been trying a bunch of things, and out of the stuff we tried, this seemed to
+work the best", but it does seem a little loose, no?
+
+What other possible transformations are there, involving $Z(u)^2$?
+
+(I understand that we want to preserve the fact that marginal distribution of 
+location is Chi-square, so this limits the number of possibilities I guess).
+
+Suggested?
+
+>While other transformations of Gaussian random fields could be considered, the 
+quadratic form represents the simplest construction leading to a chi-square-type 
+intensity. More complex transformations introduce additional parameters or 
+nonlinearities that complicate both interpretation and inference. The shifted 
+quadratic form therefore provides a natural balance between simplicity and 
+modelling flexibility within this class of processes.
+
+:::
+
+:::callout-note
+Also, I definitely should have mentioned that we decided to primarily use the 
+$(\lambda, \phi)$ parameterization, and justify why.
+:::
+
+
+
+
+
+
+

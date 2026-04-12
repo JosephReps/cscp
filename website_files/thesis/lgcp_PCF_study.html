@@ -1,0 +1,2314 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.27">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>42&nbsp; Implications for Statistical Inference – (Super Hot Fire) Thesis Notes</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../thesis/third_introduction.html" rel="next">
+<link href="../thesis/lgcp_PCF_comparison_emp.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-985aa47af68dae11cd4d235c71fb941e.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-364982630eef5352dd1537128a8ed5cb.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../styles.css">
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../thesis/lgcp_motivation.html">CSCP II</a></li><li class="breadcrumb-item"><a href="../thesis/lgcp_PCF_study.html"><span class="chapter-number">42</span>&nbsp; <span class="chapter-title">Implications for Statistical Inference</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">(Super Hot Fire) Thesis Notes</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false">
+ <span class="menu-text">Point Process Foundations</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pp/introduction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction to Point Processes</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pp/point_process_definition.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Point Process Definition</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pp/poisson_process.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">The Poisson Process</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pp/exercises.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Exercises</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false">
+ <span class="menu-text">First-Order Structure</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../structure/intensity_function.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Intensity function</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../structure/intensity_estimation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Intensity estimation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../structure/exercises1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Exercises</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
+ <span class="menu-text">Second-Order Structure</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../structure/second_order_product_density.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Second-Order Product Density</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../structure/pcf.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Pair Correlation Function</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../structure/k_function.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">K-function</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../structure/second_order_estimation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Second-Order Estimation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../structure/exercises2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Exercises</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false">
+ <span class="menu-text">Structural Assumptions</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../structure/stationarity.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Stationarity</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../structure/isotropy.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Isotropy</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../structure/exercises3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Exercises</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false">
+ <span class="menu-text">Random Fields</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../rf/gaussian_random_fields.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Gaussian Random Fields</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../rf/covariance_functions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Covariance Functions</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../rf/exercises.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Exercises</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="false">
+ <span class="menu-text">Cox Processes</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../cox/cox_process_definition.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Introduction to Cox Processes</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../cox/moment_properties.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Moment Properties</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../cox/exercises.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Exercises</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false">
+ <span class="menu-text">Log-Gaussian Cox Processes</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../lgcp/lgcp_definition.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Introduction to Log-Gaussian Cox Processes</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../lgcp/lgcp_moments.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Moment Properties of the LGCP</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../lgcp/lgcp_pcf.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Pair Correlation Function of the LGCP</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../lgcp/exercises.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Exercises</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="false">
+ <span class="menu-text">Estimation and Inference</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../inference/likelihood.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Likelihood</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../inference/minimum_contrast.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Minimum Contrast Estimation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../inference/composite_likelihood.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Composite Likelihood</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../inference/pseudolikelihood.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">Pseudolikelihood</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../inference/exercises.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">30</span>&nbsp; <span class="chapter-title">Exercises</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="false">
+ <span class="menu-text">CSCP I</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../thesis/cscp_preface.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">31</span>&nbsp; <span class="chapter-title">Defining the CSCP</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../thesis/cscp_definition.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">32</span>&nbsp; <span class="chapter-title">The Non-Central Model</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../thesis/cscp_definition2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">33</span>&nbsp; <span class="chapter-title">The Central Model</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../thesis/cscp_definition3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">34</span>&nbsp; <span class="chapter-title">The Shifted Model</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../thesis/cscp_parameterisations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">35</span>&nbsp; <span class="chapter-title">Parameterizations</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../thesis/cscp_parameterisations_derivations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">36</span>&nbsp; <span class="chapter-title">Parameterizations - Derivations</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../thesis/cscp_model_selection.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">37</span>&nbsp; <span class="chapter-title">Model interpretation</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" role="navigation" aria-expanded="true">
+ <span class="menu-text">CSCP II</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-10" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../thesis/lgcp_motivation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">38</span>&nbsp; <span class="chapter-title">Motivating the Identifiability Problem</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../thesis/lgcp_identifiability.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">39</span>&nbsp; <span class="chapter-title">Model Setup</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../thesis/lgcp_PCF_comparison.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">40</span>&nbsp; <span class="chapter-title">🚧 Theoretical(ish) Comparison of PCFs</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../thesis/lgcp_PCF_comparison_emp.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">41</span>&nbsp; <span class="chapter-title">🚧 Empirical comparison of PCF families</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../thesis/lgcp_PCF_study.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">42</span>&nbsp; <span class="chapter-title">Implications for Statistical Inference</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" role="navigation" aria-expanded="false">
+ <span class="menu-text">CSCP III</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-11" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../thesis/third_introduction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">43</span>&nbsp; <span class="chapter-title">🚧 Identifiability Beyond Second-Order Structure</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" role="navigation" aria-expanded="false">
+ <span class="menu-text">Package Docs</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-12" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../package_docs/basics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">44</span>&nbsp; <span class="chapter-title">🚧 Getting Started</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../package_docs/minimum_contrast.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">45</span>&nbsp; <span class="chapter-title">Minimum contrast</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview"><span class="header-section-number">42.1</span> Overview</a></li>
+  <li><a href="#key-quantities-of-interest" id="toc-key-quantities-of-interest" class="nav-link" data-scroll-target="#key-quantities-of-interest"><span class="header-section-number">42.2</span> Key quantities of interest</a></li>
+  <li><a href="#experimental-setup" id="toc-experimental-setup" class="nav-link" data-scroll-target="#experimental-setup"><span class="header-section-number">42.3</span> Experimental setup</a></li>
+  <li><a href="#expected-behaviour" id="toc-expected-behaviour" class="nav-link" data-scroll-target="#expected-behaviour"><span class="header-section-number">42.4</span> Expected behaviour</a></li>
+  <li><a href="#single-dataset-illustration" id="toc-single-dataset-illustration" class="nav-link" data-scroll-target="#single-dataset-illustration"><span class="header-section-number">42.5</span> Single dataset illustration</a></li>
+  <li><a href="#cscp-generated-data" id="toc-cscp-generated-data" class="nav-link" data-scroll-target="#cscp-generated-data"><span class="header-section-number">42.6</span> CSCP-generated data</a>
+  <ul class="collapse">
+  <li><a href="#small-aside" id="toc-small-aside" class="nav-link" data-scroll-target="#small-aside"><span class="header-section-number">42.6.1</span> Small aside</a></li>
+  </ul></li>
+  <li><a href="#lgcp-generated-data" id="toc-lgcp-generated-data" class="nav-link" data-scroll-target="#lgcp-generated-data"><span class="header-section-number">42.7</span> LGCP-generated data</a>
+  <ul class="collapse">
+  <li><a href="#small-aside-again" id="toc-small-aside-again" class="nav-link" data-scroll-target="#small-aside-again"><span class="header-section-number">42.7.1</span> Small aside (again)</a></li>
+  </ul></li>
+  <li><a href="#summary-and-implications" id="toc-summary-and-implications" class="nav-link" data-scroll-target="#summary-and-implications"><span class="header-section-number">42.8</span> Summary and implications</a>
+  <ul class="collapse">
+  <li><a href="#what-does-this-mean" id="toc-what-does-this-mean" class="nav-link" data-scroll-target="#what-does-this-mean"><span class="header-section-number">42.8.1</span> What does this mean?</a></li>
+  <li><a href="#implications-for-modelling" id="toc-implications-for-modelling" class="nav-link" data-scroll-target="#implications-for-modelling"><span class="header-section-number">42.8.2</span> Implications for modelling</a></li>
+  <li><a href="#future-directions" id="toc-future-directions" class="nav-link" data-scroll-target="#future-directions"><span class="header-section-number">42.8.3</span> Future directions</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../thesis/lgcp_motivation.html">CSCP II</a></li><li class="breadcrumb-item"><a href="../thesis/lgcp_PCF_study.html"><span class="chapter-number">42</span>&nbsp; <span class="chapter-title">Implications for Statistical Inference</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">42</span>&nbsp; <span class="chapter-title">Implications for Statistical Inference</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>Need to rerun the study, as I changed the MC estimator (fitting over <span class="math inline">\(\eta\)</span> where <span class="math inline">\(\phi = 2\cdot \text{plogis}(\eta)\)</span>).</p>
+<p>Confident it won’t change the results.</p>
+<p>Typee shitttttttt.</p>
+<section id="overview" class="level2" data-number="42.1">
+<h2 data-number="42.1" class="anchored" data-anchor-id="overview"><span class="header-section-number">42.1</span> Overview</h2>
+<p>The previous sections showed that LGCP and CSCP models can produce nearly identical pair correlation functions when their parameters are suitably chosen.</p>
+<p>This section investigates whether this similarity carries through to statistical inference.</p>
+<p>In particular, we examine whether minimum contrast estimation based on the pair correlation function leads to similar conclusions under the two models.</p>
+<p>For each simulated dataset, we fit both LGCP and CSCP models, and compare the resulting estimates and fitted second-order structure.</p>
+<p>This allows us to assess whether the two models produce consistent descriptions of clustering when applied to the same data.</p>
+<hr>
+</section>
+<section id="key-quantities-of-interest" class="level2" data-number="42.2">
+<h2 data-number="42.2" class="anchored" data-anchor-id="key-quantities-of-interest"><span class="header-section-number">42.2</span> Key quantities of interest</h2>
+<p>The LGCP and CSCP models use different functional forms for their pair correlation functions:</p>
+<ul>
+<li>CSCP:</li>
+</ul>
+<p><span class="math display">\[
+g_{CSCP}(r; \lambda, \phi, s_C) = 1 + \phi \exp\left(-\frac{2r}{s_C}\right),
+\]</span></p>
+<ul>
+<li>LGCP:</li>
+</ul>
+<p><span class="math display">\[
+g_{LGCP}(r; \lambda, \phi, s_L) = (1 + \phi)^{\exp(-r/s_L)}.
+\]</span></p>
+<p>As a result, their scale parameters <span class="math inline">\(s_C\)</span> and <span class="math inline">\(s_L\)</span> are not directly comparable, even when the models produce nearly identical curves.</p>
+<p>To enable meaningful comparison, we focus on two quantities:</p>
+<p><strong>1. Clustering strength</strong></p>
+<p><span class="math display">\[
+\phi = g(0) - 1
+\]</span></p>
+<p>This is common to both models and directly comparable.</p>
+<p><strong>2. Half-decay distance</strong></p>
+<p>We define the half-decay distance <span class="math inline">\(r_{1/2}\)</span> as the distance at which the excess clustering halves:</p>
+<p><span class="math display">\[
+g(r_{1/2}) - 1 = \frac{\phi}{2}
+\]</span></p>
+<p>For the two models this gives:</p>
+<ul>
+<li>CSCP:</li>
+</ul>
+<p><span class="math display">\[
+r_{1/2}^{(C)} = \frac{s_C}{2}\log(2)
+\]</span></p>
+<ul>
+<li>LGCP:</li>
+</ul>
+<p><span class="math display">\[
+r_{1/2}^{(L)} = s_L\log(\frac{\log(1 + \phi)}{\log(1 + \phi / 2)})
+\]</span></p>
+<p>This provides a model-independent measure of clustering scale, allowing meaningful comparison between models.</p>
+</section>
+<section id="experimental-setup" class="level2" data-number="42.3">
+<h2 data-number="42.3" class="anchored" data-anchor-id="experimental-setup"><span class="header-section-number">42.3</span> Experimental setup</h2>
+<p>We consider the following procedure.</p>
+<p>For each parameter setting <span class="math inline">\((\lambda, \phi, s)\)</span>:</p>
+<ol type="1">
+<li>Simulate <span class="math inline">\(n_{\text{rep}} = 200\)</span> point patterns from:</li>
+</ol>
+<ul>
+<li>a CSCP model</li>
+<li>an LGCP model</li>
+</ul>
+<ol start="2" type="1">
+<li>For each simulated dataset:</li>
+</ol>
+<ul>
+<li>estimate the pair correlation function <span class="math inline">\(\hat{g}(r)\)</span></li>
+<li>fit both models (LGCP and CSCP) using minimum contrast</li>
+</ul>
+<ol start="3" type="1">
+<li>For each fit, record:</li>
+</ol>
+<ul>
+<li>estimated clustering strength <span class="math inline">\(\hat{\phi}\)</span></li>
+<li>fitted scale parameter (<span class="math inline">\(\hat{s}_C\)</span> or <span class="math inline">\(\hat{s}_L\)</span>)</li>
+<li>derived half-decay distance <span class="math inline">\(\hat{r}_{1/2}\)</span></li>
+<li>fitted pair correlation function</li>
+</ul>
+</section>
+<section id="expected-behaviour" class="level2" data-number="42.4">
+<h2 data-number="42.4" class="anchored" data-anchor-id="expected-behaviour"><span class="header-section-number">42.4</span> Expected behaviour</h2>
+<p>If second-order structure alone is insufficient to distinguish between the models, we expect:</p>
+<ul>
+<li>both models to produce similar fitted PCFs on the same dataset</li>
+<li>both models to yield similar estimates of clustering strength</li>
+<li>raw scale parameters <span class="math inline">\(\hat{s}_C\)</span> and <span class="math inline">\(\hat{s}_L\)</span> to differ</li>
+<li>but derived scale summaries such as <span class="math inline">\(\hat{r}_{1/2}\)</span> to be more closely aligned</li>
+</ul>
+</section>
+<section id="single-dataset-illustration" class="level2" data-number="42.5">
+<h2 data-number="42.5" class="anchored" data-anchor-id="single-dataset-illustration"><span class="header-section-number">42.5</span> Single dataset illustration</h2>
+<p>Some helpers for calculating <span class="math inline">\(r_{1/2}\)</span>:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>half_decay_cscp <span class="ot">&lt;-</span> <span class="cf">function</span>(phi, s) {</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  (s <span class="sc">/</span> <span class="dv">2</span>) <span class="sc">*</span> <span class="fu">log</span>(<span class="dv">2</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>half_decay_lgcp <span class="ot">&lt;-</span> <span class="cf">function</span>(phi, s) {</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  s <span class="sc">*</span> <span class="fu">log</span>(<span class="fu">log</span>(<span class="dv">1</span> <span class="sc">+</span> phi) <span class="sc">/</span> <span class="fu">log</span>(<span class="dv">1</span> <span class="sc">+</span> phi<span class="sc">/</span><span class="dv">2</span>))</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>And illustrating:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lgcp_PCF_study_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>You can find my:</p>
+<ul>
+<li>Minimum contrast fitting methods <a href="https://github.com/JosephReps/coxLab">here</a></li>
+<li>CSCP / LGCP simulation methods <a href="https://github.com/JosephReps/coxLab">here</a></li>
+</ul>
+</div>
+</div>
+</section>
+<section id="cscp-generated-data" class="level2" data-number="42.6">
+<h2 data-number="42.6" class="anchored" data-anchor-id="cscp-generated-data"><span class="header-section-number">42.6</span> CSCP-generated data</h2>
+<p>We first consider datasets generated from the CSCP model.</p>
+<p>For each parameter setting <span class="math inline">\((\lambda, \phi, s)\)</span>, we:</p>
+<ol type="1">
+<li>simulate <span class="math inline">\(n_{\text{rep}}\)</span> point patterns from a CSCP model;</li>
+<li>estimate the empirical pair correlation function <span class="math inline">\(\hat g(r)\)</span>;</li>
+<li>fit both CSCP and LGCP models using minimum contrast;</li>
+<li>record the estimated clustering strength <span class="math inline">\(\hat\phi\)</span>, the fitted scale parameter, and the derived half-decay distance <span class="math inline">\(\hat r_{1/2}\)</span>.</li>
+</ol>
+<p>We then compare the resulting estimates across the two fitted models.</p>
+<p>To examine performance across a range of clustering regimes, we fix <span class="math inline">\(\lambda = 300\)</span>, and consider</p>
+<p><span class="math display">\[
+\phi \in \{0.75,\,1.5,\,2.0\}, \qquad s \in \{0.03,\,0.05,\,0.08\}.
+\]</span> These values represent moderate to strong clustering (relative to the CSCP model) over short, intermediate, and longer spatial ranges.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Originally I wanted to use <span class="math inline">\(\phi \in \{0.25, 1, 2\}\)</span>, however for <span class="math inline">\(\phi = 0.25\)</span>, the estimation is very unstable so I decided to just use these new values.</p>
+<p>Might’ve been better if I just used <span class="math inline">\(\{1, 2\}\)</span>, but I wanted nice 3x3 panels.</p>
+<p>Additionally, I chose <span class="math inline">\(\lambda = 300\)</span>, as I wanted the non-parametric PCF estimator to perform well, so our results are not “muddied” by the poor empirical fit.</p>
+<p>Bandwidth chosen as a value which has worked well in my experience. I think the proper thing to do would be to run some type of CV to find the best value?</p>
+<p>And the other settings are either matched to the ones you guys use in the paper on the new PCF estimator, or the default spatstat.</p>
+<p>Are these sensible choices?</p>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lgcp_PCF_study_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>These curves illustrate the range of second-order structures considered in the simulation study. In particular, increasing <span class="math inline">\(\phi\)</span> controls the <em>magnitude</em> of clustering, while increasing <span class="math inline">\(s\)</span> controls the spatial extent over which clustering persists.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>n_rep <span class="ot">&lt;-</span> <span class="dv">20</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>results_list <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>counter <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(scenarios)) {</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  phi_true <span class="ot">&lt;-</span> scenarios<span class="sc">$</span>phi[j]</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  s_true   <span class="ot">&lt;-</span> scenarios<span class="sc">$</span>s[j]</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n_rep) {</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    X <span class="ot">&lt;-</span> <span class="fu">sim_cscp</span>(W, <span class="at">lambda =</span> <span class="dv">300</span>, <span class="at">phi =</span> phi_true, <span class="at">s =</span> s_true)<span class="sc">$</span>pp</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    fit_c <span class="ot">&lt;-</span> <span class="fu">fit_cscp_mc</span>(</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>      X,</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>      <span class="at">bw =</span> fit_args<span class="sc">$</span>bw,</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>      <span class="at">correction =</span> <span class="st">"isotropic"</span>,</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>      <span class="at">divisor =</span> <span class="st">"a"</span>,</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>      <span class="at">zerocor =</span> <span class="st">"JonesFoster"</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    fit_l <span class="ot">&lt;-</span> <span class="fu">fit_lgcp_mc</span>(</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>      X,</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>      <span class="at">bw =</span> fit_args<span class="sc">$</span>bw,</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>      <span class="at">correction =</span> <span class="st">"isotropic"</span>,</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>      <span class="at">divisor =</span> <span class="st">"a"</span>,</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>      <span class="at">zerocor =</span> <span class="st">"JonesFoster"</span></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>    results_list[[counter]] <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>      <span class="at">generator =</span> <span class="st">"CSCP"</span>,</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>      <span class="at">phi_true =</span> phi_true,</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>      <span class="at">s_true =</span> s_true,</span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>      <span class="at">r_half_true =</span> <span class="fu">half_decay_cscp</span>(phi_true, s_true),</span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>      <span class="at">rep =</span> i,</span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>      <span class="at">fit_model =</span> <span class="st">"CSCP"</span>,</span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>      <span class="at">phi_hat =</span> fit_c<span class="sc">$</span>par[[<span class="st">"phi"</span>]],</span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>      <span class="at">s_hat =</span> fit_c<span class="sc">$</span>par[[<span class="st">"s"</span>]],</span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>      <span class="at">r_half =</span> <span class="fu">half_decay_cscp</span>(fit_c<span class="sc">$</span>par[[<span class="st">"phi"</span>]], fit_c<span class="sc">$</span>par[[<span class="st">"s"</span>]])</span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>    counter <span class="ot">&lt;-</span> counter <span class="sc">+</span> <span class="dv">1</span></span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>    results_list[[counter]] <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>      <span class="at">generator =</span> <span class="st">"CSCP"</span>,</span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>      <span class="at">phi_true =</span> phi_true,</span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>      <span class="at">s_true =</span> s_true,</span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>      <span class="at">r_half_true =</span> <span class="fu">half_decay_cscp</span>(phi_true, s_true),</span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>      <span class="at">rep =</span> i,</span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>      <span class="at">fit_model =</span> <span class="st">"LGCP"</span>,</span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a>      <span class="at">phi_hat =</span> fit_l<span class="sc">$</span>par[[<span class="st">"phi"</span>]],</span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>      <span class="at">s_hat =</span> fit_l<span class="sc">$</span>par[[<span class="st">"s"</span>]],</span>
+<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a>      <span class="at">r_half =</span> <span class="fu">half_decay_lgcp</span>(fit_l<span class="sc">$</span>par[[<span class="st">"phi"</span>]], fit_l<span class="sc">$</span>par[[<span class="st">"s"</span>]])</span>
+<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a>    counter <span class="ot">&lt;-</span> counter <span class="sc">+</span> <span class="dv">1</span></span>
+<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">bind_rows</span>(results_list)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>We first compare the fitted models visually through the distribution of estimated clustering strength and half-decay distance across simulations.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(results, <span class="fu">aes</span>(<span class="at">x =</span> fit_model, <span class="at">y =</span> phi_hat, <span class="at">fill =</span> fit_model)) <span class="sc">+</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">outliers =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="fu">aes</span>(<span class="at">yintercept =</span> phi_true),</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>             <span class="at">linetype =</span> <span class="st">"dashed"</span>,</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>             <span class="at">colour =</span> <span class="st">"black"</span>,</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>             <span class="at">linewidth =</span> <span class="fl">0.4</span>) <span class="sc">+</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(phi_true <span class="sc">~</span> s_true, <span class="at">labeller =</span> label_both) <span class="sc">+</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Estimated clustering strength (CSCP data)"</span>,</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Fitted model"</span>,</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="fu">expression</span>(<span class="fu">hat</span>(phi))</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lgcp_PCF_study_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(results, <span class="fu">aes</span>(<span class="at">x =</span> fit_model, <span class="at">y =</span> r_half, <span class="at">fill =</span> fit_model)) <span class="sc">+</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">outliers =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="fu">aes</span>(<span class="at">yintercept =</span> r_half_true),</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>             <span class="at">linetype =</span> <span class="st">"dashed"</span>,</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>             <span class="at">colour =</span> <span class="st">"black"</span>,</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>             <span class="at">linewidth =</span> <span class="fl">0.4</span>) <span class="sc">+</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(phi_true <span class="sc">~</span> s_true, <span class="at">labeller =</span> label_both) <span class="sc">+</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Half-decay distance (CSCP data)"</span>,</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Fitted model"</span>,</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="fu">expression</span>(<span class="fu">hat</span>(r)[<span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>])</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lgcp_PCF_study_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>To quantify these differences, we summarise the agreement between the two fitted models across simulations.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># This is nasty work, would come back and clean up if this wasn't just rough </span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># notes</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># True half-decay for CSCP generator</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> results <span class="sc">%&gt;%</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">r_half_true =</span> <span class="fu">half_decay_cscp</span>(phi_true, s_true),</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">phi_error =</span> phi_hat <span class="sc">-</span> phi_true,</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">r_half_error =</span> r_half <span class="sc">-</span> r_half_true</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>agreement_table <span class="ot">&lt;-</span> results <span class="sc">%&gt;%</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(generator, phi_true, s_true, rep, fit_model, phi_hat, r_half) <span class="sc">%&gt;%</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  tidyr<span class="sc">::</span><span class="fu">pivot_wider</span>(</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_from =</span> fit_model,</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_from =</span> <span class="fu">c</span>(phi_hat, r_half)</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">delta_phi =</span> <span class="fu">abs</span>(phi_hat_CSCP <span class="sc">-</span> phi_hat_LGCP),</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">delta_r_half =</span> <span class="fu">abs</span>(r_half_CSCP <span class="sc">-</span> r_half_LGCP),</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">rel_delta_phi =</span> delta_phi <span class="sc">/</span> phi_true,</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">rel_delta_r_half =</span> delta_r_half <span class="sc">/</span> <span class="fu">half_decay_cscp</span>(phi_true, s_true)</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">group_by</span>(generator, phi_true, s_true) <span class="sc">%&gt;%</span></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">summarise</span>(</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_delta_phi =</span> <span class="fu">mean</span>(delta_phi, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_delta_r_half =</span> <span class="fu">mean</span>(delta_r_half, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_rel_delta_phi =</span> <span class="fu">mean</span>(rel_delta_phi, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_rel_delta_r_half =</span> <span class="fu">mean</span>(rel_delta_r_half, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">median_rel_delta_phi =</span> <span class="fu">median</span>(rel_delta_phi, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">median_rel_delta_r_half =</span> <span class="fu">median</span>(rel_delta_r_half, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>agreement_table_clean <span class="ot">&lt;-</span> agreement_table <span class="sc">%&gt;%</span></span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>    <span class="at">median_rel_delta_phi =</span> <span class="dv">100</span> <span class="sc">*</span> median_rel_delta_phi,</span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>    <span class="at">median_rel_delta_r_half =</span> <span class="dv">100</span> <span class="sc">*</span> median_rel_delta_r_half</span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(</span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a>    phi_true, s_true,</span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a>    mean_delta_phi,</span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a>    median_rel_delta_phi,</span>
+<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a>    median_rel_delta_r_half</span>
+<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>variability_table <span class="ot">&lt;-</span> results <span class="sc">%&gt;%</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">group_by</span>(generator, phi_true, s_true, fit_model) <span class="sc">%&gt;%</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">summarise</span>(</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">sd_phi_hat =</span> <span class="fu">sd</span>(phi_hat, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">sd_r_half =</span> <span class="fu">sd</span>(r_half, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>comparison_table <span class="ot">&lt;-</span> agreement_table <span class="sc">%&gt;%</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    variability_table <span class="sc">%&gt;%</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>      <span class="fu">group_by</span>(phi_true, s_true) <span class="sc">%&gt;%</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>      <span class="fu">summarise</span>(</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>        <span class="at">sd_phi =</span> <span class="fu">mean</span>(sd_phi_hat),</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>        <span class="at">sd_r_half =</span> <span class="fu">mean</span>(sd_r_half),</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>        <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>      ),</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"phi_true"</span>, <span class="st">"s_true"</span>)</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">ratio_phi =</span> mean_delta_phi <span class="sc">/</span> sd_phi,</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">ratio_r_half =</span> mean_delta_r_half <span class="sc">/</span> sd_r_half</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(phi_true, s_true, ratio_phi, ratio_r_half)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>A small number of the fits produced wildly inaccurate estimates, which I’m assuming is just due to unreliable PCF estimation in general, rather than anything specific to the models I’m fitting.</p>
+<p>As such, we focus on the <em>median</em> relative differences, rather than the mean, reducing the influence of the occasional outlier.</p>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Agreement between LGCP and CSCP fits on CSCP-generated data</caption>
+<colgroup>
+<col style="width: 11%">
+<col style="width: 9%">
+<col style="width: 19%">
+<col style="width: 27%">
+<col style="width: 31%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: right;">phi_true</th>
+<th style="text-align: right;">s_true</th>
+<th style="text-align: right;">mean_delta_phi</th>
+<th style="text-align: right;">median_rel_delta_phi</th>
+<th style="text-align: right;">median_rel_delta_r_half</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">0.75</td>
+<td style="text-align: right;">0.03</td>
+<td style="text-align: right;">0.019</td>
+<td style="text-align: right;">1.0</td>
+<td style="text-align: right;">12.1</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0.75</td>
+<td style="text-align: right;">0.05</td>
+<td style="text-align: right;">0.042</td>
+<td style="text-align: right;">2.5</td>
+<td style="text-align: right;">14.4</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">0.75</td>
+<td style="text-align: right;">0.08</td>
+<td style="text-align: right;">0.065</td>
+<td style="text-align: right;">9.3</td>
+<td style="text-align: right;">12.9</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1.50</td>
+<td style="text-align: right;">0.03</td>
+<td style="text-align: right;">0.037</td>
+<td style="text-align: right;">1.4</td>
+<td style="text-align: right;">19.3</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">1.50</td>
+<td style="text-align: right;">0.05</td>
+<td style="text-align: right;">0.145</td>
+<td style="text-align: right;">7.6</td>
+<td style="text-align: right;">23.0</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1.50</td>
+<td style="text-align: right;">0.08</td>
+<td style="text-align: right;">0.272</td>
+<td style="text-align: right;">14.1</td>
+<td style="text-align: right;">20.9</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.00</td>
+<td style="text-align: right;">0.03</td>
+<td style="text-align: right;">0.075</td>
+<td style="text-align: right;">2.6</td>
+<td style="text-align: right;">22.8</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2.00</td>
+<td style="text-align: right;">0.05</td>
+<td style="text-align: right;">0.275</td>
+<td style="text-align: right;">11.9</td>
+<td style="text-align: right;">27.7</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.00</td>
+<td style="text-align: right;">0.08</td>
+<td style="text-align: right;">0.316</td>
+<td style="text-align: right;">13.1</td>
+<td style="text-align: right;">23.1</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Relative magnitude of cross-model differences compared to estimation variability</caption>
+<thead>
+<tr class="header">
+<th style="text-align: right;">phi_true</th>
+<th style="text-align: right;">s_true</th>
+<th style="text-align: right;">ratio_phi</th>
+<th style="text-align: right;">ratio_r_half</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">0.75</td>
+<td style="text-align: right;">0.03</td>
+<td style="text-align: right;">0.087</td>
+<td style="text-align: right;">0.070</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0.75</td>
+<td style="text-align: right;">0.05</td>
+<td style="text-align: right;">0.186</td>
+<td style="text-align: right;">0.024</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">0.75</td>
+<td style="text-align: right;">0.08</td>
+<td style="text-align: right;">0.238</td>
+<td style="text-align: right;">0.127</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1.50</td>
+<td style="text-align: right;">0.03</td>
+<td style="text-align: right;">0.185</td>
+<td style="text-align: right;">0.287</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">1.50</td>
+<td style="text-align: right;">0.05</td>
+<td style="text-align: right;">0.324</td>
+<td style="text-align: right;">0.511</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1.50</td>
+<td style="text-align: right;">0.08</td>
+<td style="text-align: right;">0.518</td>
+<td style="text-align: right;">0.660</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.00</td>
+<td style="text-align: right;">0.03</td>
+<td style="text-align: right;">0.199</td>
+<td style="text-align: right;">0.249</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2.00</td>
+<td style="text-align: right;">0.05</td>
+<td style="text-align: right;">0.468</td>
+<td style="text-align: right;">1.129</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.00</td>
+<td style="text-align: right;">0.08</td>
+<td style="text-align: right;">0.700</td>
+<td style="text-align: right;">0.659</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>The results show that both LGCP and CSCP models yield highly consistent second-order inference when fitted to the same CSCP-generated datasets.</p>
+<p>Across all parameter regimes, the median relative differences in estimated clustering strength <span class="math inline">\(\hat{\phi}\)</span> are small, typically below 15%. The corresponding differences in half-decay distance <span class="math inline">\(\hat{r}_{1/2}\)</span> are somewhat larger, but remain moderate, generally within 10–30%.</p>
+<p>To assess whether these differences are practically meaningful, we compare them to the inherent variability of the estimators. For both clustering strength and half-decay distance, the difference between the two fitted models is consistently smaller than the standard deviation of the estimates. In all scenarios, the ratio of cross-model differences to estimation variability is well below one.</p>
+<p>This indicates that the differences between LGCP and CSCP fits are negligible relative to statistical uncertainty. In particular, the two models lead to essentially the same conclusions regarding the strength and spatial extent of clustering in the data.</p>
+<p>From the perspective of second-order inference, the choice between LGCP and CSCP does not materially affect the conclusions drawn from the data.</p>
+<p>This provides empirical evidence that second-order summaries alone are insufficient to distinguish between these model classes in practice.</p>
+<section id="small-aside" class="level3" data-number="42.6.1">
+<h3 data-number="42.6.1" class="anchored" data-anchor-id="small-aside"><span class="header-section-number">42.6.1</span> Small aside</h3>
+<p>So we’ve seen the difference in fitted models is not very substantial, however I thought it might be nice to see which actually fits the data better, so we take a brief look here:</p>
+<p>A small number of fits produced extremely large scale estimates, leading to unrealistic values of the half-decay distance. To prevent these from dominating mean-based summaries, we report trimmed RMSE values, which are more robust to such instabilities.</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>RMSE of parameter estimates under CSCP-generated data</caption>
+<thead>
+<tr class="header">
+<th style="text-align: right;">phi_true</th>
+<th style="text-align: right;">s_true</th>
+<th style="text-align: left;">fit_model</th>
+<th style="text-align: right;">phi_rmse</th>
+<th style="text-align: right;">r_half_rmse</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">0.75</td>
+<td style="text-align: right;">0.03</td>
+<td style="text-align: left;">CSCP</td>
+<td style="text-align: right;">0.514</td>
+<td style="text-align: right;">0.021</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0.75</td>
+<td style="text-align: right;">0.03</td>
+<td style="text-align: left;">LGCP</td>
+<td style="text-align: right;">0.508</td>
+<td style="text-align: right;">0.020</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">0.75</td>
+<td style="text-align: right;">0.05</td>
+<td style="text-align: left;">CSCP</td>
+<td style="text-align: right;">0.362</td>
+<td style="text-align: right;">0.020</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0.75</td>
+<td style="text-align: right;">0.05</td>
+<td style="text-align: left;">LGCP</td>
+<td style="text-align: right;">0.357</td>
+<td style="text-align: right;">0.018</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">0.75</td>
+<td style="text-align: right;">0.08</td>
+<td style="text-align: left;">CSCP</td>
+<td style="text-align: right;">0.246</td>
+<td style="text-align: right;">0.021</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0.75</td>
+<td style="text-align: right;">0.08</td>
+<td style="text-align: left;">LGCP</td>
+<td style="text-align: right;">0.275</td>
+<td style="text-align: right;">0.019</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">1.50</td>
+<td style="text-align: right;">0.03</td>
+<td style="text-align: left;">CSCP</td>
+<td style="text-align: right;">1.070</td>
+<td style="text-align: right;">0.015</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1.50</td>
+<td style="text-align: right;">0.03</td>
+<td style="text-align: left;">LGCP</td>
+<td style="text-align: right;">1.039</td>
+<td style="text-align: right;">0.013</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">1.50</td>
+<td style="text-align: right;">0.05</td>
+<td style="text-align: left;">CSCP</td>
+<td style="text-align: right;">0.628</td>
+<td style="text-align: right;">0.011</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1.50</td>
+<td style="text-align: right;">0.05</td>
+<td style="text-align: left;">LGCP</td>
+<td style="text-align: right;">0.584</td>
+<td style="text-align: right;">0.008</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">1.50</td>
+<td style="text-align: right;">0.08</td>
+<td style="text-align: left;">CSCP</td>
+<td style="text-align: right;">0.406</td>
+<td style="text-align: right;">0.009</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1.50</td>
+<td style="text-align: right;">0.08</td>
+<td style="text-align: left;">LGCP</td>
+<td style="text-align: right;">0.581</td>
+<td style="text-align: right;">0.008</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.00</td>
+<td style="text-align: right;">0.03</td>
+<td style="text-align: left;">CSCP</td>
+<td style="text-align: right;">1.472</td>
+<td style="text-align: right;">0.016</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2.00</td>
+<td style="text-align: right;">0.03</td>
+<td style="text-align: left;">LGCP</td>
+<td style="text-align: right;">1.424</td>
+<td style="text-align: right;">0.014</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.00</td>
+<td style="text-align: right;">0.05</td>
+<td style="text-align: left;">CSCP</td>
+<td style="text-align: right;">0.770</td>
+<td style="text-align: right;">0.008</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2.00</td>
+<td style="text-align: right;">0.05</td>
+<td style="text-align: left;">LGCP</td>
+<td style="text-align: right;">0.715</td>
+<td style="text-align: right;">0.005</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.00</td>
+<td style="text-align: right;">0.08</td>
+<td style="text-align: left;">CSCP</td>
+<td style="text-align: right;">0.460</td>
+<td style="text-align: right;">0.008</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2.00</td>
+<td style="text-align: right;">0.08</td>
+<td style="text-align: left;">LGCP</td>
+<td style="text-align: right;">0.489</td>
+<td style="text-align: right;">0.008</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Across all parameter regimes, the RMSE values for the two fitted models are very similar. Differences between LGCP and CSCP fits are small in magnitude and show no consistent pattern: in some regimes the CSCP fit yields slightly lower error, while in others the LGCP fit performs marginally better.</p>
+<p>Importantly, even though the data are generated from a CSCP model, fitting an LGCP produces estimates with comparable accuracy. This indicates that, when inference is based on second-order summaries, neither model has a clear advantage in recovering the underlying clustering structure.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>I think a more interpretable table would display the difference in RMSE for each regime?</p>
+<p>To be honest I personally find deciding on what results to display <em>really</em> difficult, is there some sort of default / boiler that I can just always use and be confident I’m presenting the right information?</p>
+</div>
+</div>
+</section>
+</section>
+<section id="lgcp-generated-data" class="level2" data-number="42.7">
+<h2 data-number="42.7" class="anchored" data-anchor-id="lgcp-generated-data"><span class="header-section-number">42.7</span> LGCP-generated data</h2>
+<p>We now repeat the study with data generated from an LGCP model.</p>
+<p>For each parameter setting <span class="math inline">\((\lambda, \phi, s)\)</span>, we:</p>
+<ol type="1">
+<li>simulate <span class="math inline">\(n_{\text{rep}}\)</span> point patterns from an LGCP model;</li>
+<li>estimate the empirical pair correlation function <span class="math inline">\(\hat g(r)\)</span>;</li>
+<li>fit both LGCP and CSCP models using minimum contrast;</li>
+<li>record the estimated clustering strength <span class="math inline">\(\hat\phi\)</span>, the fitted scale parameter, and the derived half-decay distance <span class="math inline">\(\hat r_{1/2}\)</span>.</li>
+</ol>
+<p>We then compare the resulting estimates across the two fitted models.</p>
+<p>As before, we fix <span class="math inline">\(\lambda = 300\)</span>, and consider</p>
+<p><span class="math display">\[
+\phi \in \{0.75,\,1.5,\,2.0\}, \qquad s \in \{0.03,\,0.05,\,0.08\}.
+\]</span></p>
+<p>These values span a range of clustering strengths and spatial scales, allowing us to assess whether the same practical non-identifiability appears when the data are generated from the LGCP rather than the CSCP.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lgcp_PCF_study_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>These curves represent the second-order structures used in the LGCP-generated simulation study. As before, increasing <span class="math inline">\(\phi\)</span> increases the magnitude of clustering, while increasing <span class="math inline">\(s\)</span> increases the spatial scale over which that clustering persists.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>results_lgcp_list <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>counter <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(scenarios)) {</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  phi_true <span class="ot">&lt;-</span> scenarios<span class="sc">$</span>phi[j]</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  s_true   <span class="ot">&lt;-</span> scenarios<span class="sc">$</span>s[j]</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n_rep) {</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    X <span class="ot">&lt;-</span> <span class="fu">sim_lgcp</span>(W, <span class="at">lambda =</span> <span class="dv">300</span>, <span class="at">phi =</span> phi_true, <span class="at">s =</span> s_true)<span class="sc">$</span>pp</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    fit_l <span class="ot">&lt;-</span> <span class="fu">fit_lgcp_mc</span>(</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>      X,</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>      <span class="at">bw =</span> fit_args<span class="sc">$</span>bw,</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>      <span class="at">correction =</span> <span class="st">"isotropic"</span>,</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>      <span class="at">divisor =</span> <span class="st">"a"</span>,</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>      <span class="at">zerocor =</span> <span class="st">"JonesFoster"</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>    fit_c <span class="ot">&lt;-</span> <span class="fu">fit_cscp_mc</span>(</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>      X,</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>      <span class="at">bw =</span> fit_args<span class="sc">$</span>bw,</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>      <span class="at">correction =</span> <span class="st">"isotropic"</span>,</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>      <span class="at">divisor =</span> <span class="st">"a"</span>,</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>      <span class="at">zerocor =</span> <span class="st">"JonesFoster"</span></span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>    results_lgcp_list[[counter]] <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>      <span class="at">generator =</span> <span class="st">"LGCP"</span>,</span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>      <span class="at">phi_true =</span> phi_true,</span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>      <span class="at">s_true =</span> s_true,</span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>      <span class="at">r_half_true =</span> <span class="fu">half_decay_lgcp</span>(phi_true, s_true),</span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>      <span class="at">rep =</span> i,</span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>      <span class="at">fit_model =</span> <span class="st">"LGCP"</span>,</span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>      <span class="at">phi_hat =</span> fit_l<span class="sc">$</span>par[[<span class="st">"phi"</span>]],</span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>      <span class="at">s_hat =</span> fit_l<span class="sc">$</span>par[[<span class="st">"s"</span>]],</span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>      <span class="at">r_half =</span> <span class="fu">half_decay_lgcp</span>(fit_l<span class="sc">$</span>par[[<span class="st">"phi"</span>]], fit_l<span class="sc">$</span>par[[<span class="st">"s"</span>]])</span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>    counter <span class="ot">&lt;-</span> counter <span class="sc">+</span> <span class="dv">1</span></span>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a>    results_lgcp_list[[counter]] <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a>      <span class="at">generator =</span> <span class="st">"LGCP"</span>,</span>
+<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a>      <span class="at">phi_true =</span> phi_true,</span>
+<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a>      <span class="at">s_true =</span> s_true,</span>
+<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a>      <span class="at">r_half_true =</span> <span class="fu">half_decay_lgcp</span>(phi_true, s_true),</span>
+<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a>      <span class="at">rep =</span> i,</span>
+<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a>      <span class="at">fit_model =</span> <span class="st">"CSCP"</span>,</span>
+<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a>      <span class="at">phi_hat =</span> fit_c<span class="sc">$</span>par[[<span class="st">"phi"</span>]],</span>
+<span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a>      <span class="at">s_hat =</span> fit_c<span class="sc">$</span>par[[<span class="st">"s"</span>]],</span>
+<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a>      <span class="at">r_half =</span> <span class="fu">half_decay_cscp</span>(fit_c<span class="sc">$</span>par[[<span class="st">"phi"</span>]], fit_c<span class="sc">$</span>par[[<span class="st">"s"</span>]])</span>
+<span id="cb7-52"><a href="#cb7-52" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb7-53"><a href="#cb7-53" aria-hidden="true" tabindex="-1"></a>    counter <span class="ot">&lt;-</span> counter <span class="sc">+</span> <span class="dv">1</span></span>
+<span id="cb7-54"><a href="#cb7-54" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb7-55"><a href="#cb7-55" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-56"><a href="#cb7-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-57"><a href="#cb7-57" aria-hidden="true" tabindex="-1"></a>results_lgcp <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">bind_rows</span>(results_lgcp_list)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>We again compare the fitted models visually through the distribution of estimated clustering strength and half-decay distance across simulations.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lgcp_PCF_study_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lgcp_PCF_study_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>To quantify these differences, we summarise the agreement between the two fitted models across simulations.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>results_lgcp <span class="ot">&lt;-</span> results_lgcp <span class="sc">%&gt;%</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">r_half_true =</span> <span class="fu">half_decay_lgcp</span>(phi_true, s_true),</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">phi_error =</span> phi_hat <span class="sc">-</span> phi_true,</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">r_half_error =</span> r_half <span class="sc">-</span> r_half_true</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>agreement_table_lgcp <span class="ot">&lt;-</span> results_lgcp <span class="sc">%&gt;%</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(generator, phi_true, s_true, rep, fit_model, phi_hat, r_half) <span class="sc">%&gt;%</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  tidyr<span class="sc">::</span><span class="fu">pivot_wider</span>(</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_from =</span> fit_model,</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_from =</span> <span class="fu">c</span>(phi_hat, r_half)</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">delta_phi =</span> <span class="fu">abs</span>(phi_hat_CSCP <span class="sc">-</span> phi_hat_LGCP),</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">delta_r_half =</span> <span class="fu">abs</span>(r_half_CSCP <span class="sc">-</span> r_half_LGCP),</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">rel_delta_phi =</span> delta_phi <span class="sc">/</span> phi_true,</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">rel_delta_r_half =</span> delta_r_half <span class="sc">/</span> <span class="fu">half_decay_lgcp</span>(phi_true, s_true)</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">group_by</span>(generator, phi_true, s_true) <span class="sc">%&gt;%</span></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">summarise</span>(</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_delta_phi =</span> <span class="fu">mean</span>(delta_phi, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_delta_r_half =</span> <span class="fu">mean</span>(delta_r_half, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_rel_delta_phi =</span> <span class="fu">mean</span>(rel_delta_phi, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_rel_delta_r_half =</span> <span class="fu">mean</span>(rel_delta_r_half, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">median_rel_delta_phi =</span> <span class="fu">median</span>(rel_delta_phi, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">median_rel_delta_r_half =</span> <span class="fu">median</span>(rel_delta_r_half, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>agreement_table_lgcp_clean <span class="ot">&lt;-</span> agreement_table_lgcp <span class="sc">%&gt;%</span></span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">median_rel_delta_phi =</span> <span class="dv">100</span> <span class="sc">*</span> median_rel_delta_phi,</span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">median_rel_delta_r_half =</span> <span class="dv">100</span> <span class="sc">*</span> median_rel_delta_r_half</span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(</span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>    phi_true, s_true,</span>
+<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a>    mean_delta_phi,</span>
+<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a>    median_rel_delta_phi,</span>
+<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a>    median_rel_delta_r_half</span>
+<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>variability_table_lgcp <span class="ot">&lt;-</span> results_lgcp <span class="sc">%&gt;%</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">group_by</span>(generator, phi_true, s_true, fit_model) <span class="sc">%&gt;%</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">summarise</span>(</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">sd_phi_hat =</span> <span class="fu">sd</span>(phi_hat, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">sd_r_half =</span> <span class="fu">sd</span>(r_half, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>comparison_table_lgcp <span class="ot">&lt;-</span> agreement_table_lgcp <span class="sc">%&gt;%</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    variability_table_lgcp <span class="sc">%&gt;%</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>      <span class="fu">group_by</span>(phi_true, s_true) <span class="sc">%&gt;%</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>      <span class="fu">summarise</span>(</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>        <span class="at">sd_phi =</span> <span class="fu">mean</span>(sd_phi_hat),</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>        <span class="at">sd_r_half =</span> <span class="fu">mean</span>(sd_r_half),</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>        <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>      ),</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"phi_true"</span>, <span class="st">"s_true"</span>)</span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">ratio_phi =</span> mean_delta_phi <span class="sc">/</span> sd_phi,</span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">ratio_r_half =</span> mean_delta_r_half <span class="sc">/</span> sd_r_half</span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(phi_true, s_true, ratio_phi, ratio_r_half)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Agreement between LGCP and CSCP fits on LGCP-generated data</caption>
+<colgroup>
+<col style="width: 11%">
+<col style="width: 9%">
+<col style="width: 19%">
+<col style="width: 27%">
+<col style="width: 31%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: right;">phi_true</th>
+<th style="text-align: right;">s_true</th>
+<th style="text-align: right;">mean_delta_phi</th>
+<th style="text-align: right;">median_rel_delta_phi</th>
+<th style="text-align: right;">median_rel_delta_r_half</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">0.75</td>
+<td style="text-align: right;">0.03</td>
+<td style="text-align: right;">0.031</td>
+<td style="text-align: right;">2.7</td>
+<td style="text-align: right;">15.4</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0.75</td>
+<td style="text-align: right;">0.05</td>
+<td style="text-align: right;">0.058</td>
+<td style="text-align: right;">5.0</td>
+<td style="text-align: right;">13.0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">0.75</td>
+<td style="text-align: right;">0.08</td>
+<td style="text-align: right;">0.055</td>
+<td style="text-align: right;">6.3</td>
+<td style="text-align: right;">10.0</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1.50</td>
+<td style="text-align: right;">0.03</td>
+<td style="text-align: right;">0.141</td>
+<td style="text-align: right;">4.7</td>
+<td style="text-align: right;">24.8</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">1.50</td>
+<td style="text-align: right;">0.05</td>
+<td style="text-align: right;">0.265</td>
+<td style="text-align: right;">7.2</td>
+<td style="text-align: right;">23.8</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1.50</td>
+<td style="text-align: right;">0.08</td>
+<td style="text-align: right;">0.203</td>
+<td style="text-align: right;">8.1</td>
+<td style="text-align: right;">17.3</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.00</td>
+<td style="text-align: right;">0.03</td>
+<td style="text-align: right;">0.163</td>
+<td style="text-align: right;">5.8</td>
+<td style="text-align: right;">31.5</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2.00</td>
+<td style="text-align: right;">0.05</td>
+<td style="text-align: right;">0.287</td>
+<td style="text-align: right;">8.6</td>
+<td style="text-align: right;">27.5</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.00</td>
+<td style="text-align: right;">0.08</td>
+<td style="text-align: right;">0.192</td>
+<td style="text-align: right;">9.8</td>
+<td style="text-align: right;">18.0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Relative magnitude of cross-model differences compared to estimation variability</caption>
+<thead>
+<tr class="header">
+<th style="text-align: right;">phi_true</th>
+<th style="text-align: right;">s_true</th>
+<th style="text-align: right;">ratio_phi</th>
+<th style="text-align: right;">ratio_r_half</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">0.75</td>
+<td style="text-align: right;">0.03</td>
+<td style="text-align: right;">0.142</td>
+<td style="text-align: right;">0.113</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0.75</td>
+<td style="text-align: right;">0.05</td>
+<td style="text-align: right;">0.157</td>
+<td style="text-align: right;">0.155</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">0.75</td>
+<td style="text-align: right;">0.08</td>
+<td style="text-align: right;">0.181</td>
+<td style="text-align: right;">0.226</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1.50</td>
+<td style="text-align: right;">0.03</td>
+<td style="text-align: right;">0.263</td>
+<td style="text-align: right;">0.640</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">1.50</td>
+<td style="text-align: right;">0.05</td>
+<td style="text-align: right;">0.256</td>
+<td style="text-align: right;">0.559</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1.50</td>
+<td style="text-align: right;">0.08</td>
+<td style="text-align: right;">0.223</td>
+<td style="text-align: right;">0.511</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.00</td>
+<td style="text-align: right;">0.03</td>
+<td style="text-align: right;">0.305</td>
+<td style="text-align: right;">0.642</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2.00</td>
+<td style="text-align: right;">0.05</td>
+<td style="text-align: right;">0.280</td>
+<td style="text-align: right;">0.720</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.00</td>
+<td style="text-align: right;">0.08</td>
+<td style="text-align: right;">0.316</td>
+<td style="text-align: right;">0.559</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>The results again show that both LGCP and CSCP models yield highly consistent second-order inference when fitted to the same datasets.</p>
+<p>Across the parameter regimes considered, the differences in estimated clustering strength <span class="math inline">\(\hat{\phi}\)</span> and half-decay distance <span class="math inline">\(\hat r_{1/2}\)</span> remain small relative to the overall Monte Carlo variability of the estimators. Although the fitted models use different functional forms, they continue to provide very similar descriptions of the clustering present in the data.</p>
+<p>Importantly, this behaviour persists even when the data are generated from the LGCP itself. Thus, the practical similarity observed in the previous section is not specific to CSCP-generated data, but appears symmetrically in both directions.</p>
+<p>This strengthens the conclusion that second-order summaries alone are not sufficient to distinguish between these model classes in practice.</p>
+<section id="small-aside-again" class="level3" data-number="42.7.1">
+<h3 data-number="42.7.1" class="anchored" data-anchor-id="small-aside-again"><span class="header-section-number">42.7.1</span> Small aside (again)</h3>
+<p>As before, we can also compare the accuracy of the two fitted models through RMSE.</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>RMSE of parameter estimates under LGCP-generated data</caption>
+<thead>
+<tr class="header">
+<th style="text-align: right;">phi_true</th>
+<th style="text-align: right;">s_true</th>
+<th style="text-align: left;">fit_model</th>
+<th style="text-align: right;">phi_rmse</th>
+<th style="text-align: right;">r_half_rmse</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">0.75</td>
+<td style="text-align: right;">0.03</td>
+<td style="text-align: left;">CSCP</td>
+<td style="text-align: right;">0.372</td>
+<td style="text-align: right;">0.026</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0.75</td>
+<td style="text-align: right;">0.03</td>
+<td style="text-align: left;">LGCP</td>
+<td style="text-align: right;">0.362</td>
+<td style="text-align: right;">0.024</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">0.75</td>
+<td style="text-align: right;">0.05</td>
+<td style="text-align: left;">CSCP</td>
+<td style="text-align: right;">0.266</td>
+<td style="text-align: right;">0.023</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0.75</td>
+<td style="text-align: right;">0.05</td>
+<td style="text-align: left;">LGCP</td>
+<td style="text-align: right;">0.271</td>
+<td style="text-align: right;">0.021</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">0.75</td>
+<td style="text-align: right;">0.08</td>
+<td style="text-align: left;">CSCP</td>
+<td style="text-align: right;">0.250</td>
+<td style="text-align: right;">0.015</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0.75</td>
+<td style="text-align: right;">0.08</td>
+<td style="text-align: left;">LGCP</td>
+<td style="text-align: right;">0.287</td>
+<td style="text-align: right;">0.014</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">1.50</td>
+<td style="text-align: right;">0.03</td>
+<td style="text-align: left;">CSCP</td>
+<td style="text-align: right;">0.737</td>
+<td style="text-align: right;">0.014</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1.50</td>
+<td style="text-align: right;">0.03</td>
+<td style="text-align: left;">LGCP</td>
+<td style="text-align: right;">0.735</td>
+<td style="text-align: right;">0.011</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">1.50</td>
+<td style="text-align: right;">0.05</td>
+<td style="text-align: left;">CSCP</td>
+<td style="text-align: right;">0.685</td>
+<td style="text-align: right;">0.014</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1.50</td>
+<td style="text-align: right;">0.05</td>
+<td style="text-align: left;">LGCP</td>
+<td style="text-align: right;">0.805</td>
+<td style="text-align: right;">0.011</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">1.50</td>
+<td style="text-align: right;">0.08</td>
+<td style="text-align: left;">CSCP</td>
+<td style="text-align: right;">0.689</td>
+<td style="text-align: right;">0.012</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1.50</td>
+<td style="text-align: right;">0.08</td>
+<td style="text-align: left;">LGCP</td>
+<td style="text-align: right;">0.872</td>
+<td style="text-align: right;">0.011</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.00</td>
+<td style="text-align: right;">0.03</td>
+<td style="text-align: left;">CSCP</td>
+<td style="text-align: right;">1.072</td>
+<td style="text-align: right;">0.015</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2.00</td>
+<td style="text-align: right;">0.03</td>
+<td style="text-align: left;">LGCP</td>
+<td style="text-align: right;">1.003</td>
+<td style="text-align: right;">0.011</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.00</td>
+<td style="text-align: right;">0.05</td>
+<td style="text-align: left;">CSCP</td>
+<td style="text-align: right;">0.845</td>
+<td style="text-align: right;">0.014</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2.00</td>
+<td style="text-align: right;">0.05</td>
+<td style="text-align: left;">LGCP</td>
+<td style="text-align: right;">0.912</td>
+<td style="text-align: right;">0.009</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.00</td>
+<td style="text-align: right;">0.08</td>
+<td style="text-align: left;">CSCP</td>
+<td style="text-align: right;">0.718</td>
+<td style="text-align: right;">0.013</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2.00</td>
+<td style="text-align: right;">0.08</td>
+<td style="text-align: left;">LGCP</td>
+<td style="text-align: right;">0.677</td>
+<td style="text-align: right;">0.011</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Across all parameter regimes, the RMSE values for the two fitted models remain very similar. Even when the data are generated from an LGCP model, fitting a CSCP produces estimates with comparable accuracy.</p>
+<p>Taken together with the CSCP-generated results, this suggests that minimum contrast estimation based on the pair correlation function is primarily recovering shared second-order structure, rather than features specific to either model class.</p>
+</section>
+</section>
+<section id="summary-and-implications" class="level2" data-number="42.8">
+<h2 data-number="42.8" class="anchored" data-anchor-id="summary-and-implications"><span class="header-section-number">42.8</span> Summary and implications</h2>
+<p>Across the previous sections, we investigated whether the theoretical similarity between the LGCP and CSCP pair correlation functions carries through to practical statistical inference.</p>
+<p>We first showed that, for suitable parameter choices, the two models can produce very similar pair correlation functions. In particular, when expressed in terms of the clustering strength <span class="math inline">\(\phi = g(0) - 1\)</span> and a characteristic spatial scale, the difference between the two families is often negligible over the range of distances relevant for estimation.</p>
+<p>We then examined whether this similarity affects inference by conducting simulation studies in both directions:</p>
+<ul>
+<li>data generated from a CSCP, fitted with both CSCP and LGCP models;</li>
+<li>data generated from an LGCP, fitted with both LGCP and CSCP models.</li>
+</ul>
+<p>In both cases, the results were remarkably consistent. The two fitted models produced:</p>
+<ul>
+<li>very similar estimates of clustering strength <span class="math inline">\(\hat{\phi}\)</span>;</li>
+<li>very similar estimates of the half-decay distance <span class="math inline">\(\hat{r}_{1/2}\)</span>;</li>
+<li>visually indistinguishable fitted pair correlation functions.</li>
+</ul>
+<p>Moreover, the differences between the models were small relative to the overall Monte Carlo variability of the estimators. In other words, fitting the “wrong” model did not meaningfully degrade second-order inference.</p>
+<section id="what-does-this-mean" class="level3" data-number="42.8.1">
+<h3 data-number="42.8.1" class="anchored" data-anchor-id="what-does-this-mean"><span class="header-section-number">42.8.1</span> What does this mean?</h3>
+<p>At a practical level, these results suggest that inference based on second-order summaries—such as minimum contrast estimation using the pair correlation function—is largely driven by the <em>shape of the PCF</em>, rather than the specific underlying model.</p>
+<p>Since the LGCP and CSCP are capable of generating very similar PCFs, they also lead to very similar second-order inference, even under model misspecification.</p>
+<p>This implies that, in many realistic settings, it may be difficult to distinguish between these model classes using second-order statistics alone.</p>
+</section>
+<section id="implications-for-modelling" class="level3" data-number="42.8.2">
+<h3 data-number="42.8.2" class="anchored" data-anchor-id="implications-for-modelling"><span class="header-section-number">42.8.2</span> Implications for modelling</h3>
+<p>These findings have two important implications.</p>
+<p>First, care should be taken when interpreting fitted Cox process models based only on second-order summaries. A good fit to the empirical PCF does not necessarily provide strong evidence in favour of one model over another, if multiple models can reproduce the same second-order structure.</p>
+<p>Second, model choice in this context should be guided not only by goodness-of-fit at the level of the PCF, but also by:</p>
+<ul>
+<li>interpretability of the latent structure,</li>
+<li>computational considerations,</li>
+<li>and the specific scientific questions of interest.</li>
+</ul>
+</section>
+<section id="future-directions" class="level3" data-number="42.8.3">
+<h3 data-number="42.8.3" class="anchored" data-anchor-id="future-directions"><span class="header-section-number">42.8.3</span> Future directions</h3>
+<p>The results of this study naturally raise the question of how the models might be distinguished in practice.</p>
+<p>One possible direction is to consider features beyond second-order structure. For example:</p>
+<ul>
+<li>higher-order interactions,</li>
+<li>conditional or Palm distributions,</li>
+<li>or likelihood-based approaches that incorporate more of the underlying model structure.</li>
+</ul>
+<p>Alternatively, one could investigate whether differences in the marginal distribution of the intensity field, or in extreme clustering behaviour, provide useful distinguishing features.</p>
+<p>Exploring these directions may help to identify settings in which the LGCP and CSCP can be meaningfully separated, and where model choice has a more substantial impact on inference.</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../thesis/lgcp_PCF_comparison_emp.html" class="pagination-link" aria-label="🚧 Empirical comparison of PCF families">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">41</span>&nbsp; <span class="chapter-title">🚧 Empirical comparison of PCF families</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../thesis/third_introduction.html" class="pagination-link" aria-label="🚧 Identifiability Beyond Second-Order Structure">
+        <span class="nav-page-text"><span class="chapter-number">43</span>&nbsp; <span class="chapter-title">🚧 Identifiability Beyond Second-Order Structure</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

@@ -1,0 +1,327 @@
+# Exercises
+
+## Likelihood
+
+1. Consider a homogeneous Poisson process with intensity $\lambda$ on a window $W$.
+
+   (a) Starting from the Poisson distribution of $N(W)$, derive the likelihood
+   $$
+   L(\lambda; X) = e^{-\lambda |W|} \lambda^n.
+   $$
+
+   (b) Show that the MLE is
+   $$
+   \hat{\lambda} = \frac{n}{|W|}.
+   $$
+
+::: {.callout-note collapse="true"}
+**Answer**
+
+(a) $N(W) \sim \text{Poisson}(\lambda |W|)$, so  
+$$
+\mathbb{P}(N(W)=n) = \frac{(\lambda |W|)^n}{n!} e^{-\lambda |W|}.
+$$
+Ignoring constants not depending on $\lambda$ gives  
+$$
+L(\lambda) \propto e^{-\lambda |W|} \lambda^n.
+$$
+
+(b) Log-likelihood:
+$$
+\ell(\lambda) = n \log \lambda - \lambda |W|.
+$$
+Differentiate:
+$$
+\frac{d\ell}{d\lambda} = \frac{n}{\lambda} - |W| = 0
+\Rightarrow \hat{\lambda} = \frac{n}{|W|}.
+$$
+:::
+
+---
+
+2. Starting from the partition argument in the notes, explain precisely where the term
+$$
+\int_W \lambda(u)\,du
+$$
+comes from.
+
+Then explain why this term corresponds to the expected number of points.
+
+::: {.callout-note collapse="true"}
+**Answer**
+
+It arises as the limit of the sum over small cells:
+$$
+\sum_j \lambda(u_j)|B_j| \to \int_W \lambda(u)\,du.
+$$
+
+For a Poisson process,
+$$
+\mathbb{E}[N(W)] = \int_W \lambda(u)\,du,
+$$
+so this term represents the expected total number of points.
+:::
+
+---
+
+3. Let $\Lambda(u)$ be a random intensity field.
+
+Show that the Cox process likelihood can be written as
+$$
+L(\theta;X) = \mathbb{E}_\Lambda\left[L(\theta;X \mid \Lambda)\right].
+$$
+
+Explain why this is analogous to a **mixture model**.
+
+::: {.callout-note collapse="true"}
+**Answer**
+
+By definition:
+$$
+L(\theta;X) = \int L(\theta;X \mid \Lambda)\, dP(\Lambda).
+$$
+
+This is identical in structure to mixture models:
+$$
+f(x) = \int f(x \mid z)\, dP(z).
+$$
+
+Here, $\Lambda$ plays the role of a latent variable.
+:::
+
+---
+
+## Minimum Contrast
+
+4. Show that the minimum contrast estimator based on the PCF,
+
+$$
+C(\theta)
+=
+\int w(r)\,[\hat{g}(r) - g(r;\theta)]^2 dr,
+$$
+
+is a functional analogue of ordinary least squares.
+
+What plays the role of:
+- response variable?
+- predictor?
+- residual?
+
+::: {.callout-note collapse="true"}
+**Answer**
+
+- response: $\hat{g}(r)$  
+- predictor: $g(r;\theta)$  
+- residual: $\hat{g}(r) - g(r;\theta)$  
+
+So the contrast is an $L^2$ loss over functions.
+:::
+
+---
+
+5. Suppose
+$$
+g(r;\theta) = 1 + A e^{-2r/s}.
+$$
+
+(a) Show that
+$$
+\log(g(r)-1) = \log A - \frac{2}{s} r.
+$$
+
+(b) Explain how this leads to a **linear regression estimator**.
+
+(c) Discuss when this transformation may be unstable.
+
+::: {.callout-note collapse="true"}
+**Answer**
+
+(a) Direct log:
+$$
+\log(g(r)-1) = \log A - \frac{2}{s}r.
+$$
+
+(b) Regress $y = \log(\hat{g}(r)-1)$ on $r$.
+
+(c) When $\hat{g}(r) \approx 1$, the log is unstable.
+:::
+
+---
+
+6. Explain why the choice of fitting range $[r_{\min}, r_{\max}]$ is critical.
+
+Your answer should discuss:
+
+- behaviour near $r=0$
+- behaviour for large $r$
+- bias–variance trade-off
+
+---
+
+7. Suppose two models have identical PCFs $g(r)$ but different higher-order structure.
+
+Show that minimum contrast based on the PCF cannot distinguish between them.
+
+---
+
+## Composite Likelihood
+
+8. Starting from
+$$
+\lambda^{(2)}(u,v) = \lambda(u)\lambda(v) g(u,v),
+$$
+
+derive the pairwise composite likelihood
+
+$$
+L_{\text{pair}}(\theta) \propto \prod_{i<j} \lambda^{(2)}(x_i,x_j).
+$$
+
+Then express it in terms of $\lambda$ and $g$.
+
+---
+
+9. In the stationary case, show that the pairwise log-likelihood reduces to
+
+$$
+\ell(\theta)
+=
+\sum_{i<j} \log g(r_{ij}) + \text{constant}.
+$$
+
+Explain why this makes the estimator depend only on the PCF.
+
+---
+
+10. Compare minimum contrast and composite likelihood:
+
+(a) What data do they use?  
+(b) What structure do they rely on?  
+(c) Why might they give similar estimates?
+
+---
+
+## Pseudolikelihood
+
+11. Show that for a Poisson process,
+
+$$
+\lambda(u \mid X) = \lambda(u).
+$$
+
+Explain why this implies pseudolikelihood equals the true likelihood.
+
+---
+
+12. For a Cox process, show that
+
+$$
+\lambda(u \mid X) = \mathbb{E}[\Lambda(u) \mid X].
+$$
+
+Explain why this is difficult to compute.
+
+---
+
+13. Compare Cox and Gibbs processes in terms of conditional intensity:
+
+- which has tractable $\lambda(u \mid X)$?
+- which is easier for pseudolikelihood?
+
+---
+
+## Simulation and Applied Exercises
+
+14. **Poisson likelihood simulation**
+
+Simulate a homogeneous Poisson process with known $\lambda$.
+
+(a) Estimate $\lambda$ using the likelihood.  
+(b) Repeat over many simulations.  
+(c) Verify empirically that the estimator is unbiased.
+
+---
+
+15. **Minimum contrast fitting**
+
+Simulate a clustered point process (e.g. LGCP or Thomas).
+
+(a) Estimate $\hat{g}(r)$  
+(b) Fit parameters using minimum contrast  
+(c) Plot $\hat{g}(r)$ and fitted $g(r)$
+
+Investigate sensitivity to:
+
+- fitting range
+- weighting
+
+---
+
+16. **Composite likelihood vs minimum contrast**
+
+Using the same simulated dataset:
+
+(a) Fit parameters using minimum contrast  
+(b) Fit parameters using pairwise likelihood (if implemented)  
+(c) Compare estimates and fitted PCFs
+
+---
+
+17. **Identifiability experiment (important)**
+
+Simulate two processes with similar PCFs:
+
+- one LGCP
+- one CSCP
+
+(a) Compute empirical $\hat{g}(r)$  
+(b) Fit both models using minimum contrast  
+(c) Compare fitted curves
+
+Discuss:
+
+- how similar the fits are  
+- what this implies about identifiability  
+
+---
+
+18. **Effect of sample size**
+
+Repeat Exercise 17 for increasing window sizes.
+
+Explain:
+
+- how estimation improves  
+- whether model distinguishability improves  
+
+---
+
+## Challenging / Theory Extensions
+
+19. Suppose $g(r) = 1 + \epsilon h(r)$ for small $\epsilon$.
+
+Show that, to first order,
+
+$$
+\log g(r) \approx \epsilon h(r).
+$$
+
+Explain why this suggests different models may look similar under weak clustering.
+
+---
+
+20. Consider two models:
+
+- Model A: $g_A(r) = \exp(C(r))$  
+- Model B: $g_B(r) = 1 + C(r)$  
+
+Show that for small $C(r)$,
+
+$$
+g_A(r) \approx g_B(r).
+$$
+
+Explain why this is relevant for LGCP vs CSCP.
+
+---

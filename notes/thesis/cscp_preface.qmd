@@ -1,0 +1,31 @@
+# Defining the CSCP
+
+The aim of the following chapters is to establish a clear and usable definition 
+of the single-component Chi-Square Cox process (CSCP).
+
+Unlike the LGCP, which has a standard and widely accepted formulation, there is 
+no (or at least I / we cannot find) a canonical definition of the CSCP in the 
+literature. And so before getting started on investigating the properties, we
+obviously need a definition.
+
+We consider three natural candidates:
+
+- the non-central formulation,
+- the central formulation,
+- the shifted (or external mean) formulation.
+
+Each of these results from slightly different ways of constructing the underlying 
+random intensity field and, as we will see, lead to distinct relationships 
+between the parameters and the resulting first- and second-order structure.
+
+The purpose of the following chapters is therefore:
+
+- to define each formulation precisely,
+- to derive its basic properties (in particular the intensity and pair correlation function),
+- to examine how the parameters control clustering behaviour, and
+- to compare the formulations in terms of interpretability and suitability for statistical inference.
+
+This analysis will allow us to identify a formulation that is both mathematically 
+natural and practically useful, which we will adopt as the canonical definition 
+of the CSCP in the remainder of the thesis.
+

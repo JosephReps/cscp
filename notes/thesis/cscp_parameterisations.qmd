@@ -1,0 +1,73 @@
+# Parameterizations 
+
+I'm not considering the central model here, as it is too restrictive to be
+practical, and I want to preserve my sanity.
+
+## Why consider alternatives?
+
+The natural parameterisation of the CSCP in terms of the Gaussian random field 
+parameters $(\mu, \sigma^2)$ is mathematically convenient, but not very interpretable.
+
+In particular:
+- $\mu$ and $\sigma^2$ both influence the first-order intensity,
+- and, in the non-central formulation, both parameters also influence the second-order structure.
+
+As a result, it is difficult to disentangle the effects of these parameters on 
+the intensity and clustering behaviour of the process.
+
+To address this, it is useful to consider alternative parameterisations in terms 
+of quantities with more direct interpretation, such as:
+- the mean intensity $\lambda$, and  
+- a parameter controlling clustering strength (e.g. $g(0)$, or $\phi = g(0) - 1$).
+
+These parameterisations will also allow for more direct comparison with other 
+Cox processes, such as the LGCP, which are naturally expressed in terms of $(\lambda, \phi, s)$.
+
+## Shifted Model
+
+Recall, under this definition the random intensity is
+
+$$
+\Lambda(u) = \mu + Z(u)^2
+$$
+
+where $Z \sim N(0, \sigma^2)$, and 
+
+$$
+\mathrm{Cov}(Z(u), Z(v)) = \sigma^2\rho(u, v) = \sigma^2\rho(r)
+$$.
+
+The parameterizations we have investigated so far are as follows:
+    
+| Parameters | Definitions | First-order | PCF |  Constraints |
+|------|----------|------|----------|----------|
+| $(\mu,\sigma^2)$    | $(\mu,\sigma^2)$ | $\mu + \sigma^2$ | $1 + \frac{2\sigma^4}{(\mu + \sigma^2)^2}\rho(r)^2$ | $0 \le \mu,\ 0 \le \sigma^2$ |
+| $(\lambda, \eta)$   | $(\mu + \sigma^2, \frac{\mu}{\sigma^2})$ | $\lambda$ | $1 + \frac{2}{(1 + \eta)^2}\rho(r)^2$ | $0 \le \lambda,\ 0 \le \eta$ |
+| $(\lambda, \delta)$ | $(\mu + \sigma^2, \frac{1}{(1 + \mu / \sigma^2)^2})$ | $\lambda$ | $1 + 2\delta\rho(r)^2$ | $0 \le \lambda,\ 0 \le \delta \le 1$ |
+| $(\lambda, g_0)$    | $(\mu + \sigma^2, 1 + \frac{2\sigma^4}{(\mu + \sigma^2)^2})$ | $\lambda$ | $1 + (g_0 - 1)\rho(r)^2$ | $0 \le \lambda,\ 1 \le g_0 \le 3$ |
+|$(\lambda, \psi)$|$(\mu + \sigma^2, \frac{2\sigma^4}{(\mu + \sigma^2)^2})$|$\lambda$|$1 + \psi\rho(r)^2$|$0 \le \lambda,\ 0 \le \psi \le 2$|
+
+## Non-Central Model
+
+Recall, under this definition the random intensity is
+
+$$
+\Lambda(u) = Z(u)^2
+$$
+
+where $Z \sim N(\mu, \sigma^2)$, and 
+
+$$
+\mathrm{Cov}(Z(u), Z(v)) = \sigma^2\rho(u, v) = \sigma^2\rho(r)
+$$.
+
+The parameterizations investigated so far are as follows:
+
+| Parameters | Definitions | First-order | PCF |
+|------|----------|------|----------|
+| $(\mu,\sigma^2)$    | $(\mu, \sigma^2)$ | $\mu^2 + \sigma^2$ | $1 + \frac{2\sigma^4\rho(r)^2 + 4\mu^2\sigma^2\rho(r)}{(\mu^2 + \sigma^2)^2}$ |
+| $(\lambda, \eta)$   | $(\mu^2 + \sigma^2, \frac{\mu^2}{\sigma^2})$ | $\lambda$ | $1 + \frac{2\rho(r)^2 + 4\eta\rho(r)}{(1 + \eta)^2}$ |
+| $(\lambda, \delta)$ | $(\mu^2 + \sigma^2,\ \frac{\sigma^4}{(\mu^2 + \sigma^2)^2})$ | $\lambda$ | $1 + 2\delta\rho(r)^2 + 4(\sqrt{\delta} - \delta)\rho(r)$ |
+| $(\lambda, g_0)$    | $(\mu^2 + \sigma^2,\ 1 + \frac{2\sigma^4 + 4\mu^2\sigma^2}{(\mu^2 + \sigma^2)^2})$ | $\lambda$ | $1 + 2a^2\rho(r)^2 + 4a(1-a)\rho(r)$, where $a = 1 - \sqrt{\frac{3-g_0}{2}}$ |
+
+I couldn't fit the constraints column here, but they are just the same as above.

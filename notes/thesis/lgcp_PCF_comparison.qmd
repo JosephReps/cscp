@@ -1,0 +1,240 @@
+# 🚧 Theoretical(ish) Comparison of PCFs
+
+## Preliminaries
+
+In the previous sections, we established a common parameterisation for LGCPs and
+CSCPs, and observed that the two models can produce very similar second-order
+structure when their parameters are suitably chosen.
+
+We now study this phenomenon directly by comparing the two families of pair
+correlation functions.
+
+Under the parameterisation $(\lambda, \phi, s)$, the PCFs take the form
+$$
+g_{CSCP}(r; \lambda, \phi, s_C) = 1 + \phi \exp\left(-\frac{2r}{s_C}\right),
+$$
+$$
+g_{LGCP}(r; \lambda, \phi, s_L) = (1 + \phi)^{\exp(-r/s_L)}.
+$$
+
+The central question is whether these two families of functions can be
+distinguished when only second-order structure is available.
+
+To formalise this, we consider the following approximation problem:
+
+:::callout-important
+Given a CSCP PCF with parameters $(\lambda, \phi, s_C)$, how well can it be
+approximated by an LGCP PCF with the same $(\lambda, \phi)$ by optimally choosing
+the scale parameter $s_L$?
+:::
+
+If the discrepancy between the two families can be made arbitrarily small through
+rescaling, this would indicate a fundamental limitation in using second-order
+structure for model identification.
+
+## Non-equivalence of the PCF families
+
+Before studying approximation, we first note that the two PCF families are not
+identical.
+
+[Need to type up proof that the two families of curves are only identical when $\phi = 0$,
+not really important though.]
+
+## Best LGCP approximation of CSCP PCF
+
+Consider a CSCP with parameters $(\lambda, \phi, s_C)$, and an LGCP with parameters
+$(\lambda, \phi, s_L)$.
+
+We are interested in the following question:
+
+:::callout-important
+For fixed $(\lambda, \phi, s_C)$, how should we choose $s_L$ so that the LGCP PCF 
+is as close as possible to the CSCP PCF?
+:::
+
+To make this precise, define the discrepancy
+
+$$
+D = \sup_{r \ge 0} \left|g_{LGCP}(r; \lambda, \phi, s_L) - g_{CSCP}(r; \lambda, \phi, s_C)\right|.
+$$
+
+Our goal is to solve
+
+$$
+\inf_{s_L > 0} D,
+$$
+
+and to understand how small this discrepancy can be as $\phi$ varies over $[0,2]$.
+
+
+## Reduction to a scale-ratio
+
+At first glance, this appears to be a one-dimensional optimisation over $s_L$.
+
+However, rewriting the problem reveals that the discrepancy depends only on the 
+**relative scale** between the two models, rather than their absolute values.
+
+:::callout-note
+Having this as a proposition feels kind of goofy. Only have it structured like this
+as before I was trying to actually find a decent analytic bound, but gave up.
+
+Will likely restructure / revisit this section at a later date.
+:::
+
+### Proposition 1
+
+Let
+
+$$
+g_{CSCP}(r; \lambda, \phi, s_C) = 1 + \phi \exp\left(-\frac{2r}{s_C}\right),
+$$
+
+$$
+g_{LGCP}(r; \lambda, \phi, s_L) = (1 + \phi)^{\exp(-r/s_L)}.
+$$
+
+Define
+
+$$
+x = \exp\left(-\frac{2r}{s_C}\right) \in [0,1], \quad
+p = \frac{s_C}{2s_L}, \quad
+c = \log(1+\phi).
+$$
+
+Then the discrepancy can be written as
+
+$$
+D = \sup_{x \in [0,1]} \left| \exp(c x^p) - (1 + \phi x) \right|.
+$$
+
+---
+
+### Proof of Proposition 1
+
+Starting with the LGCP:
+
+$$
+\begin{align}
+g_{LGCP}(r; \lambda, \phi, s_L)
+&= (1 + \phi)^{\exp(-r/s_L)} \\
+&= \exp\left(\log(1 + \phi)\exp(-r/s_L)\right) \\
+&= \exp\left(c \exp(-r/s_L)\right).
+\end{align}
+$$
+
+Now note that
+
+$$
+x = \exp\left(-\frac{2r}{s_C}\right)
+\quad \Rightarrow \quad
+\exp(-r/s_L) = x^{\,p}, \quad p = \frac{s_C}{2s_L}.
+$$
+
+So
+
+$$
+g_{LGCP}(r) = \exp(c x^p).
+$$
+
+For the CSCP:
+
+$$
+g_{CSCP}(r) = 1 + \phi \exp\left(-\frac{2r}{s_C}\right) = 1 + \phi x.
+$$
+
+Substituting both into the discrepancy,
+
+$$
+D = \sup_{x \in [0,1]} \left| \exp(c x^p) - (1 + \phi x) \right|.
+$$
+
+Thus, once $\phi$ is fixed, the discrepancy depends on $s_C$ and $s_L$ only through
+the ratio $p = \frac{s_C}{2s_L}$.
+
+## Optimisation problem
+
+We now define the approximation error as
+
+$$
+E(\phi, p) := \sup_{x \in [0,1]} \left| \exp(c x^p) - 1 - \phi x \right|,
+\quad c = \log(1 + \phi).
+$$
+
+For fixed $\phi$, $E(\phi, p)$ represents the **maximum vertical distance**
+between the two PCF curves across all distances.
+
+So the best possible LGCP approximation (under this discrepancy measure) is 
+obtained by solving
+
+$$
+p^*(\phi) \in \arg \min_{p > 0} E(\phi, p).
+$$
+
+Once $p^*(\phi)$ is found, the corresponding LGCP scale is
+
+$$
+s_L^*(\phi, s_C) = \frac{s_C}{2p^*(\phi)}.
+$$
+
+---
+
+## Practical computation
+
+At this point, the problem is completely explicit:
+
+- For each $\phi \in [0,2]$,
+- we numerically solve the one-dimensional minimisation
+
+$$
+\min_{p > 0} \sup_{x \in [0,1]} \left| \exp(c x^p) - 1 - \phi x \right|.
+$$
+
+This yields:
+
+- the optimal scale ratio $p^*(\phi)$,
+- and the corresponding minimum discrepancy
+
+$$
+E^*(\phi) := E(\phi, p^*(\phi)).
+$$
+
+## Interpretation
+
+This formulation makes the comparison particularly transparent:
+
+- $\lambda$ plays no role once matched,
+- $s_C$ only sets the overall distance scale,
+- $\phi$ controls the shape of clustering,
+- and the LGCP can only adjust via a single scaling parameter.
+
+Thus, the problem reduces to understanding how well a nonlinear curve of the form
+$\exp(c x^p)$ can approximate the linear function $1 + \phi x$ over $[0,1]$.
+
+This provides a direct way to quantify how distinguishable the two model classes
+are using second-order structure alone.
+
+## Summary
+
+We have reduced the comparison between LGCP and CSCP PCFs to a simple
+one-dimensional optimisation problem.
+
+For each clustering strength $\phi$, the optimal LGCP scale is obtained by solving
+
+$$
+p^*(\phi) \in \arg \min_{p > 0} \sup_{x \in [0,1]} 
+\left| \exp(c x^p) - 1 - \phi x \right|,
+$$
+
+and setting
+
+$$
+s_L^*(\phi, s_C) = \frac{s_C}{2p^*(\phi)}.
+$$
+
+This provides a complete description of the best possible second-order
+approximation of a CSCP by an LGCP under matched $(\lambda, \phi)$.
+
+The remaining question is how small this discrepancy can be in practice,
+and whether it is large enough to distinguish the two models.
+
+We now investigate this empirically.

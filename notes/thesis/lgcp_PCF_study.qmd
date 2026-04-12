@@ -1,0 +1,969 @@
+```{r include = FALSE}
+devtools::load_all()
+library(spatstat)
+library(dplyr)
+library(tidyr)
+library(purrr)
+library(ggplot2)
+library(patchwork)
+```
+
+# Implications for Statistical Inference
+
+Need to rerun the study, as I changed the MC estimator (fitting over $\eta$ where
+$\phi = 2\cdot \text{plogis}(\eta)$).
+ 
+Confident it won't change the results.
+
+Typee shitttttttt.
+
+## Overview
+
+The previous sections showed that LGCP and CSCP models can produce nearly 
+identical pair correlation functions when their parameters are suitably chosen.
+
+This section investigates whether this similarity carries through to statistical 
+inference.
+
+In particular, we examine whether minimum contrast estimation based on the pair 
+correlation function leads to similar conclusions under the two models.
+
+For each simulated dataset, we fit both LGCP and CSCP models, and compare the 
+resulting estimates and fitted second-order structure.
+
+This allows us to assess whether the two models produce consistent descriptions of 
+clustering when applied to the same data.
+
+---
+
+## Key quantities of interest
+
+The LGCP and CSCP models use different functional forms for their pair 
+correlation functions:
+
+- CSCP:
+
+$$
+g_{CSCP}(r; \lambda, \phi, s_C) = 1 + \phi \exp\left(-\frac{2r}{s_C}\right),
+$$
+
+- LGCP:
+
+$$
+g_{LGCP}(r; \lambda, \phi, s_L) = (1 + \phi)^{\exp(-r/s_L)}.
+$$
+
+As a result, their scale parameters $s_C$ and $s_L$ are not directly comparable, 
+even when the models produce nearly identical curves.
+
+To enable meaningful comparison, we focus on two quantities:
+
+**1. Clustering strength**
+
+$$
+\phi = g(0) - 1
+$$
+
+This is common to both models and directly comparable.
+
+**2. Half-decay distance**
+
+We define the half-decay distance $r_{1/2}$ as the distance at which the excess 
+clustering halves:
+
+$$
+g(r_{1/2}) - 1 = \frac{\phi}{2}
+$$
+
+For the two models this gives:
+
+- CSCP:
+
+$$
+r_{1/2}^{(C)} = \frac{s_C}{2}\log(2)
+$$
+
+- LGCP:
+
+$$
+r_{1/2}^{(L)} = s_L\log(\frac{\log(1 + \phi)}{\log(1 + \phi / 2)})
+$$
+
+This provides a model-independent measure of clustering scale, allowing 
+meaningful comparison between models.
+
+## Experimental setup
+
+We consider the following procedure.
+
+For each parameter setting $(\lambda, \phi, s)$:
+
+1. Simulate $n_{\text{rep}} = 200$ point patterns from:
+- a CSCP model
+- an LGCP model
+
+2. For each simulated dataset:
+- estimate the pair correlation function $\hat{g}(r)$
+- fit both models (LGCP and CSCP) using minimum contrast
+
+3. For each fit, record:
+- estimated clustering strength $\hat{\phi}$
+- fitted scale parameter ($\hat{s}_C$ or $\hat{s}_L$)
+- derived half-decay distance $\hat{r}_{1/2}$
+- fitted pair correlation function
+
+## Expected behaviour
+
+If second-order structure alone is insufficient to distinguish between the models, we expect:
+
+- both models to produce similar fitted PCFs on the same dataset
+- both models to yield similar estimates of clustering strength
+- raw scale parameters $\hat{s}_C$ and $\hat{s}_L$ to differ
+- but derived scale summaries such as $\hat{r}_{1/2}$ to be more closely aligned
+
+## Single dataset illustration
+
+Some helpers for calculating $r_{1/2}$:
+
+```{r}
+#| code-fold: true
+half_decay_cscp <- function(phi, s) {
+  (s / 2) * log(2)
+}
+
+half_decay_lgcp <- function(phi, s) {
+  s * log(log(1 + phi) / log(1 + phi/2))
+}
+```
+
+And illustrating:
+
+```{r echo = FALSE}
+set.seed(1)
+
+W <- spatstat.geom::owin(c(0, 1), c(0, 1))
+
+true <- list(lambda = 300, phi = 2, s = 0.05)
+
+fit_args <- list(
+  start = list(phi = 0.8, s = 0.06),
+  bw = 0.02,
+  correction = "isotropic",
+  divisor = "a",
+  zerocor = "JonesFoster"
+)
+
+# simulate
+X <- sim_cscp(W, lambda = true$lambda, phi = true$phi, s = true$s)$pp
+
+# fit both
+fit_c <- fit_cscp_mc(X, bw = fit_args$bw, correction = "isotropic", divisor = "a", zerocor = "JonesFoster")
+fit_l <- fit_lgcp_mc(X, bw = fit_args$bw, correction = "isotropic", divisor = "a", zerocor = "JonesFoster")
+
+# empirical PCF
+pcf_obs <- spatstat.explore::pcf(X, correction = "isotropic", divisor = "a", zerocor = "JonesFoster", bw = fit_args$bw)
+
+r <- pcf_obs$r
+
+g_c_fit <- pcf_cscp_theoretical(r, lambda = true$lambda, phi = fit_c$par[["phi"]], s = fit_c$par[["s"]])
+g_l_fit <- pcf_lgcp_theoretical(r, lambda = true$lambda, phi = fit_l$par[["phi"]], s = fit_l$par[["s"]])
+
+plot(r, pcf_obs$iso, type = "l", lwd = 2,
+     main = "CSCP data: both fits vs truth",
+     ylab = "g(r)", xlab = "r", ylim = range(c(1, pcf_obs$iso, g_c_fit, g_l_fit), na.rm = TRUE))
+
+lines(r, g_c_fit, col = "blue", lwd = 2)
+lines(r, g_l_fit, col = "red", lwd = 2)
+lines(r, pcf_cscp_theoretical(r, lambda = true$lambda, phi = true$phi, s = true$s), col = "darkgreen", lwd = 2)
+abline(h = 1.0, lty = "dashed", lwd = 1)
+
+
+legend("topright",
+       legend = c("Empirical", "CSCP fit", "LGCP fit", "True PCF"),
+       col = c("black", "blue", "red", "darkgreen"),
+       lwd = 2)
+```
+
+:::callout-note
+You can find my:
+
+- Minimum contrast fitting methods [here](https://github.com/JosephReps/coxLab)
+- CSCP / LGCP simulation methods [here](https://github.com/JosephReps/coxLab)
+:::
+
+## CSCP-generated data
+
+We first consider datasets generated from the CSCP model.
+
+For each parameter setting $(\lambda, \phi, s)$, we:
+
+1. simulate $n_{\text{rep}}$ point patterns from a CSCP model;
+2. estimate the empirical pair correlation function $\hat g(r)$;
+3. fit both CSCP and LGCP models using minimum contrast;
+4. record the estimated clustering strength $\hat\phi$, the fitted scale 
+parameter, and the derived half-decay distance $\hat r_{1/2}$.
+
+We then compare the resulting estimates across the two fitted models.
+
+To examine performance across a range of clustering regimes, we fix 
+$\lambda = 300$, and consider
+
+$$
+\phi \in \{0.75,\,1.5,\,2.0\}, \qquad s \in \{0.03,\,0.05,\,0.08\}.
+$$
+These values represent moderate to strong clustering (relative to the CSCP model) 
+over short, intermediate, and longer spatial ranges.
+
+:::callout-note
+Originally I wanted to use $\phi \in \{0.25, 1, 2\}$, however for $\phi = 0.25$,
+the estimation is very unstable so I decided to just use these new values.
+
+Might've been better if I just used $\{1, 2\}$, but I wanted nice 3x3 panels.
+
+Additionally, I chose $\lambda = 300$, as I wanted the non-parametric PCF 
+estimator to perform well, so our results are not "muddied" by the poor empirical
+fit.
+
+Bandwidth chosen as a value which has worked well in my experience. I think the 
+proper thing to do would be to run some type of CV to find the best value?
+
+And the other settings are either matched to the ones you guys use in the paper
+on the new PCF estimator, or the default spatstat.
+
+Are these sensible choices?
+:::
+
+```{r echo = FALSE}
+scenarios <- expand.grid(
+  phi = c(0.75, 1.5, 2.0),
+  s   = c(0.03, 0.05, 0.08)
+)
+
+r_grid <- seq(0, 0.25, length.out = 400)
+
+pcf_true_df <- purrr::map_dfr(seq_len(nrow(scenarios)), function(i) {
+  phi_i <- scenarios$phi[i]
+  s_i   <- scenarios$s[i]
+
+  data.frame(
+    r = r_grid,
+    phi = factor(phi_i, levels = c(0.75, 1.5, 2.0)),
+    s = factor(s_i, levels = c(0.03, 0.05, 0.08)),
+    g = pcf_cscp_theoretical(r_grid, lambda = 250, phi = phi_i, s = s_i)
+  )
+})
+
+ggplot(pcf_true_df, aes(x = r, y = g)) +
+  geom_hline(yintercept = 1, linetype = "dashed", linewidth = 0.3) +
+  geom_line(linewidth = 0.9) +
+  facet_grid(phi ~ s, labeller = label_both) +
+  labs(
+    title = "True CSCP pair correlation functions across simulation regimes",
+    x = "Distance r",
+    y = "g(r)"
+  ) +
+  theme_minimal()
+```
+
+These curves illustrate the range of second-order structures considered in the 
+simulation study. In particular, increasing $\phi$ controls the *magnitude* of 
+clustering, while increasing $s$ controls the spatial extent over which 
+clustering persists.
+
+```{r warning = FALSE, cache = TRUE}
+#| code-fold: true
+n_rep <- 20
+
+results_list <- list()
+counter <- 1
+
+for (j in 1:nrow(scenarios)) {
+
+  phi_true <- scenarios$phi[j]
+  s_true   <- scenarios$s[j]
+
+  for (i in 1:n_rep) {
+
+    X <- sim_cscp(W, lambda = 300, phi = phi_true, s = s_true)$pp
+
+    fit_c <- fit_cscp_mc(
+      X,
+      bw = fit_args$bw,
+      correction = "isotropic",
+      divisor = "a",
+      zerocor = "JonesFoster"
+    )
+
+    fit_l <- fit_lgcp_mc(
+      X,
+      bw = fit_args$bw,
+      correction = "isotropic",
+      divisor = "a",
+      zerocor = "JonesFoster"
+    )
+
+    results_list[[counter]] <- data.frame(
+      generator = "CSCP",
+      phi_true = phi_true,
+      s_true = s_true,
+      r_half_true = half_decay_cscp(phi_true, s_true),
+      rep = i,
+      fit_model = "CSCP",
+      phi_hat = fit_c$par[["phi"]],
+      s_hat = fit_c$par[["s"]],
+      r_half = half_decay_cscp(fit_c$par[["phi"]], fit_c$par[["s"]])
+    )
+    counter <- counter + 1
+
+    results_list[[counter]] <- data.frame(
+      generator = "CSCP",
+      phi_true = phi_true,
+      s_true = s_true,
+      r_half_true = half_decay_cscp(phi_true, s_true),
+      rep = i,
+      fit_model = "LGCP",
+      phi_hat = fit_l$par[["phi"]],
+      s_hat = fit_l$par[["s"]],
+      r_half = half_decay_lgcp(fit_l$par[["phi"]], fit_l$par[["s"]])
+    )
+    counter <- counter + 1
+  }
+}
+
+results <- dplyr::bind_rows(results_list)
+```
+
+We first compare the fitted models visually through the distribution of 
+estimated clustering strength and half-decay distance across simulations.
+
+```{r}
+ggplot(results, aes(x = fit_model, y = phi_hat, fill = fit_model)) +
+  geom_boxplot(outliers = FALSE) +
+  geom_hline(aes(yintercept = phi_true),
+             linetype = "dashed",
+             colour = "black",
+             linewidth = 0.4) +
+  facet_grid(phi_true ~ s_true, labeller = label_both) +
+  labs(
+    title = "Estimated clustering strength (CSCP data)",
+    x = "Fitted model",
+    y = expression(hat(phi))
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
+
+```{r}
+ggplot(results, aes(x = fit_model, y = r_half, fill = fit_model)) +
+  geom_boxplot(outliers = FALSE) +
+  geom_hline(aes(yintercept = r_half_true),
+             linetype = "dashed",
+             colour = "black",
+             linewidth = 0.4) +
+  facet_grid(phi_true ~ s_true, labeller = label_both) +
+  labs(
+    title = "Half-decay distance (CSCP data)",
+    x = "Fitted model",
+    y = expression(hat(r)[1/2])
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
+
+To quantify these differences, we summarise the agreement between the two fitted 
+models across simulations.
+
+```{r}
+#| code-fold: true
+
+# This is nasty work, would come back and clean up if this wasn't just rough 
+# notes
+
+# True half-decay for CSCP generator
+results <- results %>%
+  mutate(
+    r_half_true = half_decay_cscp(phi_true, s_true),
+    phi_error = phi_hat - phi_true,
+    r_half_error = r_half - r_half_true
+  )
+
+agreement_table <- results %>%
+  dplyr::select(generator, phi_true, s_true, rep, fit_model, phi_hat, r_half) %>%
+  tidyr::pivot_wider(
+    names_from = fit_model,
+    values_from = c(phi_hat, r_half)
+  ) %>%
+  dplyr::mutate(
+    delta_phi = abs(phi_hat_CSCP - phi_hat_LGCP),
+    delta_r_half = abs(r_half_CSCP - r_half_LGCP),
+    rel_delta_phi = delta_phi / phi_true,
+    rel_delta_r_half = delta_r_half / half_decay_cscp(phi_true, s_true)
+  ) %>%
+  dplyr::group_by(generator, phi_true, s_true) %>%
+  dplyr::summarise(
+    mean_delta_phi = mean(delta_phi, na.rm = TRUE),
+    mean_delta_r_half = mean(delta_r_half, na.rm = TRUE),
+    mean_rel_delta_phi = mean(rel_delta_phi, na.rm = TRUE),
+    mean_rel_delta_r_half = mean(rel_delta_r_half, na.rm = TRUE),
+    median_rel_delta_phi = median(rel_delta_phi, na.rm = TRUE),
+    median_rel_delta_r_half = median(rel_delta_r_half, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+agreement_table_clean <- agreement_table %>%
+  mutate(
+    median_rel_delta_phi = 100 * median_rel_delta_phi,
+    median_rel_delta_r_half = 100 * median_rel_delta_r_half
+  ) %>%
+  select(
+    phi_true, s_true,
+    mean_delta_phi,
+    median_rel_delta_phi,
+    median_rel_delta_r_half
+  )
+```
+
+```{r}
+#| code-fold: true
+
+variability_table <- results %>%
+  dplyr::group_by(generator, phi_true, s_true, fit_model) %>%
+  dplyr::summarise(
+    sd_phi_hat = sd(phi_hat, na.rm = TRUE),
+    sd_r_half = sd(r_half, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+comparison_table <- agreement_table %>%
+  left_join(
+    variability_table %>%
+      group_by(phi_true, s_true) %>%
+      summarise(
+        sd_phi = mean(sd_phi_hat),
+        sd_r_half = mean(sd_r_half),
+        .groups = "drop"
+      ),
+    by = c("phi_true", "s_true")
+  ) %>%
+  mutate(
+    ratio_phi = mean_delta_phi / sd_phi,
+    ratio_r_half = mean_delta_r_half / sd_r_half
+  ) %>%
+  select(phi_true, s_true, ratio_phi, ratio_r_half)
+```
+
+:::callout-note
+A small number of the fits produced wildly inaccurate estimates, which I'm assuming
+is just due to unreliable PCF estimation in general, rather than anything specific 
+to the models I'm fitting.
+
+As such, we focus on the *median* relative differences, rather than the mean, 
+reducing the influence of the occasional outlier.
+:::
+
+```{r echo = FALSE}
+agreement_table_clean %>%
+  mutate(
+    mean_delta_phi = round(mean_delta_phi, 3),
+    median_rel_delta_phi = round(median_rel_delta_phi, 1),
+    median_rel_delta_r_half = round(median_rel_delta_r_half, 1)
+  ) %>%
+  knitr::kable(
+    caption = "Agreement between LGCP and CSCP fits on CSCP-generated data"
+  )
+```
+
+```{r echo = FALSE}
+comparison_table %>%
+  mutate(
+    ratio_phi = round(ratio_phi, 3),
+    ratio_r_half = round(ratio_r_half, 3)
+  ) %>%
+  knitr::kable(
+    caption = "Relative magnitude of cross-model differences compared to estimation variability"
+  )
+```
+
+The results show that both LGCP and CSCP models yield highly consistent 
+second-order inference when fitted to the same CSCP-generated datasets.
+
+Across all parameter regimes, the median relative differences in estimated 
+clustering strength $\hat{\phi}$ are small, typically below 15%. The 
+corresponding differences in half-decay distance $\hat{r}_{1/2}$ are somewhat 
+larger, but remain moderate, generally within 10–30%.
+
+To assess whether these differences are practically meaningful, we compare them 
+to the inherent variability of the estimators. For both clustering strength and 
+half-decay distance, the difference between the two fitted models is consistently 
+smaller than the standard deviation of the estimates. In all scenarios, the ratio 
+of cross-model differences to estimation variability is well below one.
+
+This indicates that the differences between LGCP and CSCP fits are negligible 
+relative to statistical uncertainty. In particular, the two models lead to 
+essentially the same conclusions regarding the strength and spatial extent of 
+clustering in the data.
+
+From the perspective of second-order inference, the choice between LGCP and CSCP 
+does not materially affect the conclusions drawn from the data.
+
+This provides empirical evidence that second-order summaries alone are 
+insufficient to distinguish between these model classes in practice.
+
+### Small aside
+
+So we've seen the difference in fitted models is not very substantial, however
+I thought it might be nice to see which actually fits the data better, so we 
+take a brief look here:
+
+A small number of fits produced extremely large scale estimates, leading to 
+unrealistic values of the half-decay distance. To prevent these from dominating 
+mean-based summaries, we report trimmed RMSE values, which are more robust to 
+such instabilities.
+
+```{r echo = FALSE}
+trimmed_rmse <- function(x, truth, trim = 0.05) {
+  err <- (x - truth)^2
+  err <- sort(err)
+  n <- length(err)
+  keep <- err[(floor(n * trim) + 1):(ceiling(n * (1 - trim)))]
+  sqrt(mean(keep, na.rm = TRUE))
+}
+
+performance_table <- results %>%
+  group_by(phi_true, s_true, fit_model) %>%
+  summarise(
+    phi_rmse = trimmed_rmse(phi_hat, phi_true),
+    r_half_rmse = trimmed_rmse(r_half, r_half_true),
+    .groups = "drop"
+  )
+
+performance_table %>%
+  mutate(
+    phi_rmse = round(phi_rmse, 3),
+    r_half_rmse = round(r_half_rmse, 3)
+  ) %>%
+  knitr::kable(
+    caption = "RMSE of parameter estimates under CSCP-generated data"
+  )
+```
+
+Across all parameter regimes, the RMSE values for the two fitted models are 
+very similar. Differences between LGCP and CSCP fits are small in magnitude 
+and show no consistent pattern: in some regimes the CSCP fit yields slightly 
+lower error, while in others the LGCP fit performs marginally better.
+
+Importantly, even though the data are generated from a CSCP model, fitting an 
+LGCP produces estimates with comparable accuracy. This indicates that, when 
+inference is based on second-order summaries, neither model has a clear 
+advantage in recovering the underlying clustering structure.
+
+:::callout-note
+I think a more interpretable table would display the difference in RMSE for 
+each regime?
+
+To be honest I personally find deciding on what results to display *really* 
+difficult, is there some sort of default / boiler that I can just always use
+and be confident I'm presenting the right information?
+:::
+
+## LGCP-generated data
+
+We now repeat the study with data generated from an LGCP model.
+
+For each parameter setting $(\lambda, \phi, s)$, we:
+
+1. simulate $n_{\text{rep}}$ point patterns from an LGCP model;
+2. estimate the empirical pair correlation function $\hat g(r)$;
+3. fit both LGCP and CSCP models using minimum contrast;
+4. record the estimated clustering strength $\hat\phi$, the fitted scale 
+parameter, and the derived half-decay distance $\hat r_{1/2}$.
+
+We then compare the resulting estimates across the two fitted models.
+
+As before, we fix $\lambda = 300$, and consider
+
+$$
+\phi \in \{0.75,\,1.5,\,2.0\}, \qquad s \in \{0.03,\,0.05,\,0.08\}.
+$$
+
+These values span a range of clustering strengths and spatial scales, allowing us 
+to assess whether the same practical non-identifiability appears when the data are 
+generated from the LGCP rather than the CSCP.
+
+```{r echo = FALSE}
+pcf_true_df_lgcp <- purrr::map_dfr(seq_len(nrow(scenarios)), function(i) {
+  phi_i <- scenarios$phi[i]
+  s_i   <- scenarios$s[i]
+
+  data.frame(
+    r = r_grid,
+    phi = factor(phi_i, levels = c(0.75, 1.5, 2.0)),
+    s = factor(s_i, levels = c(0.03, 0.05, 0.08)),
+    g = pcf_lgcp_theoretical(r_grid, lambda = 250, phi = phi_i, s = s_i)
+  )
+})
+
+ggplot(pcf_true_df_lgcp, aes(x = r, y = g)) +
+  geom_hline(yintercept = 1, linetype = "dashed", linewidth = 0.3) +
+  geom_line(linewidth = 0.9) +
+  facet_grid(phi ~ s, labeller = label_both) +
+  labs(
+    title = "True LGCP pair correlation functions across simulation regimes",
+    x = "Distance r",
+    y = "g(r)"
+  ) +
+  theme_minimal()
+```
+
+These curves represent the second-order structures used in the LGCP-generated
+simulation study. As before, increasing $\phi$ increases the magnitude of
+clustering, while increasing $s$ increases the spatial scale over which that
+clustering persists.
+
+```{r cache = TRUE, warning = FALSE}
+#| code-fold: true
+
+results_lgcp_list <- list()
+counter <- 1
+
+for (j in 1:nrow(scenarios)) {
+
+  phi_true <- scenarios$phi[j]
+  s_true   <- scenarios$s[j]
+
+  for (i in 1:n_rep) {
+
+    X <- sim_lgcp(W, lambda = 300, phi = phi_true, s = s_true)$pp
+
+    fit_l <- fit_lgcp_mc(
+      X,
+      bw = fit_args$bw,
+      correction = "isotropic",
+      divisor = "a",
+      zerocor = "JonesFoster"
+    )
+
+    fit_c <- fit_cscp_mc(
+      X,
+      bw = fit_args$bw,
+      correction = "isotropic",
+      divisor = "a",
+      zerocor = "JonesFoster"
+    )
+
+    results_lgcp_list[[counter]] <- data.frame(
+      generator = "LGCP",
+      phi_true = phi_true,
+      s_true = s_true,
+      r_half_true = half_decay_lgcp(phi_true, s_true),
+      rep = i,
+      fit_model = "LGCP",
+      phi_hat = fit_l$par[["phi"]],
+      s_hat = fit_l$par[["s"]],
+      r_half = half_decay_lgcp(fit_l$par[["phi"]], fit_l$par[["s"]])
+    )
+    counter <- counter + 1
+
+    results_lgcp_list[[counter]] <- data.frame(
+      generator = "LGCP",
+      phi_true = phi_true,
+      s_true = s_true,
+      r_half_true = half_decay_lgcp(phi_true, s_true),
+      rep = i,
+      fit_model = "CSCP",
+      phi_hat = fit_c$par[["phi"]],
+      s_hat = fit_c$par[["s"]],
+      r_half = half_decay_cscp(fit_c$par[["phi"]], fit_c$par[["s"]])
+    )
+    counter <- counter + 1
+  }
+}
+
+results_lgcp <- dplyr::bind_rows(results_lgcp_list)
+```
+
+We again compare the fitted models visually through the distribution of estimated
+clustering strength and half-decay distance across simulations.
+
+```{r echo = FALSE}
+ggplot(results_lgcp, aes(x = fit_model, y = phi_hat, fill = fit_model)) +
+  geom_boxplot(outliers = FALSE) +
+  geom_hline(aes(yintercept = phi_true),
+             linetype = "dashed",
+             colour = "black",
+             linewidth = 0.4) +
+  facet_grid(phi_true ~ s_true, labeller = label_both) +
+  labs(
+    title = "Estimated clustering strength (LGCP data)",
+    x = "Fitted model",
+    y = expression(hat(phi))
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
+
+```{r echo = FALSE}
+ggplot(results_lgcp, aes(x = fit_model, y = r_half, fill = fit_model)) +
+  geom_boxplot(outliers = FALSE) +
+  geom_hline(aes(yintercept = r_half_true),
+             linetype = "dashed",
+             colour = "black",
+             linewidth = 0.4) +
+  facet_grid(phi_true ~ s_true, labeller = label_both) +
+  labs(
+    title = "Half-decay distance (LGCP data)",
+    x = "Fitted model",
+    y = expression(hat(r)[1/2])
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
+
+To quantify these differences, we summarise the agreement between the two fitted
+models across simulations.
+
+```{r}
+#| code-fold: true
+
+results_lgcp <- results_lgcp %>%
+  mutate(
+    r_half_true = half_decay_lgcp(phi_true, s_true),
+    phi_error = phi_hat - phi_true,
+    r_half_error = r_half - r_half_true
+  )
+
+agreement_table_lgcp <- results_lgcp %>%
+  dplyr::select(generator, phi_true, s_true, rep, fit_model, phi_hat, r_half) %>%
+  tidyr::pivot_wider(
+    names_from = fit_model,
+    values_from = c(phi_hat, r_half)
+  ) %>%
+  dplyr::mutate(
+    delta_phi = abs(phi_hat_CSCP - phi_hat_LGCP),
+    delta_r_half = abs(r_half_CSCP - r_half_LGCP),
+    rel_delta_phi = delta_phi / phi_true,
+    rel_delta_r_half = delta_r_half / half_decay_lgcp(phi_true, s_true)
+  ) %>%
+  dplyr::group_by(generator, phi_true, s_true) %>%
+  dplyr::summarise(
+    mean_delta_phi = mean(delta_phi, na.rm = TRUE),
+    mean_delta_r_half = mean(delta_r_half, na.rm = TRUE),
+    mean_rel_delta_phi = mean(rel_delta_phi, na.rm = TRUE),
+    mean_rel_delta_r_half = mean(rel_delta_r_half, na.rm = TRUE),
+    median_rel_delta_phi = median(rel_delta_phi, na.rm = TRUE),
+    median_rel_delta_r_half = median(rel_delta_r_half, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+agreement_table_lgcp_clean <- agreement_table_lgcp %>%
+  mutate(
+    median_rel_delta_phi = 100 * median_rel_delta_phi,
+    median_rel_delta_r_half = 100 * median_rel_delta_r_half
+  ) %>%
+  select(
+    phi_true, s_true,
+    mean_delta_phi,
+    median_rel_delta_phi,
+    median_rel_delta_r_half
+  )
+```
+
+```{r}
+#| code-fold: true
+
+variability_table_lgcp <- results_lgcp %>%
+  dplyr::group_by(generator, phi_true, s_true, fit_model) %>%
+  dplyr::summarise(
+    sd_phi_hat = sd(phi_hat, na.rm = TRUE),
+    sd_r_half = sd(r_half, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+comparison_table_lgcp <- agreement_table_lgcp %>%
+  left_join(
+    variability_table_lgcp %>%
+      group_by(phi_true, s_true) %>%
+      summarise(
+        sd_phi = mean(sd_phi_hat),
+        sd_r_half = mean(sd_r_half),
+        .groups = "drop"
+      ),
+    by = c("phi_true", "s_true")
+  ) %>%
+  mutate(
+    ratio_phi = mean_delta_phi / sd_phi,
+    ratio_r_half = mean_delta_r_half / sd_r_half
+  ) %>%
+  select(phi_true, s_true, ratio_phi, ratio_r_half)
+```
+
+```{r echo = FALSE}
+agreement_table_lgcp_clean %>%
+  mutate(
+    mean_delta_phi = round(mean_delta_phi, 3),
+    median_rel_delta_phi = round(median_rel_delta_phi, 1),
+    median_rel_delta_r_half = round(median_rel_delta_r_half, 1)
+  ) %>%
+  knitr::kable(
+    caption = "Agreement between LGCP and CSCP fits on LGCP-generated data"
+  )
+```
+
+```{r echo = FALSE}
+comparison_table_lgcp %>%
+  mutate(
+    ratio_phi = round(ratio_phi, 3),
+    ratio_r_half = round(ratio_r_half, 3)
+  ) %>%
+  knitr::kable(
+    caption = "Relative magnitude of cross-model differences compared to estimation variability"
+  )
+```
+
+The results again show that both LGCP and CSCP models yield highly consistent
+second-order inference when fitted to the same datasets.
+
+Across the parameter regimes considered, the differences in estimated clustering
+strength $\hat{\phi}$ and half-decay distance $\hat r_{1/2}$ remain small relative
+to the overall Monte Carlo variability of the estimators. Although the fitted
+models use different functional forms, they continue to provide very similar
+descriptions of the clustering present in the data.
+
+Importantly, this behaviour persists even when the data are generated from the
+LGCP itself. Thus, the practical similarity observed in the previous section is
+not specific to CSCP-generated data, but appears symmetrically in both directions.
+
+This strengthens the conclusion that second-order summaries alone are not
+sufficient to distinguish between these model classes in practice.
+
+### Small aside (again)
+
+As before, we can also compare the accuracy of the two fitted models through RMSE.
+
+```{r echo = FALSE}
+performance_table_lgcp <- results_lgcp %>%
+  group_by(phi_true, s_true, fit_model) %>%
+  summarise(
+    phi_rmse = trimmed_rmse(phi_hat, phi_true),
+    r_half_rmse = trimmed_rmse(r_half, r_half_true),
+    .groups = "drop"
+  )
+
+performance_table_lgcp %>%
+  mutate(
+    phi_rmse = round(phi_rmse, 3),
+    r_half_rmse = round(r_half_rmse, 3)
+  ) %>%
+  knitr::kable(
+    caption = "RMSE of parameter estimates under LGCP-generated data"
+  )
+```
+
+Across all parameter regimes, the RMSE values for the two fitted models remain
+very similar. Even when the data are generated from an LGCP model, fitting a
+CSCP produces estimates with comparable accuracy.
+
+Taken together with the CSCP-generated results, this suggests that minimum
+contrast estimation based on the pair correlation function is primarily recovering
+shared second-order structure, rather than features specific to either model class.
+
+## Summary and implications
+
+Across the previous sections, we investigated whether the theoretical similarity 
+between the LGCP and CSCP pair correlation functions carries through to practical 
+statistical inference.
+
+We first showed that, for suitable parameter choices, the two models can produce 
+very similar pair correlation functions. In particular, when expressed in terms of 
+the clustering strength $\phi = g(0) - 1$ and a characteristic spatial scale, the 
+difference between the two families is often negligible over the range of distances 
+relevant for estimation.
+
+We then examined whether this similarity affects inference by conducting simulation 
+studies in both directions:
+
+- data generated from a CSCP, fitted with both CSCP and LGCP models;
+- data generated from an LGCP, fitted with both LGCP and CSCP models.
+
+In both cases, the results were remarkably consistent. The two fitted models 
+produced:
+
+- very similar estimates of clustering strength $\hat{\phi}$;
+- very similar estimates of the half-decay distance $\hat{r}_{1/2}$;
+- visually indistinguishable fitted pair correlation functions.
+
+Moreover, the differences between the models were small relative to the overall 
+Monte Carlo variability of the estimators. In other words, fitting the “wrong” model 
+did not meaningfully degrade second-order inference.
+
+### What does this mean?
+
+At a practical level, these results suggest that inference based on second-order 
+summaries—such as minimum contrast estimation using the pair correlation 
+function—is largely driven by the *shape of the PCF*, rather than the specific 
+underlying model.
+
+Since the LGCP and CSCP are capable of generating very similar PCFs, they also 
+lead to very similar second-order inference, even under model misspecification.
+
+This implies that, in many realistic settings, it may be difficult to distinguish 
+between these model classes using second-order statistics alone.
+
+### Implications for modelling
+
+These findings have two important implications.
+
+First, care should be taken when interpreting fitted Cox process models based only 
+on second-order summaries. A good fit to the empirical PCF does not necessarily 
+provide strong evidence in favour of one model over another, if multiple models can 
+reproduce the same second-order structure.
+
+Second, model choice in this context should be guided not only by goodness-of-fit 
+at the level of the PCF, but also by:
+
+- interpretability of the latent structure,
+- computational considerations,
+- and the specific scientific questions of interest.
+
+### Future directions
+
+The results of this study naturally raise the question of how the models might be 
+distinguished in practice.
+
+One possible direction is to consider features beyond second-order structure. 
+For example:
+
+- higher-order interactions,
+- conditional or Palm distributions,
+- or likelihood-based approaches that incorporate more of the underlying model 
+  structure.
+
+Alternatively, one could investigate whether differences in the marginal 
+distribution of the intensity field, or in extreme clustering behaviour, provide 
+useful distinguishing features.
+
+Exploring these directions may help to identify settings in which the LGCP and CSCP 
+can be meaningfully separated, and where model choice has a more substantial impact 
+on inference.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

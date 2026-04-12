@@ -1,0 +1,17 @@
+{
+  "hash": "7a59bead584fed25b966df5f206a6625",
+  "result": {
+    "engine": "knitr",
+    "markdown": "# Pair Correlation Function\n\n\n\n\n## Motivation\n\nIn the previous section, we introduced the second-order product density\n$\\lambda^{(2)}(u, v)$, which describes the joint occurrences of points at two \nlocations.\n\nHowever, this quantity is difficult to interpret directly:\n\n- its magnitude depends on the intensity $\\ambda(u)$,\n- it is not scale invariant\n- and it does not isolate pure interaction between points.\n\nTo address this, we introduct a normalized version.\n\n## Definition\n\nThe pair correlation function (PCF) is defined as\n\n$$\ng(u, v) = \\frac{\\lambda^{(2)}(u, v)}{\\lambda(u) \\lambda(v)}, \\quad u \\neq v\n$$\n## Interpretation\n\nThe PCF compares the observed joint occurrence of points at $u$ and $v$, to what\nwould be expected under independence.\n\nIn particular:\n\n- $g(u, v) = 1 \\Longrightarrow$ no interaction (Poisson-like)\n\n- $g(u, v) > 1 \\Longrightarrow$ clustering (points occur together more often \nthan expected)\n\n- $g(u, v) > 1 \\Longrightarrow$ repulsion (points inhibit each other)\n\nThe PCF removes the effect of intensity. It isolates the pure spatial ineraction \nbetween points.\n\n## Relation to the Poisson process\n\nFor a Poisson process, we have:\n\n$$\n\\lambda^{(2)}(u, v) = \\lambda(u) \\lambda(v)\n$$\n\nand hence:\n\n$$\ng(u, v) = 1\n$$\n\nThus, the PCF can be interpreted as a measure of deviation from complete spatial\nrandomness.\n\n## Interpretation as a ratio\n\nAnother useful way to interpret the PCF is:\n\n$$\ng(u,v) \\approx \\frac{\\text{probability of observing a pair at } (u,v)}\n{\\text{probability under independence}}\n$$\n\nSo:\n\n- $g(u,v) = 2$ means that pairs occur twice as often as expected\n\n- $g(u, v) = 0.5$ means that pairs occur half as often as expected\n\n## Distance based form\n\nIn many situations, interaction depends only on the distance between points.\n\nIn such cases, we write:\n\n$$\nr = \\|u - v\\|\n$$\n\nand express the PCF as a function of distance, $g(r)$.\n\nThis reduces the problem from studying interactions between all pairs of \nlocations to understanding how interaction varies with separation distance.\n\nThis $g(r)$ form is most commonly used in practice.\n\n## Examples (conceptual)\n\nAn example of a clustered process:\n\n\n::: {.cell}\n\n```{.r .cell-code}\npar(mfrow = c(1, 2))\nplot(longleaf)\nplot(pcf(longleaf))\n```\n\n::: {.cell-output-display}\n![](pcf_files/figure-html/unnamed-chunk-2-1.png){width=672}\n:::\n:::\n\n\nAnd an example of a regular process:\n\n\n::: {.cell}\n\n```{.r .cell-code}\npar(mfrow = c(1, 2))\nplot(hamster)\nplot(pcf(hamster))\n```\n\n::: {.cell-output-display}\n![](pcf_files/figure-html/unnamed-chunk-3-1.png){width=672}\n:::\n:::\n\n\n## Summary\n\n- The PCF is defined as:\n  $$\n  g(u,v) = \\frac{\\lambda^{(2)}(u,v)}{\\lambda(u)\\lambda(v)}.\n  $$\n- It measures deviation from independence.\n- Values of:\n  - $g > 1$ indicate clustering,\n  - $g < 1$ indicate repulsion.\n- When expressed as $g(r)$, it describes how interaction varies with distance.\n\n## Next Step\n\nWe now explore another second-order summary: the $K$-function, which \naggregates interaction over distance and provides a complementary perspective.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n",
+    "supporting": [
+      "pcf_files"
+    ],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

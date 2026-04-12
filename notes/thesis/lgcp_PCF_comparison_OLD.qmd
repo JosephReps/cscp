@@ -1,0 +1,409 @@
+# Theoretical Comparison of Pair Correlation Functions
+
+## Preliminaries
+
+In the previous sections, we established a common parameterisation for LGCPs and
+CSCPs, and observed that the two models can produce very similar second-order
+structure when their parameters are suitably chosen.
+
+We now study this phenomenon directly by comparing the two families of pair
+correlation functions.
+
+Under the parameterisation $(\lambda, \phi, s)$, the PCFs take the form
+$$
+g_{CSCP}(r; \lambda, \phi, s_C) = 1 + \phi \exp\left(-\frac{2r}{s_C}\right),
+$$
+$$
+g_{LGCP}(r; \lambda, \phi, s_L) = (1 + \phi)^{\exp(-r/s_L)}.
+$$
+
+The central question is whether these two families of functions can be
+distinguished when only second-order structure is available.
+
+To formalise this, we consider the following approximation problem:
+
+:::callout-important
+Given a CSCP PCF with parameters $(\lambda, \phi, s_C)$, how well can it be
+approximated by an LGCP PCF with the same $(\lambda, \phi)$ by optimally choosing
+the scale parameter $s_L$?
+:::
+
+If the discrepancy between the two families can be made arbitrarily small through
+rescaling, this would indicate a fundamental limitation in using second-order
+structure for model identification.
+
+## Non-equivalence of the PCF families
+
+Before studying approximation, we first note that the two PCF families are not
+identical.
+
+[Need to type up proof that the two families of curves are only identical when $\phi = 0$]
+
+## Best LGCP approximation of CSCP PCF
+
+Consider a CSCP with parameters $(\lambda, \phi, s_C)$, and LGCP with parameters
+$(\lambda, \phi, s_L)$. 
+
+We are interested in the following question:
+
+:::
+For fixed $(\lambda, \phi)$, how should we choose $s_L$ so that the LGCP PCF is 
+as close as possible to the CSCP PCF?
+:::
+
+:::callout-tip
+Should I be saying for fixed $(\lambda, \phi, s_C)$ here instead?
+:::
+
+To make this precise, define discrepancy as
+
+$$
+D = \sup_{r \ge 0} |g_{_{LGCP}}(r; \lambda, \phi, s_L) - g_{_{CSCP}}(r; \lambda, \phi, s_C)|
+$$
+
+Our goal is to solve
+
+$$
+\inf_{s_L > 0} D
+$$
+
+and to understand how small this discrepancy can be as $\phi$ varies over $[0,2]$.
+
+### Reduction to scale-ratio
+
+At first glance, this looks like a two-parameter problem in $s_L$ and $s_C$.
+
+However, it turns out that once $(\lambda, \phi)$ are fixed, only the ratio of
+scales matters.
+
+:::callout-tip
+After thinking, I don't really feel that this reduction to a scale ratio is all 
+that helpful?
+
+To me it is already quite obviously a one-dimensional mini-max problem; the only 
+parameter we are varying is $s_L$?
+
+Keeping it in for now as bot is recommending it, but kind of feel it might just
+cause confusion.
+:::
+
+### Proposition 1
+Let
+
+$$
+g_{_{CSCP}}(r; \lambda, \phi, s_C) = 1 + \phi \exp(\frac{-2r}{s_C})
+$$
+$$
+g_{_{LGCP}}(r; \lambda, \phi, s_L) = (1 + \phi)^{\exp(-r/s_L)}
+$$
+
+Define 
+
+$$
+x = \exp(\frac{-r}{s_L}) \in [0,1],\quad
+p = \frac{2s_L}{s_C},\quad
+c = \log(1+\phi)
+$$
+
+Then the discrepancy can be written as:
+
+$$
+\sup_{x \in [0,1]} |\exp(cx^p) - 1 - \phi x|
+$$
+
+This makes it clear that approximation problem depends only on the scale ratio:
+
+$$
+\frac{2s_L}{s_C}
+$$
+
+Our problem now becomes:
+
+> For fixed $\phi$, how should $p$ be chosen to make the two curves as close as 
+possible, and how large would the resulting discrepancy be, over $\phi \in [0,2]$
+
+:::callout-note
+Also, note that the factor 2 in the ratio just a result of the 2 in the exponent
+of the CSCP. We could have just used $p = \frac{s_L}{s_C}$ as the ratio, but
+then the discrepancy would have $x^{2p}$ which is not as clean.
+:::
+
+### Proof of Proposition 1
+
+Starting with the LGCP:
+
+$$
+\begin{align}
+g_{_{LGCP}}(r; \lambda, \phi, s_L) &= (1 + \phi)^{\exp(-r/s_L)}\\
+&= \exp(\log(1 + \phi)\exp(-r/s_L))\\
+&= \exp(cx)
+\end{align}
+$$
+
+where $c = \log(1 + \phi)$ and $x = \exp(-r/s_L)$.
+
+And now the CSCP:
+
+$$
+\begin{align}
+g_{_{CSCP}}(r; \lambda, \phi, s_C) &= 1 + \phi \exp(\frac{-2r}{s_C})\\
+&= 1 + \phi \exp(\frac{-r}{s_L} \frac{2s_L}{s_C})\\
+&= 1 + \phi \exp(\frac{-r}{s_L})^{2s_L/s_C}\\
+&= 1 + \phi x^p\\
+\end{align}
+$$
+
+And substituting both into the discrepancy, we have:
+
+$$
+\begin{align}
+D &= \sup_{r \ge 0} |g_{_{LGCP}}(r; \lambda, \phi, s_L) - g_{_{CSCP}}(r; \lambda, \phi, s_C)|\\
+&= \sup_{x \in [0,1]} |(\exp(cx)) - (1 + \phi x^p)|\\
+&= \sup_{x \in [0,1]} |\exp(cx) - 1 - \phi x^p|
+\end{align}
+$$
+
+Thus, once $\phi$ is fixed, the discrepancy depends on $s_C$ and $s_L$ only through
+the ratio $p = \frac{2s_L}{s_C}$
+
+## Proposition 2
+
+Define approximation error as:
+
+$$
+E(\phi, p) := \sup_{x \in [0,1]} |\exp(cx) - 1 - \phi x^p|
+$$
+
+with $\phi \in [0,2]$, $p > 0$, $c = \log(1 + \phi)$.
+
+:::callout-note
+This quantity represents the largest vertical difference between the LGCP and
+CSCP PCF curves, once $(\lambda, \phi)$ are matched. $p = \frac{2s_L}{s_C}$ 
+represents the relative scale of the two processes.
+:::
+
+Then:
+
+1. For each fixed $\phi$, the optimal approximation problem reduces to the one 
+dimensional minimization 
+$$
+\inf_{p > 0} E(\phi, p)
+$$
+
+2. If $p = 1$, then
+
+$$
+E(\phi, 1) := \sup_{x \in [0,1]} |\exp(cx) - 1 - \phi x|
+$$
+and 
+$$
+\exp(cx) - 1 - \phi x \le 0 \forall x \in [0,1]
+$$
+
+3. Additionally, for $p = 1$,
+
+$$
+E(\phi, 1) \le 2(\phi - \log(1 + \phi))
+$$
+
+Hence even before optimizing over $p$, the discrepancy is uniformly controlled
+by an explicit function of $\phi$, and this upper bound approaches 0 as $\phi \to 0$.
+
+:::callout-note
+I initially wanted to include this proposition as an example that the discrepancy
+is infact bound above by a function of $\phi$, and that as $\phi$ approaches 0,
+this upper bound also approaches 0. 
+
+However as noted in the meeting, as $\phi$ goes to 0, the two curves just collapse
+to a horizontal line at $g(r) = 1$, so it is not actually an interesting result.
+
+I would probably not include this in a proper write up.
+:::
+
+## Proof of Proposition 2
+
+1. Follows immediately from Proposition 1.
+
+2. Set
+
+$$
+c = log(1 + \phi),\quad F_\phi(x) = \exp(cx) - 1 - \phi x
+$$
+
+Then
+
+$$
+F_\phi(0) = 0, \quad F_\phi(1) = \exp(c) - 1 - \phi = 0
+$$
+
+Also $F''_\phi(x) = c^2 \exp(cx) > 0$.
+
+So $F_\phi$ is convex on $[0,1]$. A convex function that is 0 at both endpoints 
+must lie below the straight line joining them, which here is identically 0.
+
+:::callout-note
+Needs to be justified / explained.
+:::
+
+Hence,
+
+$$
+F_\phi(x) = \exp(cx) - 1 - \phi x \le 0 \ \forall x \in [0,1]
+$$
+
+3. For the third claim, we will use the series expansion:
+
+$$
+\exp(cx) = 1 + cx + \sum_{k=2}^\infty \frac{(cx)^k}{k!}
+$$
+
+Applying the above expansion to $F_\phi(x)$, we have
+
+$$
+\begin{align}
+F_\phi(x) &= \exp(cx) - 1 - \phi x\\
+&= (c - \phi)x + \sum_{k=2}^\infty \frac{c^k}{k!}x^k
+\end{align}
+$$
+
+Taking absolute values, and using the fact that $0 \le x \le 1$,
+
+$$
+\begin{align}
+|F_\phi(x)| &= |\exp(cx) - 1 - \phi x|\\
+&= |(c - \phi)x + \sum_{k=2}^\infty \frac{c^k}{k!}x^k|\\
+&\le |(c - \phi)x| + |\sum_{k=2}^\infty \frac{c^k}{k!}x^k|\\
+&= |(c - \phi)x| + \sum_{k=2}^\infty \frac{c^k}{k!}x^k\\
+&\le |(c - \phi)| + \sum_{k=2}^\infty \frac{c^k}{k!}x^k
+\end{align}
+$$
+
+Where we are using the triangle inequality, and the facts that $c >= 0$, 
+$x \in [0, 1]$.
+
+Also, because $c = \log(1+\phi) \le \phi$, we have
+
+$$
+|c - \phi| = \phi - \log(1 + \phi)
+$$
+
+Additionally,
+
+$$
+\sum_{k=2}^\infty \frac{c^k}{k!}x^k = \exp(c) - 1 - c = \phi - \log(1 + \phi)
+$$
+
+And so substituting both of these into our inequality gives us:
+
+$$
+|F_\phi(x)| \le 2(\phi - \log(1 + \phi))
+$$
+
+And hence
+
+$$
+E(\phi, 1) \le 2(\phi - \log(1 + \phi))
+$$
+
+The special case $p = 1$, corresponding to the choice $s_C = 2s_L$, already yields
+a simple explicit error bound.
+
+Note that this bound isn't particularly good. If $\phi = 2$, then we have a bound
+on $E(\phi, 1)$ of $\approx 1.8$
+
+Although this choice isn't necessarily optimal, it shows immediately that the two
+PCF families are close, whenever $\phi$ is small, since
+
+$$
+\phi - \log(1 + \phi) = \frac{\phi^2}{2} + O(\phi^3), \qquad (\phi \to 0)
+$$
+
+This suggests that the families may be practically difficult to distinguish in 
+weak clustering regimes.
+
+## Proposition 3 - Optimal Scale Matching
+
+Let approximation error be defined as:
+
+$$
+E(\phi, p) := \sup_{x \in [0,1]} |\exp(cx) - 1 - \phi x^p|
+$$
+
+with $\phi \in [0,2]$, $p > 0$, $c = \log(1 + \phi)$.
+
+Then:
+
+1. For each $\phi \in [0,2]$, there exists at least one minimizer
+
+$$
+p_*(\phi) \in \arg \min_{p > 0} E(\phi, p)
+$$
+
+2. The minimizer $p_*(\phi)$ does not admit a closed-form expression in general,
+but it is uniquely determined as a solution to a one dimensional minimax problem. [????]
+
+3. The corresponding approximation error is
+
+$$
+E_*(\phi) = \inf_{p > 0} E(\phi, p)
+$$
+
+## Proof of Proposition 3
+
+Let
+
+$$
+E(\phi, p) := \sup_{x \in [0,1]} |\exp(cx) - 1 - \phi x^p|
+$$
+
+with $\phi \in [0,2]$, $p > 0$, $c = \log(1 + \phi)$.
+
+Now, for fixed $\phi$, the map
+
+$$
+p \to E(\phi, p)
+$$
+
+is continuous on $(0, \infty)$.
+
+:::callout-note
+Needs more explan
+:::
+
+Moreover
+
+- as $p \to 0$, $x^p \to 1$, so
+
+$$
+E(\phi, p) \to \sup_{x \in [0,1]}|\exp(cx) - 1 - \phi|
+$$
+
+which is finite.
+
+- as $p \to \infty$, $x^p \to 0$ for $x < 1$, so
+
+$$
+E(\phi, p) \to \sup_{x \in [0,1]}|\exp(cx) - 1|
+$$
+
+which is also finite.
+
+Thus a minimum is attained on some compact subset of $(0, \infty)$, implying the
+existence of a minimizer.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

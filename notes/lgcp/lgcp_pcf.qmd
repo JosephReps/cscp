@@ -1,0 +1,194 @@
+# Pair Correlation Function of the LGCP
+
+## Motivation
+
+From the moment calculations, the pair correlation function of a log-Gaussian 
+Cox process is
+
+$$
+g(u,v) = \exp\big(C(u,v)\big),
+$$
+
+where $C(u,v)$ is the covariance function of the underlying Gaussian random 
+field $Z(u)$.
+
+Under stationarity and isotropy, this simplifies to
+
+$$
+g(r) = \exp\big(C(r)\big),
+\qquad r = \|u-v\|
+$$
+
+This gives a direct and explicit link between:
+
+- the covariance structure of the Gaussian field
+- the clustering behaviour of the point process
+
+## A standard covariance model
+
+A common choice is the exponential covariance function:
+
+$$
+C(r) = \sigma^2 \exp\left(-\frac{r}{s}\right),
+$$
+
+where:
+
+- $\sigma^2$ controls variability
+- $s$ controls the spatial scale
+
+Substituting into the LGCP PCF gives
+
+$$
+g(r)
+=
+\exp\left(
+\sigma^2 \exp\left(-\frac{r}{s}\right)
+\right)
+$$
+
+## Clustering strength
+
+A natural measure of clustering is the value of the PCF at the origin:
+
+$$
+g(0) = \exp\big(C(0)\big) = \exp(\sigma^2)
+$$
+
+Define the **clustering strength**
+
+$$
+\phi = g(0) - 1 = \exp(\sigma^2) - 1
+$$
+
+This gives a more interpretable parameter:
+
+- $\phi = 0$ → no clustering (Poisson)
+- larger $\phi$ → stronger clustering
+
+We can invert this relationship:
+
+$$
+\sigma^2 = \log(1+\phi).
+$$
+
+## Reparameterised PCF
+
+Substituting $\sigma^2 = \log(1+\phi)$ into the PCF gives
+
+$$
+g(r)
+=
+\exp\left(
+\log(1+\phi)\,\exp\left(-\frac{r}{s}\right)
+\right)
+$$
+
+This can be written more compactly as
+
+$$
+g(r)
+=
+(1+\phi)^{\exp(-r/s)}
+$$
+
+## Interpretation
+
+This parameterisation makes the structure of the LGCP much clearer:
+
+- $\phi$ controls **how much clustering occurs**
+- $s$ controls **how quickly clustering decays with distance**
+
+Key properties:
+
+1. At $r=0$:
+   $$
+   g(0) = 1 + \phi
+   $$
+
+2. As $r \to \infty$:
+   $$
+   g(r) \to 1
+   $$
+
+3. The decay is governed by $\exp(-r/s)$:
+   - small $s$ → rapid decay
+   - large $s$ → long-range clustering
+
+## Shape of the LGCP PCF
+
+The LGCP PCF has a characteristic form:
+
+$$
+g(r) = \exp(C(r))
+$$
+
+This implies:
+
+- smooth decay from $g(0)$ to $1$
+- strictly positive clustering (no inhibition)
+- nonlinear relationship between covariance and clustering
+
+::: {.callout-note}
+Even moderate values of $\sigma^2$ can produce large values of $g(0)$ due 
+to the exponential transformation.
+:::
+
+## Role of the mean
+
+Recall that the intensity is
+
+$$
+\lambda = \exp\left(m + \tfrac{1}{2}\sigma^2\right).
+$$
+
+So:
+
+- $m$ affects the overall intensity
+- $\sigma^2$ affects both intensity and clustering
+
+This means that:
+
+::: {.callout-important}
+In the LGCP, intensity and clustering are not fully independent under the 
+$(m, \sigma^2)$ parameterisation.
+:::
+
+The $(\lambda, \phi, s)$ parameterisation separates these roles more clearly:
+
+- $\lambda$ → first-order intensity
+- $\phi$ → clustering strength
+- $s$ → clustering scale
+
+## Summary
+
+For a stationary isotropic LGCP with exponential covariance:
+
+$$
+C(r) = \sigma^2 \exp(-r/s),
+$$
+
+the pair correlation function can be written as
+
+$$
+g(r) = \exp(C(r)) = (1+\phi)^{\exp(-r/s)},
+$$
+
+where
+
+$$
+\phi = \exp(\sigma^2) - 1
+$$
+
+This parameterisation provides:
+
+- a direct interpretation of clustering strength ($\phi$)
+- a clear notion of spatial scale ($s$)
+- a convenient bridge between theory and empirical analysis
+
+
+
+
+
+
+

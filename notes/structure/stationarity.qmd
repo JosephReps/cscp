@@ -1,0 +1,157 @@
+# Stationarity
+
+So far, we have defined general point processes and their first- and second-order
+structure.
+
+However, these quantities can be very complex in full generality, as they depend 
+on locations $u$ and pairs $(u,v)$.
+
+To make progress, we often impose structural assumptions.
+
+One of the most important of these is *stationarity*.
+
+## Definition
+
+A point process $X$ on $\mathbb{R}^d$ is said to be stationary if its 
+distribution is invariant under translations.
+
+Formally, for any vector $h \in \mathbb{R}^d$,
+
+$$
+X \overset{d}{=} X + h,
+$$
+
+where
+
+$$
+X + h := \{u + h: u \in X\}
+$$
+
+## Intuition
+
+Stationarity means:
+
+> The statistical properties of the process do not depend on where you are in space.
+
+If you "shift the entire pattern", nothing changes probabilistically.
+
+## Consequences for first order structure
+
+Recall the intensity function:
+
+$$
+\lambda(u) = \lim_{|du|\to 0} \frac{\mathbb{E}[N(du)]}{|du|}.
+$$
+
+Under stationarity:
+
+$$
+\lambda(u) = \lambda \ \text{constant}
+$$
+
+That is, stationarity implies constant intensity. 
+
+It is important to note the reverse is NOT true in general.
+
+:::callout-note
+Example...
+:::
+
+## Consequences for Second-Order Structure
+
+Recall the second-order product density:
+
+$$
+\lambda^{(2)}(u,v).
+$$
+
+Under stationarity, this can only depend on the *relative displacement* between $u$ and $v$:
+
+$$
+\lambda^{(2)}(u,v) = \lambda^{(2)}(u - v).
+$$
+
+That is, the dependence structure is translation invariant.
+
+## Pair correlation function
+
+Recall the pair correlation function:
+
+$$
+g(u,v) = \frac{\lambda^{(2)}(u,v)}{\lambda(u)\lambda(v)}.
+$$
+
+Under stationarity:
+
+- $\lambda(u) = \lambda$
+- $\lambda^{(2)}(u,v) = \lambda^{(2)}(u-v)$
+
+So:
+
+$$
+g(u,v) = g(u - v).
+$$
+
+Thus, the PCF depends only on the *vector difference* between points.
+
+## Why This Matters
+
+Stationarity simplifies everything:
+
+| Quantity | General case | Stationary case |
+|----------|-------------|-----------------|
+| Intensity | $\lambda(u)$ | $\lambda$ |
+| Second-order | $\lambda^{(2)}(u,v)$ | $\lambda^{(2)}(u-v)$ |
+| PCF | $g(u,v)$ | $g(u-v)$ |
+
+This reduction is crucial:
+
+- Instead of functions of two variables $(u,v)$  
+- We now work with functions of a *single displacement vector*
+
+---
+
+## Limitations
+
+Stationarity is often unrealistic in practice:
+
+- Environmental heterogeneity  
+- Spatial trends (e.g. population density, elevation)  
+- Large-scale gradients  
+
+In such cases, we instead work with:
+
+- Inhomogeneous models
+- Residual analysis after detrending
+
+## Summary
+
+Stationarity is the assumption that:
+
+- The process looks the same everywhere in space  
+- The intensity is constant  
+- Dependence depends only on relative displacement  
+
+This assumption dramatically simplifies second-order analysis, and forms the foundation for further simplifications such as isotropy.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

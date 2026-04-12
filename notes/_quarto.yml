@@ -1,0 +1,111 @@
+project:
+  type: book
+  execute-dir: project
+  output-dir: ../website_files
+
+book:
+  title: "(Super Hot Fire) Thesis Notes"
+  author: "Joseph Reps"
+  date: "26/03/2026"
+
+  sidebar:
+    search: true
+    collapse-level: 1
+
+  chapters:
+    - index.qmd
+    - part: "Point Process Foundations"
+      chapters:
+        - pp/introduction.qmd
+        - pp/point_process_definition.qmd
+        - pp/poisson_process.qmd
+        - pp/exercises.qmd
+    - part: "First-Order Structure"
+      chapters:
+        - structure/intensity_function.qmd
+        - structure/intensity_estimation.qmd
+        - structure/exercises1.qmd
+    - part: "Second-Order Structure"
+      chapters:
+        - structure/second_order_product_density.qmd
+        - structure/pcf.qmd
+        - structure/k_function.qmd
+        - structure/second_order_estimation.qmd
+        # - structure/identifiability.qmd
+        - structure/exercises2.qmd
+    - part: "Structural Assumptions"
+      chapters:
+        - structure/stationarity.qmd
+        - structure/isotropy.qmd
+        - structure/exercises3.qmd
+    - part: "Random Fields"
+      chapters:
+        - rf/gaussian_random_fields.qmd
+        - rf/covariance_functions.qmd
+        - rf/exercises.qmd
+    - part: "Cox Processes"
+      chapters:
+        - cox/cox_process_definition.qmd
+        - cox/moment_properties.qmd
+        # - cox/simulation.qmd
+        - cox/exercises.qmd
+    - part: "Log-Gaussian Cox Processes"
+      chapters:
+        - lgcp/lgcp_definition.qmd
+        - lgcp/lgcp_moments.qmd
+        - lgcp/lgcp_pcf.qmd
+        - lgcp/exercises.qmd
+    - part: "Estimation and Inference"
+      chapters:
+        - inference/likelihood.qmd
+        - inference/minimum_contrast.qmd
+        - inference/composite_likelihood.qmd
+        - inference/pseudolikelihood.qmd
+        - inference/exercises.qmd
+    # - part: "Limitations of Second-Order Methods"
+    #   chapters:
+    #     - inference/identifiability_second_order.qmd
+    #     - inference/higher_order_structure.qmd
+    - part: "CSCP I"
+      chapters:
+        - thesis/cscp_preface.qmd
+        - thesis/cscp_definition.qmd
+        - thesis/cscp_definition2.qmd
+        - thesis/cscp_definition3.qmd
+        - thesis/cscp_parameterisations.qmd
+        - thesis/cscp_parameterisations_derivations.qmd
+        - thesis/cscp_model_selection.qmd
+
+    - part: "CSCP II"
+      chapters:
+        - thesis/lgcp_motivation.qmd
+        - thesis/lgcp_identifiability.qmd
+        - thesis/lgcp_PCF_comparison.qmd
+        - thesis/lgcp_PCF_comparison_emp.qmd
+        - thesis/lgcp_PCF_study.qmd
+
+    - part: "CSCP III"
+      chapters:
+        - thesis/third_introduction.qmd
+        # - thesis/third_marginal.qmd
+
+    - part: "Package Docs"
+      chapters:
+        - package_docs/basics.qmd
+        - package_docs/minimum_contrast.qmd
+
+# cscp_vs_lgcp_second_order.qmd
+# multicomponent_cscp_definition.qmd
+# multicomponent_cscp_moments.qmd
+
+format:
+  html:
+    theme:
+      - cosmo
+      - brand
+    css: styles.css
+    # include-after-body: sidebar-background-toggle.html
+  # pdf:
+  #   documentclass: scrreprt
+
+

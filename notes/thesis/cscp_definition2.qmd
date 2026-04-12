@@ -1,0 +1,112 @@
+# The Central Model
+
+The expressions derived in the previous section, while general, are somewhat 
+difficult to interpret due to the presence of mixed terms involving both the 
+mean and covariance functions of the underlying Gaussian random field.
+
+To obtain a more tractable and interpretable model, we now consider the 
+special case in which the Gaussian random field is centered, i.e.
+
+$$
+m(u) = \mathbb{E}[Z(u)] = 0.
+$$
+
+As we will see, this assumption leads to a substantial simplification of the 
+second-order structure.
+
+## Definition
+
+The centered CSCP is obtained by restricting the Gaussian random field to have 
+zero mean. That is, we consider the Cox process with random intensity
+
+$$
+\Lambda(u) = Z(u)^2,
+$$
+
+where $Z(u)$ is a **mean-zero** Gaussian random field with covariance function $C(u,v)$.
+
+## First-order intensity and PCF
+
+Under this mean-zero assumption, the first order intensity simplifies to
+
+$$
+\lambda(u) = C(u, u)
+$$
+
+and the second-order intensity becomes
+
+$$
+\lambda^{(2)}(u,v) = C(u,u)C(v,v) + 2C(u,v)^2.
+$$
+
+Consequently, the PCF simplifies to
+
+$$
+g(u,v) = 1 + \frac{2C(u,v)^2}{C(u,u)C(v,v)}
+$$
+
+This is a substantial simplification of the second-order structure.
+
+In particular, we no longer see the mean being involved in the PCF. In other
+words, the clustering behaviour is now entirely determined by the covariance 
+structure of the underlying field.
+
+## Stationary and Isotropic
+
+Under the assumption of stationarity and isotropy, the model simplifies further.
+
+the first-order intensity becomes
+
+$$
+\lambda(u) = \lambda = \sigma^2,
+$$
+
+the second-order intensity becomes
+
+$$
+\lambda^{(2)}(u,v) = \sigma^4 + 2\sigma^4\rho(r)^2
+$$
+
+and the PCF becomes
+
+$$
+g(r) = 1 + 2 \rho(r)^2.
+$$
+
+As with the previous construction, we observe that the pair correlation function 
+is bounded:
+
+$$
+1 \le g(r) \le 3,
+$$
+
+since $|\rho(r)| \le 1$.
+
+This implies that the clustering strength of the process is inherently limited, 
+and cannot grow arbitrarily large, in contrast to processes such as the LGCP, 
+where $g(0)$ can be unbounded. Thus, this construction does not overcome the 
+boundedness of the PCF observed in the more general case.
+
+More significantly, in the centered case, a stronger restriction holds. Evaluating at 
+$r = 0$, we obtain
+
+$$
+g(0) = 1 + 2\rho(0)^2 = 3,
+$$
+
+since $\rho(0) = 1$. Thus, the clustering strength at zero is fixed, regardless 
+of the choice of covariance function.
+
+This lack of flexibility makes the centered model highly restrictive, as it 
+cannot represent processes with weaker or stronger clustering behaviour.
+
+In particular, the model lacks any parameter controlling clustering strength, 
+which severely limits its usefulness in practical modelling.
+
+:::callout-note
+Interesting note: in the clustering-strength parameterisation $(\lambda, \phi)$ 
+introduced later, this construction corresponds to the fixed value $\phi = 2$.
+
+This makes it even more clear why it is so restrictive, the model has no ability 
+to vary clustering strength.
+:::

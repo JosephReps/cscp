@@ -1,0 +1,77 @@
+# 🚧🚧 Marginal Distribution of $\Lambda(u)$
+
+Tight tight tight
+
+In the previous sections, we showed that LGCP and CSCP models can produce nearly
+identical second-order structure, leading to similar inference based on the pair
+correlation function.
+
+We now investigate whether the models can be distinguished through the marginal
+distribution of the underlying intensity field $\Lambda(u)$.
+
+## Visual inspection
+
+So we are looking at the marginal distribution of the LGCP and CSCP. 
+
+We will start by just doing some visual inspection of the intensity surfaces.
+
+```{r}
+# 2x2 panel: intensity surfaces
+# rows = different realisations
+# cols = CSCP (left), LGCP (right)
+```
+
+```{r}
+# 2x2 panel plotting the 3D!!! intensity surface for LGCP CSCP with the same lambda, phi
+# CSCP on the left, LGCP on the right
+```
+
+Comments on the plot.
+
+## Observed data
+
+Now if we were able to have access to the true intensity surface, obviously we
+could distinguish between the two processes, but unfortunately we only observe the
+point patterns. Taking a look at some example patterns:
+
+```{r}
+# 5x2 panel plotting the 2D point patterns for LGCP CSCP with the same lambda, phi
+# CSCP on the left, LGCP on the right
+# Increasing lambda as you go down row-wise
+```
+
+Probably much harder to distinguish from the patterns alone.
+
+So we would ideally like to have a procedure which does not rely on our visual 
+interpretation, which brings us to quadrat counts.
+
+## Quadrat count idea
+
+To extract information about the marginal distribution of $\Lambda(u)$, we consider
+quadrat counts.
+
+The idea is that, over sufficiently small regions, the number of points reflects
+the local intensity. Differences in the distribution of $\Lambda(u)$ may therefore
+be detectable through the distribution of quadrat counts.
+
+```{r}
+# Example: same pattern, quadrat overlay
+# left = CSCP, right = LGCP
+```
+
+```{r}
+# Histogram / distribution of quadrat counts
+# compare CSCP vs LGCP
+```
+
+We expect the LGCP to produce more extreme counts, corresponding to its
+heavier-tailed intensity distribution, while the CSCP produces more moderate
+variability.
+
+This suggests that quadrat-based summaries may provide a practical way to
+distinguish between the models, even when their second-order structure is similar.
+
+
+
+
+

@@ -1,0 +1,144 @@
+# K-function
+
+## Motivation
+
+The PCF $g(r)$ describes how interaction between points varies with distance.
+
+However, $g(r)$ is a local measure - it focuses on behavior at specific 
+distance $r$.
+
+In many situations, it is useful to have a summary that captures the *total* 
+interaction up to a given distance.
+
+This leads to the $K$-function.
+
+## Definition
+
+The $K$-function, denoted $K(r)$, is defined such that
+
+$$
+\lambda K(r)
+$$
+
+is the expected number of further points within distance $r$ of a typical point.
+
+The $K$-function answers the question:
+
+> Given a point of the process, how many other points do we expect to find 
+within distance $r$?
+
+More precisely:
+
+- $K(r)$ describes the cumulative interaction up to distance $r$.
+- It aggregates behavior over all distances from $0$ to $r$.
+
+:::callout-note
+Just remember:
+
+- $g(r)$ tells us what happens AT distance $r$
+- $K(r)$ tells us what happens WITHIN distance $r$
+:::
+
+## Relation to the Poisson process
+
+For a Poisson process with intensity $\lambda$, we have:
+
+$$
+K(r) = \pi r^2
+$$
+
+:::callout-note
+No explanation why??????? Are you fucking serious dog
+:::
+
+This corresponds to the area of a disc of radius $r$, reflecting complete 
+spatial randomness.
+
+:::callout-note
+Shitty ahh explanation.
+:::
+
+## Detecting interaction
+
+Comparing $K(r)$ to $\pi r^2$ reveals the spatial structure:
+
+- $K(r) > \pi r^2 \Longrightarrow$ clustering
+
+- $K(r) < \pi r^2 \Longrightarrow$ repulsion
+
+- $K(r) = \pi r^2 \Longrightarrow$ no interaction
+
+## Relationship to the PCF
+
+The $K$-function and the PCF are closely related. 
+
+In particular, the $K$-function can be expressed as
+
+$$
+K(r) = \int_0^r 2\pi s\ g(s)\ ds
+$$
+
+Thus:
+
+- the PCF $g(r)$ describes local interaction
+- the $K$-function aggregates this into a cumulative measure.
+
+::: {.callout-note}
+The $K$-function is essentially a smoothed, accumulated version of the PCF.
+:::
+
+## Advantages and Limitations
+
+**Advantages**
+
+- Easier to estimate in practice (less noisy than the PCF)
+
+- Provides a stable summary of interaction (is this not just the same as the 
+ last point).
+ 
+- Widely used in exploratory analysis
+
+**Limitations**
+
+- Being cumulative, it can mask local features
+ 
+- Different processes can produce very similar $K(r)$
+
+- Interpretation is less direct than for $g(r)$
+
+## Summary
+
+- The $K$-function describes the **expected number of neighbours within distance $r$**
+- It provides a **cumulative measure of interaction**
+- It is related to the PCF via:
+  $$
+  K(r) = \int_0^r 2\pi s \, g(s)\, ds
+  $$
+- Comparing $K(r)$ to $\pi r^2$ reveals clustering or repulsion
+
+## Next Step
+
+We now consider how second-order quantities such as the PCF and $K$-function 
+can be estimated from observed data.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

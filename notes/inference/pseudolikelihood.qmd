@@ -1,0 +1,262 @@
+# Pseudolikelihood
+
+## Motivation
+
+In the previous chapters, we considered two approaches to inference:
+
+- minimum contrast estimation, which replaces the likelihood with a distance 
+between summary functions
+- composite likelihood, which approximates the likelihood using lower-order joint distributions
+
+Both approaches avoid working directly with the full likelihood.
+
+In this chapter, we consider a different strategy:
+
+> Can we approximate the likelihood using **conditional structure** instead 
+of marginal or pairwise structure?
+
+This leads to the idea of **pseudolikelihood**.
+
+## Conditional viewpoint
+
+In many statistical models, the joint density can be factorized into conditional components.
+
+For example, for random variables $X_1,\dots,X_n$,
+
+$$
+f(x_1,\dots,x_n)
+=
+\prod_{i=1}^n
+f(x_i \mid x_1,\dots,x_{i-1}).
+$$
+
+This suggests that, instead of modelling the full joint distribution, we might 
+try to approximate it using **local conditional distributions**.
+
+## Conditional intensity
+
+For spatial point processes, the relevant object is the **Papangelou conditional intensity**.
+
+Intuitively, this measures:
+
+> the infinitesimal rate at which a point would occur at location $u$, 
+given the rest of the configuration.
+
+Formally, it is defined (heuristically) as
+
+$$
+\lambda(u \mid X)
+\approx
+\text{rate of observing a point at } u \text{ given } X.
+$$
+
+A more precise definition can be given in terms of densities, but for our 
+purposes this interpretation is sufficient.
+
+## Key interpretation
+
+The conditional intensity $\lambda(u \mid X)$ plays a role analogous to:
+
+- a conditional probability density in classical statistics
+- a hazard rate in survival analysis
+
+It describes how likely a point is to occur at $u$, given the existing configuration.
+
+## Example: Poisson process
+
+For a Poisson process,
+
+$$
+\lambda(u \mid X) = \lambda(u).
+$$
+
+That is, the conditional intensity does not depend on the configuration $X$.
+
+This reflects the fact that Poisson processes have no interaction between points.
+
+## Example: interacting processes
+
+For interacting processes (such as Gibbs processes), the conditional intensity 
+depends on nearby points.
+
+For example, in a repulsive process:
+
+- $\lambda(u \mid X)$ is small if there are nearby points
+
+In a clustered process:
+
+- $\lambda(u \mid X)$ is large near existing points
+
+## Constructing the pseudolikelihood
+
+The idea of pseudolikelihood is to approximate the full likelihood by treating 
+the conditional intensities as if they were independent contributions.
+
+This leads to the pseudolikelihood:
+
+$$
+PL(\theta; X)
+=
+\left[
+\prod_{i=1}^n \lambda(x_i \mid X \setminus \{x_i\})
+\right]
+\exp\left(
+-\int_W \lambda(u \mid X)\,du
+\right).
+$$
+
+## Interpretation
+
+This has a similar structure to the Poisson likelihood:
+
+$$
+\text{(product over observed points)} \times \text{(exponential term)}.
+$$
+
+But now:
+
+- the intensity depends on the configuration
+- interactions are incorporated through $\lambda(u \mid X)$
+
+## Log pseudolikelihood
+
+Taking logs gives
+
+$$
+\ell_{PL}(\theta)
+=
+\sum_{i=1}^n \log \lambda(x_i \mid X \setminus \{x_i\})
+-
+\int_W \lambda(u \mid X)\,du.
+$$
+
+This is the quantity that is maximized in practice.
+
+## Why this works (heuristically)
+
+The pseudolikelihood treats each point as if it were generated independently, 
+conditional on the rest of the configuration.
+
+This is not strictly correct, but it often provides a reasonable approximation when:
+
+- interactions are local
+- dependence decays with distance
+
+## Connection to Gibbs processes
+
+Pseudolikelihood is particularly well-suited to **Gibbs processes**, where:
+
+- the conditional intensity has a simple closed form
+- interactions are explicitly defined through local structure
+
+For example, in a pairwise interaction model:
+
+$$
+\lambda(u \mid X)
+=
+\lambda \prod_{x_i \in X} h(\|u - x_i\|),
+$$
+
+for some interaction function $h$.
+
+## What about Cox processes?
+
+For Cox processes, the situation is quite different.
+
+Recall that a Cox process is defined via a latent random intensity field $\Lambda(u)$:
+
+$$
+X \mid \Lambda \sim \text{Poisson process with intensity } \Lambda(u).
+$$
+
+Conditionally on $\Lambda$:
+
+$$
+\lambda(u \mid X, \Lambda) = \Lambda(u).
+$$
+
+However, marginally (after integrating out $\Lambda$), the conditional intensity is:
+
+$$
+\lambda(u \mid X)
+=
+\mathbb{E}[\Lambda(u) \mid X].
+$$
+
+## Why this is difficult
+
+This expression depends on the **posterior distribution of the latent field** 
+given the observed data.
+
+In most Cox process models:
+
+- this conditional expectation is not available in closed form
+- computing it requires high-dimensional integration or simulation
+
+:::{.callout-warning}
+For Cox processes, the conditional intensity is typically intractable.
+:::
+
+## Consequence
+
+This means that, unlike Gibbs processes:
+
+- pseudolikelihood is not straightforward to apply
+- the key quantity $\lambda(u \mid X)$ is not easily computed
+
+So while pseudolikelihood is a powerful tool for interacting point processes, 
+it is less natural for Cox processes.
+
+
+## Comparison with previous methods
+
+We now have three approaches:
+
+### Minimum contrast
+
+- matches empirical and theoretical summary functions
+- uses second-order structure
+
+### Composite likelihood
+
+- approximates likelihood using pairs
+- still relies on second-order structure
+
+### Pseudolikelihood
+
+- uses conditional intensity
+- requires tractable $\lambda(u \mid X)$
+
+## Key takeaway
+
+:::{.callout-important}
+Different approximation methods rely on different aspects of the point process:
+
+- minimum contrast → summary functions  
+- composite likelihood → joint structure of pairs  
+- pseudolikelihood → conditional structure  
+:::
+
+For Cox processes:
+
+- summary functions are tractable  
+- pairwise structure is tractable  
+- conditional structure is generally not
+
+## Summary
+
+Pseudolikelihood provides a way to approximate the likelihood using conditional 
+intensities.
+
+It is particularly effective for models where:
+
+- local interactions are well-defined
+- conditional intensities have closed forms
+
+However, for Cox processes:
+
+- the conditional intensity depends on an unobserved random field
+- this makes pseudolikelihood difficult to apply in practice
+
+As a result, methods based on second-order structure (such as minimum contrast 
+and composite likelihood) are often preferred.
