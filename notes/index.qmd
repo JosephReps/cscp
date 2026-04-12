@@ -340,14 +340,23 @@
 This webpage serves as both documentation for the `cscp` package, as well as 
 an up-to-date reference for my thesis progress.
 
-::: {.callout-note collapse="true"}
-### For thesis material, see the CSCP I section here.
-:::
+Skip to:
 
-::: {.callout-note collapse="true"}
-### For documentation of the `cscp` package, see the Docs section here.
-:::
+<div class="cta-container">
 
+<a href="thesis/cscp_preface.html" class="cta-button secondary">
+📘 CSCP I (Thesis Material)
+</a>
+
+<a href="thesis/lgcp_motivation.html" class="cta-button secondary">
+📘 CSCP II (Thesis Material)
+</a>
+
+<a href="package_docs/basics.html" class="cta-button secondary">
+📦 Package Documentation
+</a>
+
+</div>
 ## Installation
 
 You can install the `cscp` package using `devtools::install_github()`:

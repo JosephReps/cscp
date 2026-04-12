@@ -11,6 +11,12 @@ book:
   sidebar:
     search: true
     collapse-level: 1
+    # logo: mini_BA_logo.png
+    tools:
+      - icon: github
+        href: https://github.com/JosephReps/cscp
+      - icon: envelope
+        href: mailto:joseph.reps@gmail.com
 
   chapters:
     - index.qmd
@@ -104,8 +110,5 @@ format:
       - cosmo
       - brand
     css: styles.css
-    # include-after-body: sidebar-background-toggle.html
-  # pdf:
-  #   documentclass: scrreprt
 
 

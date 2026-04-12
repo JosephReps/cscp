@@ -1,74 +1,32 @@
-/* Custom sidebar options */
-/* Collapsible background group */
-.background-group {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.background-toggle {
-  appearance: none;
-  width: 100%;
+.cta-container {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.35rem 0.5rem;
-  margin: 0;
-  border: none;
-  border-radius: 0;
-  background: transparent;
-  color: inherit;
-  font: inherit;
+  gap: 16px;
+  margin: 20px 0 30px 0;
+  flex-wrap: wrap;
+}
+
+.cta-button {
+  display: inline-block;
+  padding: 14px 22px;
+  font-size: 16px;
   font-weight: 600;
-  text-align: left;
-  cursor: pointer;
+  text-decoration: none;
+  border-radius: 10px;
+  background: #111;
+  color: #fff;
+  transition: all 0.2s ease;
 }
 
-.background-toggle:hover {
-  background-color: rgba(127, 127, 127, 0.08);
+.cta-button:hover {
+  background: #333;
+  transform: translateY(-2px);
 }
 
-.background-toggle:focus {
-  outline: none;
-  box-shadow: none;
+.cta-button.secondary {
+  background: #f2f2f2;
+  color: #111;
 }
 
-.background-toggle-label {
-  line-height: 1.4;
-}
-
-.background-toggle-chevron {
-  font-size: 0.8em;
-  opacity: 0.7;
-  transition: transform 0.15s ease;
-}
-
-.background-group.is-open .background-toggle-chevron {
-  transform: rotate(90deg);
-}
-
-/* Remove ugly bullets and extra list spacing */
-.background-panel {
-  list-style: none;
-  margin: 0;
-  padding: 0 0 0 0.75rem;
-}
-
-.background-panel li {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-/* Keep nested items visually subordinate */
-.background-panel .sidebar-item,
-.background-panel .chapter {
-  margin: 0;
-  padding: 0;
-}
-
-/* Slight indent only */
-.background-panel a,
-.background-panel .sidebar-link {
-  padding-left: 0.25rem;
+.cta-button.secondary:hover {
+  background: #ddd;
 }

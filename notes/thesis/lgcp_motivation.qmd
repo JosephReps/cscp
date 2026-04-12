@@ -155,8 +155,8 @@ actually despise the default plotting from spatstat.
 :::
 
 When the parameters are matched exactly, the two processes appear noticeably
-different upon visual inspection of both their intensity surfaces and the
-resulting point patterns.
+different upon visual inspection of their intensity surfaces (and less so
+from the resulting point patterns).
 
 Now obviously visual inspection alone is not sufficient for model comparison in
 practice. Instead, it is common to rely on second-order summary statistics,

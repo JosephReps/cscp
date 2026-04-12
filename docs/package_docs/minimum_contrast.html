@@ -162,6 +162,10 @@ window.Quarto = {
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
       <a href="../">(Super Hot Fire) Thesis Notes</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/JosephReps/cscp" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-github"></i></a>
+    <a href="mailto:joseph.reps@gmail.com" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-envelope"></i></a>
+</div>
     </div>
       </div>
         <div class="mt-2 flex-shrink-0 align-items-center">
@@ -633,7 +637,7 @@ window.Quarto = {
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>cscp_fit <span class="ot">&lt;-</span> <span class="fu">fit_cscp_mc</span>(cscp_pp, <span class="at">bw =</span> <span class="fl">0.02</span>)</span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Comparing the model fit to the true PCF</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>r_vals <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="at">by =</span> <span class="fl">0.001</span>)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>r_vals <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="fl">2.5</span>, <span class="at">by =</span> <span class="fl">0.001</span>)</span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>fitted_pcf_vals <span class="ot">&lt;-</span> <span class="fu">pcf_cscp_theoretical</span>(r_vals, <span class="at">lambda =</span> cscp_fit<span class="sc">$</span>par[[<span class="st">"lambda"</span>]], </span>
 <span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>                                        <span class="at">phi =</span> cscp_fit<span class="sc">$</span>par[[<span class="st">"phi"</span>]], </span>
