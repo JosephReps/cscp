@@ -21,7 +21,7 @@ cscp_pp <- sim_cscp(lambda = 100, phi = 1.5, s = 0.05)$pp
 cscp_fit <- fit_cscp_mc(cscp_pp, bw = 0.02)
 
 # Comparing the model fit to the true PCF
-r_vals <- seq(0, 1, by = 0.001)
+r_vals <- seq(0, 2.5, by = 0.001)
 
 fitted_pcf_vals <- pcf_cscp_theoretical(r_vals, lambda = cscp_fit$par[["lambda"]], 
                                         phi = cscp_fit$par[["phi"]], 
