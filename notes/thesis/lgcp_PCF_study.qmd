@@ -10,13 +10,6 @@ library(patchwork)
 
 # Implications for Statistical Inference
 
-Need to rerun the study, as I changed the MC estimator (fitting over $\eta$ where
-$\phi = 2\cdot \text{plogis}(\eta)$).
- 
-Confident it won't change the results.
-
-Typee shitttttttt.
-
 ## Overview
 
 The previous sections showed that LGCP and CSCP models can produce nearly 
@@ -33,8 +26,6 @@ resulting estimates and fitted second-order structure.
 
 This allows us to assess whether the two models produce consistent descriptions of 
 clustering when applied to the same data.
-
----
 
 ## Key quantities of interest
 
@@ -187,8 +178,8 @@ legend("topright",
 :::callout-note
 You can find my:
 
-- Minimum contrast fitting methods [here](https://github.com/JosephReps/coxLab)
-- CSCP / LGCP simulation methods [here](https://github.com/JosephReps/coxLab)
+- Minimum contrast fitting methods [here](https://github.com/JosephReps/cscp/blob/main/R/fit.R)
+- CSCP / LGCP simulation methods [here](https://github.com/JosephReps/cscp/blob/main/R/sim.R)
 :::
 
 ## CSCP-generated data
@@ -225,7 +216,8 @@ estimator to perform well, so our results are not "muddied" by the poor empirica
 fit.
 
 Bandwidth chosen as a value which has worked well in my experience. I think the 
-proper thing to do would be to run some type of CV to find the best value?
+proper thing to do would be to run some type of CV to find the best value? And
+importantly, we use the same bandwidth over each regime.
 
 And the other settings are either matched to the ones you guys use in the paper
 on the new PCF estimator, or the default spatstat.
@@ -268,7 +260,8 @@ ggplot(pcf_true_df, aes(x = r, y = g)) +
 These curves illustrate the range of second-order structures considered in the 
 simulation study. In particular, increasing $\phi$ controls the *magnitude* of 
 clustering, while increasing $s$ controls the spatial extent over which 
-clustering persists.
+clustering persists (don't really think this comment is necessary, at this point
+should be fairly clear the roles which $\phi$ and $s$ play).
 
 ```{r warning = FALSE, cache = TRUE}
 #| code-fold: true
@@ -336,7 +329,7 @@ results <- dplyr::bind_rows(results_list)
 We first compare the fitted models visually through the distribution of 
 estimated clustering strength and half-decay distance across simulations.
 
-```{r}
+```{r echo = FALSE}
 ggplot(results, aes(x = fit_model, y = phi_hat, fill = fit_model)) +
   geom_boxplot(outliers = FALSE) +
   geom_hline(aes(yintercept = phi_true),
@@ -353,7 +346,7 @@ ggplot(results, aes(x = fit_model, y = phi_hat, fill = fit_model)) +
   theme(legend.position = "none")
 ```
 
-```{r}
+```{r echo = FALSE}
 ggplot(results, aes(x = fit_model, y = r_half, fill = fit_model)) +
   geom_boxplot(outliers = FALSE) +
   geom_hline(aes(yintercept = r_half_true),
@@ -459,6 +452,10 @@ to the models I'm fitting.
 
 As such, we focus on the *median* relative differences, rather than the mean, 
 reducing the influence of the occasional outlier.
+
+Also note, these tables aren't particularly readable, but I don't want to spend
+a bunch of time formatting stuff nicely when I don't even know whether the 
+methodolgy of the study is correct.
 :::
 
 ```{r echo = FALSE}
@@ -473,6 +470,17 @@ agreement_table_clean %>%
   )
 ```
 
+The results show that both LGCP and CSCP models yield highly consistent 
+second-order inference when fitted to the same CSCP-generated datasets.
+
+Across all parameter regimes, the median relative differences in estimated 
+clustering strength $\hat{\phi}$ are small, typically below 15%. The 
+corresponding differences in half-decay distance $\hat{r}_{1/2}$ are somewhat 
+larger, but remain moderate, generally within 10–30%.
+
+To assess whether these differences are practically meaningful, we compare them 
+to the inherent variability of the estimators.
+
 ```{r echo = FALSE}
 comparison_table %>%
   mutate(
@@ -484,19 +492,10 @@ comparison_table %>%
   )
 ```
 
-The results show that both LGCP and CSCP models yield highly consistent 
-second-order inference when fitted to the same CSCP-generated datasets.
-
-Across all parameter regimes, the median relative differences in estimated 
-clustering strength $\hat{\phi}$ are small, typically below 15%. The 
-corresponding differences in half-decay distance $\hat{r}_{1/2}$ are somewhat 
-larger, but remain moderate, generally within 10–30%.
-
-To assess whether these differences are practically meaningful, we compare them 
-to the inherent variability of the estimators. For both clustering strength and 
-half-decay distance, the difference between the two fitted models is consistently 
-smaller than the standard deviation of the estimates. In all scenarios, the ratio 
-of cross-model differences to estimation variability is well below one.
+For both clustering strength and half-decay distance, the difference between the 
+two fitted models is consistently smaller than the standard deviation of the 
+estimates. In all scenarios, the ratio of cross-model differences to estimation 
+variability is well below one.
 
 This indicates that the differences between LGCP and CSCP fits are negligible 
 relative to statistical uncertainty. In particular, the two models lead to 
@@ -515,10 +514,10 @@ So we've seen the difference in fitted models is not very substantial, however
 I thought it might be nice to see which actually fits the data better, so we 
 take a brief look here:
 
-A small number of fits produced extremely large scale estimates, leading to 
-unrealistic values of the half-decay distance. To prevent these from dominating 
-mean-based summaries, we report trimmed RMSE values, which are more robust to 
-such instabilities.
+Again, note that because a small number of fits produced extremely large scale 
+estimates, leading to unrealistic values of the half-decay distance. To prevent 
+these from dominating mean-based summaries, we report trimmed RMSE values, which 
+are more robust to such instabilities.
 
 ```{r echo = FALSE}
 trimmed_rmse <- function(x, truth, trim = 0.05) {
@@ -558,12 +557,15 @@ inference is based on second-order summaries, neither model has a clear
 advantage in recovering the underlying clustering structure.
 
 :::callout-note
-I think a more interpretable table would display the difference in RMSE for 
-each regime?
+I find deciding on what results to display *really* difficult, is there some 
+sort of default / boiler that I can just always use and be confident I'm 
+presenting the right information?
+:::
 
-To be honest I personally find deciding on what results to display *really* 
-difficult, is there some sort of default / boiler that I can just always use
-and be confident I'm presenting the right information?
+:::callout-note
+Really should have a better commentary / analysis on how well the models are 
+fitting in general. If they both suck at recovering the true parameter values,
+do we really care that they are not very dissimilar?
 :::
 
 ## LGCP-generated data
@@ -614,11 +616,6 @@ ggplot(pcf_true_df_lgcp, aes(x = r, y = g)) +
   ) +
   theme_minimal()
 ```
-
-These curves represent the second-order structures used in the LGCP-generated
-simulation study. As before, increasing $\phi$ increases the magnitude of
-clustering, while increasing $s$ increases the spatial scale over which that
-clustering persists.
 
 ```{r cache = TRUE, warning = FALSE}
 #| code-fold: true
@@ -893,14 +890,14 @@ produced:
 - visually indistinguishable fitted pair correlation functions.
 
 Moreover, the differences between the models were small relative to the overall 
-Monte Carlo variability of the estimators. In other words, fitting the “wrong” model 
+Monte Carlo variability of the estimators. In other words, fitting the "wrong" model 
 did not meaningfully degrade second-order inference.
 
 ### What does this mean?
 
 At a practical level, these results suggest that inference based on second-order 
-summaries—such as minimum contrast estimation using the pair correlation 
-function—is largely driven by the *shape of the PCF*, rather than the specific 
+summaries, such as minimum contrast estimation using the pair correlation 
+function, is largely driven by the *shape of the PCF*, rather than the specific 
 underlying model.
 
 Since the LGCP and CSCP are capable of generating very similar PCFs, they also 
@@ -924,6 +921,20 @@ at the level of the PCF, but also by:
 - interpretability of the latent structure,
 - computational considerations,
 - and the specific scientific questions of interest.
+
+:::callout-note
+Some thoughts I have:
+
+I really think the two most important pieces of information that need to be 
+provided here are (1) that the models actually perform well and (2) that the
+difference between the models is smaller than the variation in the empirical
+PCF estimator. 
+
+Right now I don't think I do a very good job of framing this.
+
+I will continue to work on this, but regardless, it seems we are not going to be
+very successful in distinguishing between the two models using PCF-based methods.
+:::
 
 ### Future directions
 

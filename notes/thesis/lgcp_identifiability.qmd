@@ -1,7 +1,8 @@
 # Model Setup
 
 :::callout-note
-Bit of a nothing burger section
+Bit of a nothing burger section, just making sure working definition of the two 
+processes are clear.
 :::
 
 In the previous section, we observed that LGCPs and CSCPs can produce remarkably
@@ -34,14 +35,18 @@ have a common interpretation across both models, allowing for a direct compariso
 of their second-order structure.
 
 Under this parameterisation, the CSCP satisfies:
+
 - First-order intensity:
   $$
   \lambda = \mu + \sigma^2,
   $$
+  
 - Pair correlation function:
   $$
   g(r) = 1 + \phi \exp\left(-\frac{2r}{s}\right).
   $$
+
+---
 
 For comparison, we also consider the LGCP with intensity
 $$
@@ -59,6 +64,3 @@ $$
 g(r) = \exp\left(\log(1+\phi)\, \exp\left(-\frac{r}{s}\right)\right).
 $$
 
-Thus, both models are fully characterised by $(\lambda, \phi, s)$ at the level
-of first- and second-order structure, but induce different functional forms for
-the pair correlation function. <- Eh

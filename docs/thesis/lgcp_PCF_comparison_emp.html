@@ -515,7 +515,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../thesis/lgcp_motivation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">38</span>&nbsp; <span class="chapter-title">Motivating the Identifiability Problem</span></span></a>
+ <span class="menu-text"><span class="chapter-number">38</span>&nbsp; <span class="chapter-title">Second-order Structure Comparison to LGCPs</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -556,7 +556,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../thesis/third_introduction.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">43</span>&nbsp; <span class="chapter-title">🚧 Identifiability Beyond Second-Order Structure</span></span></a>
+ <span class="menu-text"><span class="chapter-number">43</span>&nbsp; <span class="chapter-title">🚧 Looking Beyond Second-Order Structure</span></span></a>
   </div>
 </li>
       </ul>
@@ -715,6 +715,19 @@ p^*(\phi) \in \arg \min_{p &gt; 0} \sup_{x \in [0,1]}
 <p><span class="math display">\[
 \alpha_{\text{slope}}(\phi) = \frac{(1+\phi)\log(1+\phi)}{2\phi}.
 \]</span></p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Originally, I wanted to have some sort of closed-form approximation of the best approximating ratio for a given <span class="math inline">\(\phi\)</span>, but it seems less useful than just making a function which numerically calculates it for you basically instantly.</p>
+</div>
+</div>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
@@ -800,6 +813,20 @@ E^*(\phi) := \inf_{p &gt; 0} \sup_{x \in [0,1]} \left| \exp(c x^p) - 1 - \phi x 
 </div>
 </div>
 </div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Might be nice to replot this as some type of error relative to the curves.</p>
+<p>For example, maybe relative to the current height of the curve above 1?</p>
+</div>
+</div>
 </section>
 <section id="visual-comparison-of-pcfs" class="level2" data-number="41.4">
 <h2 data-number="41.4" class="anchored" data-anchor-id="visual-comparison-of-pcfs"><span class="header-section-number">41.4</span> Visual comparison of PCFs</h2>
@@ -834,19 +861,20 @@ E^*(\phi) := \inf_{p &gt; 0} \sup_{x \in [0,1]} \left| \exp(c x^p) - 1 - \phi x 
 <span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>  )</span>
 <span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>})</span>
 <span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(pcf_panel_df, <span class="fu">aes</span>(<span class="at">x =</span> r, <span class="at">y =</span> g, <span class="at">linetype =</span> model)) <span class="sc">+</span></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(pcf_panel_df, <span class="fu">aes</span>(<span class="at">x =</span> r, <span class="at">y =</span> g, <span class="at">colour =</span> model, <span class="at">linetype =</span> model)) <span class="sc">+</span></span>
 <span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="fl">0.9</span>) <span class="sc">+</span></span>
 <span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> phi_lab, <span class="at">ncol =</span> <span class="dv">2</span>, <span class="at">scales =</span> <span class="st">"fixed"</span>) <span class="sc">+</span></span>
 <span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
 <span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"r"</span>,</span>
 <span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"PCF"</span>,</span>
-<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">linetype =</span> <span class="cn">NULL</span></span>
-<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
-<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
-<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.position =</span> <span class="st">"top"</span>,</span>
-<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">panel.grid.minor =</span> <span class="fu">element_blank</span>()</span>
-<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">colour =</span> <span class="cn">NULL</span>,</span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">linetype =</span> <span class="cn">NULL</span></span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.position =</span> <span class="st">"top"</span>,</span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">panel.grid.minor =</span> <span class="fu">element_blank</span>()</span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -917,7 +945,7 @@ Note
 <ul>
 <li>Procedures based on second-order summaries, such as minimum contrast estimation, lead to similar conclusions under LGCP and CSCP models.</li>
 </ul>
-<p>The next section investigates this empirically by fitting each model to data generated from the other, and comparing the resulting fits and parameter estimates.</p>
+<p>The next section investigates this empirically by fitting each models to data generated by both LGCPs and CSCPs, and compares the resulting fits and parameter estimates.</p>
 </section>
 <section id="extras" class="level2" data-number="41.8">
 <h2 data-number="41.8" class="anchored" data-anchor-id="extras"><span class="header-section-number">41.8</span> Extras</h2>
@@ -930,6 +958,8 @@ g_{LGCP}(r) - g_{CSCP}(r)
 <p>for selected values of <span class="math inline">\(\phi\)</span>.</p>
 <p>This is looking at how different the two curves are as we increase <span class="math inline">\(r\)</span>.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>diff_df <span class="ot">&lt;-</span> <span class="fu">map_dfr</span>(<span class="fu">seq_along</span>(phi_panel), <span class="cf">function</span>(i) {</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  phi_i <span class="ot">&lt;-</span> phi_panel[i]</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  alpha_i <span class="ot">&lt;-</span> panel_match<span class="sc">$</span>alpha_opt[panel_match<span class="sc">$</span>phi <span class="sc">==</span> phi_i]</span>
@@ -951,10 +981,11 @@ g_{LGCP}(r) - g_{CSCP}(r)
 <span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"r"</span>,</span>
 <span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="fu">expression</span>(g[LGCP](r) <span class="sc">-</span> g[CSCP](r))</span>
 <span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
 <span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
 <span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">panel.grid.minor =</span> <span class="fu">element_blank</span>()</span>
 <span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">

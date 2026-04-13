@@ -1,4 +1,4 @@
-# 🚧 Identifiability Beyond Second-Order Structure
+# 🚧 Looking Beyond Second-Order Structure
 
 Second-order summaries are insufficient to distinguish LGCP and CSCP in practice.
 

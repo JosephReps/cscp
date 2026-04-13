@@ -515,7 +515,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../thesis/lgcp_motivation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">38</span>&nbsp; <span class="chapter-title">Motivating the Identifiability Problem</span></span></a>
+ <span class="menu-text"><span class="chapter-number">38</span>&nbsp; <span class="chapter-title">Second-order Structure Comparison to LGCPs</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -556,7 +556,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../thesis/third_introduction.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">43</span>&nbsp; <span class="chapter-title">🚧 Identifiability Beyond Second-Order Structure</span></span></a>
+ <span class="menu-text"><span class="chapter-number">43</span>&nbsp; <span class="chapter-title">🚧 Looking Beyond Second-Order Structure</span></span></a>
   </div>
 </li>
       </ul>
@@ -638,9 +638,6 @@ window.Quarto = {
 </header>
 
 
-<p>Need to rerun the study, as I changed the MC estimator (fitting over <span class="math inline">\(\eta\)</span> where <span class="math inline">\(\phi = 2\cdot \text{plogis}(\eta)\)</span>).</p>
-<p>Confident it won’t change the results.</p>
-<p>Typee shitttttttt.</p>
 <section id="overview" class="level2" data-number="42.1">
 <h2 data-number="42.1" class="anchored" data-anchor-id="overview"><span class="header-section-number">42.1</span> Overview</h2>
 <p>The previous sections showed that LGCP and CSCP models can produce nearly identical pair correlation functions when their parameters are suitably chosen.</p>
@@ -648,7 +645,6 @@ window.Quarto = {
 <p>In particular, we examine whether minimum contrast estimation based on the pair correlation function leads to similar conclusions under the two models.</p>
 <p>For each simulated dataset, we fit both LGCP and CSCP models, and compare the resulting estimates and fitted second-order structure.</p>
 <p>This allows us to assess whether the two models produce consistent descriptions of clustering when applied to the same data.</p>
-<hr>
 </section>
 <section id="key-quantities-of-interest" class="level2" data-number="42.2">
 <h2 data-number="42.2" class="anchored" data-anchor-id="key-quantities-of-interest"><span class="header-section-number">42.2</span> Key quantities of interest</h2>
@@ -767,8 +763,8 @@ Note
 <div class="callout-body-container callout-body">
 <p>You can find my:</p>
 <ul>
-<li>Minimum contrast fitting methods <a href="https://github.com/JosephReps/coxLab">here</a></li>
-<li>CSCP / LGCP simulation methods <a href="https://github.com/JosephReps/coxLab">here</a></li>
+<li>Minimum contrast fitting methods <a href="https://github.com/JosephReps/cscp/blob/main/R/fit.R">here</a></li>
+<li>CSCP / LGCP simulation methods <a href="https://github.com/JosephReps/cscp/blob/main/R/sim.R">here</a></li>
 </ul>
 </div>
 </div>
@@ -801,7 +797,7 @@ Note
 <p>Originally I wanted to use <span class="math inline">\(\phi \in \{0.25, 1, 2\}\)</span>, however for <span class="math inline">\(\phi = 0.25\)</span>, the estimation is very unstable so I decided to just use these new values.</p>
 <p>Might’ve been better if I just used <span class="math inline">\(\{1, 2\}\)</span>, but I wanted nice 3x3 panels.</p>
 <p>Additionally, I chose <span class="math inline">\(\lambda = 300\)</span>, as I wanted the non-parametric PCF estimator to perform well, so our results are not “muddied” by the poor empirical fit.</p>
-<p>Bandwidth chosen as a value which has worked well in my experience. I think the proper thing to do would be to run some type of CV to find the best value?</p>
+<p>Bandwidth chosen as a value which has worked well in my experience. I think the proper thing to do would be to run some type of CV to find the best value? And importantly, we use the same bandwidth over each regime.</p>
 <p>And the other settings are either matched to the ones you guys use in the paper on the new PCF estimator, or the default spatstat.</p>
 <p>Are these sensible choices?</p>
 </div>
@@ -815,7 +811,7 @@ Note
 </div>
 </div>
 </div>
-<p>These curves illustrate the range of second-order structures considered in the simulation study. In particular, increasing <span class="math inline">\(\phi\)</span> controls the <em>magnitude</em> of clustering, while increasing <span class="math inline">\(s\)</span> controls the spatial extent over which clustering persists.</p>
+<p>These curves illustrate the range of second-order structures considered in the simulation study. In particular, increasing <span class="math inline">\(\phi\)</span> controls the <em>magnitude</em> of clustering, while increasing <span class="math inline">\(s\)</span> controls the spatial extent over which clustering persists (don’t really think this comment is necessary, at this point should be fairly clear the roles which <span class="math inline">\(\phi\)</span> and <span class="math inline">\(s\)</span> play).</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
@@ -882,20 +878,6 @@ Note
 </div>
 <p>We first compare the fitted models visually through the distribution of estimated clustering strength and half-decay distance across simulations.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(results, <span class="fu">aes</span>(<span class="at">x =</span> fit_model, <span class="at">y =</span> phi_hat, <span class="at">fill =</span> fit_model)) <span class="sc">+</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">outliers =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="fu">aes</span>(<span class="at">yintercept =</span> phi_true),</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>             <span class="at">linetype =</span> <span class="st">"dashed"</span>,</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>             <span class="at">colour =</span> <span class="st">"black"</span>,</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>             <span class="at">linewidth =</span> <span class="fl">0.4</span>) <span class="sc">+</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(phi_true <span class="sc">~</span> s_true, <span class="at">labeller =</span> label_both) <span class="sc">+</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Estimated clustering strength (CSCP data)"</span>,</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Fitted model"</span>,</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="fu">expression</span>(<span class="fu">hat</span>(phi))</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -905,20 +887,6 @@ Note
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(results, <span class="fu">aes</span>(<span class="at">x =</span> fit_model, <span class="at">y =</span> r_half, <span class="at">fill =</span> fit_model)) <span class="sc">+</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">outliers =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="fu">aes</span>(<span class="at">yintercept =</span> r_half_true),</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>             <span class="at">linetype =</span> <span class="st">"dashed"</span>,</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>             <span class="at">colour =</span> <span class="st">"black"</span>,</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>             <span class="at">linewidth =</span> <span class="fl">0.4</span>) <span class="sc">+</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(phi_true <span class="sc">~</span> s_true, <span class="at">labeller =</span> label_both) <span class="sc">+</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Half-decay distance (CSCP data)"</span>,</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Fitted model"</span>,</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="fu">expression</span>(<span class="fu">hat</span>(r)[<span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>])</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -931,80 +899,80 @@ Note
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># This is nasty work, would come back and clean up if this wasn't just rough </span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># notes</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># True half-decay for CSCP generator</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> results <span class="sc">%&gt;%</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">r_half_true =</span> <span class="fu">half_decay_cscp</span>(phi_true, s_true),</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">phi_error =</span> phi_hat <span class="sc">-</span> phi_true,</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">r_half_error =</span> r_half <span class="sc">-</span> r_half_true</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>agreement_table <span class="ot">&lt;-</span> results <span class="sc">%&gt;%</span></span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(generator, phi_true, s_true, rep, fit_model, phi_hat, r_half) <span class="sc">%&gt;%</span></span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  tidyr<span class="sc">::</span><span class="fu">pivot_wider</span>(</span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_from =</span> fit_model,</span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_from =</span> <span class="fu">c</span>(phi_hat, r_half)</span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">delta_phi =</span> <span class="fu">abs</span>(phi_hat_CSCP <span class="sc">-</span> phi_hat_LGCP),</span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">delta_r_half =</span> <span class="fu">abs</span>(r_half_CSCP <span class="sc">-</span> r_half_LGCP),</span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">rel_delta_phi =</span> delta_phi <span class="sc">/</span> phi_true,</span>
-<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">rel_delta_r_half =</span> delta_r_half <span class="sc">/</span> <span class="fu">half_decay_cscp</span>(phi_true, s_true)</span>
-<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">group_by</span>(generator, phi_true, s_true) <span class="sc">%&gt;%</span></span>
-<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">summarise</span>(</span>
-<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_delta_phi =</span> <span class="fu">mean</span>(delta_phi, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_delta_r_half =</span> <span class="fu">mean</span>(delta_r_half, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_rel_delta_phi =</span> <span class="fu">mean</span>(rel_delta_phi, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_rel_delta_r_half =</span> <span class="fu">mean</span>(rel_delta_r_half, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">median_rel_delta_phi =</span> <span class="fu">median</span>(rel_delta_phi, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">median_rel_delta_r_half =</span> <span class="fu">median</span>(rel_delta_r_half, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
-<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>agreement_table_clean <span class="ot">&lt;-</span> agreement_table <span class="sc">%&gt;%</span></span>
-<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>    <span class="at">median_rel_delta_phi =</span> <span class="dv">100</span> <span class="sc">*</span> median_rel_delta_phi,</span>
-<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>    <span class="at">median_rel_delta_r_half =</span> <span class="dv">100</span> <span class="sc">*</span> median_rel_delta_r_half</span>
-<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(</span>
-<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a>    phi_true, s_true,</span>
-<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a>    mean_delta_phi,</span>
-<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a>    median_rel_delta_phi,</span>
-<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a>    median_rel_delta_r_half</span>
-<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># This is nasty work, would come back and clean up if this wasn't just rough </span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># notes</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># True half-decay for CSCP generator</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> results <span class="sc">%&gt;%</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">r_half_true =</span> <span class="fu">half_decay_cscp</span>(phi_true, s_true),</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">phi_error =</span> phi_hat <span class="sc">-</span> phi_true,</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">r_half_error =</span> r_half <span class="sc">-</span> r_half_true</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>agreement_table <span class="ot">&lt;-</span> results <span class="sc">%&gt;%</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(generator, phi_true, s_true, rep, fit_model, phi_hat, r_half) <span class="sc">%&gt;%</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  tidyr<span class="sc">::</span><span class="fu">pivot_wider</span>(</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_from =</span> fit_model,</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_from =</span> <span class="fu">c</span>(phi_hat, r_half)</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">delta_phi =</span> <span class="fu">abs</span>(phi_hat_CSCP <span class="sc">-</span> phi_hat_LGCP),</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">delta_r_half =</span> <span class="fu">abs</span>(r_half_CSCP <span class="sc">-</span> r_half_LGCP),</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">rel_delta_phi =</span> delta_phi <span class="sc">/</span> phi_true,</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">rel_delta_r_half =</span> delta_r_half <span class="sc">/</span> <span class="fu">half_decay_cscp</span>(phi_true, s_true)</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">group_by</span>(generator, phi_true, s_true) <span class="sc">%&gt;%</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">summarise</span>(</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_delta_phi =</span> <span class="fu">mean</span>(delta_phi, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_delta_r_half =</span> <span class="fu">mean</span>(delta_r_half, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_rel_delta_phi =</span> <span class="fu">mean</span>(rel_delta_phi, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_rel_delta_r_half =</span> <span class="fu">mean</span>(rel_delta_r_half, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">median_rel_delta_phi =</span> <span class="fu">median</span>(rel_delta_phi, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">median_rel_delta_r_half =</span> <span class="fu">median</span>(rel_delta_r_half, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>agreement_table_clean <span class="ot">&lt;-</span> agreement_table <span class="sc">%&gt;%</span></span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>    <span class="at">median_rel_delta_phi =</span> <span class="dv">100</span> <span class="sc">*</span> median_rel_delta_phi,</span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>    <span class="at">median_rel_delta_r_half =</span> <span class="dv">100</span> <span class="sc">*</span> median_rel_delta_r_half</span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(</span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>    phi_true, s_true,</span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>    mean_delta_phi,</span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>    median_rel_delta_phi,</span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>    median_rel_delta_r_half</span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>variability_table <span class="ot">&lt;-</span> results <span class="sc">%&gt;%</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">group_by</span>(generator, phi_true, s_true, fit_model) <span class="sc">%&gt;%</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">summarise</span>(</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">sd_phi_hat =</span> <span class="fu">sd</span>(phi_hat, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">sd_r_half =</span> <span class="fu">sd</span>(r_half, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>comparison_table <span class="ot">&lt;-</span> agreement_table <span class="sc">%&gt;%</span></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(</span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    variability_table <span class="sc">%&gt;%</span></span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>      <span class="fu">group_by</span>(phi_true, s_true) <span class="sc">%&gt;%</span></span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>      <span class="fu">summarise</span>(</span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>        <span class="at">sd_phi =</span> <span class="fu">mean</span>(sd_phi_hat),</span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>        <span class="at">sd_r_half =</span> <span class="fu">mean</span>(sd_r_half),</span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>        <span class="at">.groups =</span> <span class="st">"drop"</span></span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>      ),</span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"phi_true"</span>, <span class="st">"s_true"</span>)</span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">ratio_phi =</span> mean_delta_phi <span class="sc">/</span> sd_phi,</span>
-<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">ratio_r_half =</span> mean_delta_r_half <span class="sc">/</span> sd_r_half</span>
-<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(phi_true, s_true, ratio_phi, ratio_r_half)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>variability_table <span class="ot">&lt;-</span> results <span class="sc">%&gt;%</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">group_by</span>(generator, phi_true, s_true, fit_model) <span class="sc">%&gt;%</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">summarise</span>(</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">sd_phi_hat =</span> <span class="fu">sd</span>(phi_hat, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">sd_r_half =</span> <span class="fu">sd</span>(r_half, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>comparison_table <span class="ot">&lt;-</span> agreement_table <span class="sc">%&gt;%</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    variability_table <span class="sc">%&gt;%</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>      <span class="fu">group_by</span>(phi_true, s_true) <span class="sc">%&gt;%</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>      <span class="fu">summarise</span>(</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>        <span class="at">sd_phi =</span> <span class="fu">mean</span>(sd_phi_hat),</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>        <span class="at">sd_r_half =</span> <span class="fu">mean</span>(sd_r_half),</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>        <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>      ),</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"phi_true"</span>, <span class="st">"s_true"</span>)</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">ratio_phi =</span> mean_delta_phi <span class="sc">/</span> sd_phi,</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">ratio_r_half =</span> mean_delta_r_half <span class="sc">/</span> sd_r_half</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(phi_true, s_true, ratio_phi, ratio_r_half)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <div class="callout callout-style-default callout-note callout-titled">
@@ -1019,6 +987,7 @@ Note
 <div class="callout-body-container callout-body">
 <p>A small number of the fits produced wildly inaccurate estimates, which I’m assuming is just due to unreliable PCF estimation in general, rather than anything specific to the models I’m fitting.</p>
 <p>As such, we focus on the <em>median</em> relative differences, rather than the mean, reducing the influence of the occasional outlier.</p>
+<p>Also note, these tables aren’t particularly readable, but I don’t want to spend a bunch of time formatting stuff nicely when I don’t even know whether the methodolgy of the study is correct.</p>
 </div>
 </div>
 <div class="cell">
@@ -1109,6 +1078,9 @@ Note
 </table>
 </div>
 </div>
+<p>The results show that both LGCP and CSCP models yield highly consistent second-order inference when fitted to the same CSCP-generated datasets.</p>
+<p>Across all parameter regimes, the median relative differences in estimated clustering strength <span class="math inline">\(\hat{\phi}\)</span> are small, typically below 15%. The corresponding differences in half-decay distance <span class="math inline">\(\hat{r}_{1/2}\)</span> are somewhat larger, but remain moderate, generally within 10–30%.</p>
+<p>To assess whether these differences are practically meaningful, we compare them to the inherent variability of the estimators.</p>
 <div class="cell">
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
@@ -1180,16 +1152,14 @@ Note
 </table>
 </div>
 </div>
-<p>The results show that both LGCP and CSCP models yield highly consistent second-order inference when fitted to the same CSCP-generated datasets.</p>
-<p>Across all parameter regimes, the median relative differences in estimated clustering strength <span class="math inline">\(\hat{\phi}\)</span> are small, typically below 15%. The corresponding differences in half-decay distance <span class="math inline">\(\hat{r}_{1/2}\)</span> are somewhat larger, but remain moderate, generally within 10–30%.</p>
-<p>To assess whether these differences are practically meaningful, we compare them to the inherent variability of the estimators. For both clustering strength and half-decay distance, the difference between the two fitted models is consistently smaller than the standard deviation of the estimates. In all scenarios, the ratio of cross-model differences to estimation variability is well below one.</p>
+<p>For both clustering strength and half-decay distance, the difference between the two fitted models is consistently smaller than the standard deviation of the estimates. In all scenarios, the ratio of cross-model differences to estimation variability is well below one.</p>
 <p>This indicates that the differences between LGCP and CSCP fits are negligible relative to statistical uncertainty. In particular, the two models lead to essentially the same conclusions regarding the strength and spatial extent of clustering in the data.</p>
 <p>From the perspective of second-order inference, the choice between LGCP and CSCP does not materially affect the conclusions drawn from the data.</p>
 <p>This provides empirical evidence that second-order summaries alone are insufficient to distinguish between these model classes in practice.</p>
 <section id="small-aside" class="level3" data-number="42.6.1">
 <h3 data-number="42.6.1" class="anchored" data-anchor-id="small-aside"><span class="header-section-number">42.6.1</span> Small aside</h3>
 <p>So we’ve seen the difference in fitted models is not very substantial, however I thought it might be nice to see which actually fits the data better, so we take a brief look here:</p>
-<p>A small number of fits produced extremely large scale estimates, leading to unrealistic values of the half-decay distance. To prevent these from dominating mean-based summaries, we report trimmed RMSE values, which are more robust to such instabilities.</p>
+<p>Again, note that because a small number of fits produced extremely large scale estimates, leading to unrealistic values of the half-decay distance. To prevent these from dominating mean-based summaries, we report trimmed RMSE values, which are more robust to such instabilities.</p>
 <div class="cell">
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
@@ -1346,8 +1316,20 @@ Note
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>I think a more interpretable table would display the difference in RMSE for each regime?</p>
-<p>To be honest I personally find deciding on what results to display <em>really</em> difficult, is there some sort of default / boiler that I can just always use and be confident I’m presenting the right information?</p>
+<p>I find deciding on what results to display <em>really</em> difficult, is there some sort of default / boiler that I can just always use and be confident I’m presenting the right information?</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Really should have a better commentary / analysis on how well the models are fitting in general. If they both suck at recovering the true parameter values, do we really care that they are not very dissimilar?</p>
 </div>
 </div>
 </section>
@@ -1377,67 +1359,66 @@ Note
 </div>
 </div>
 </div>
-<p>These curves represent the second-order structures used in the LGCP-generated simulation study. As before, increasing <span class="math inline">\(\phi\)</span> increases the magnitude of clustering, while increasing <span class="math inline">\(s\)</span> increases the spatial scale over which that clustering persists.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>results_lgcp_list <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>counter <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(scenarios)) {</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  phi_true <span class="ot">&lt;-</span> scenarios<span class="sc">$</span>phi[j]</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  s_true   <span class="ot">&lt;-</span> scenarios<span class="sc">$</span>s[j]</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n_rep) {</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    X <span class="ot">&lt;-</span> <span class="fu">sim_lgcp</span>(W, <span class="at">lambda =</span> <span class="dv">300</span>, <span class="at">phi =</span> phi_true, <span class="at">s =</span> s_true)<span class="sc">$</span>pp</span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    fit_l <span class="ot">&lt;-</span> <span class="fu">fit_lgcp_mc</span>(</span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>      X,</span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>      <span class="at">bw =</span> fit_args<span class="sc">$</span>bw,</span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>      <span class="at">correction =</span> <span class="st">"isotropic"</span>,</span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>      <span class="at">divisor =</span> <span class="st">"a"</span>,</span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>      <span class="at">zerocor =</span> <span class="st">"JonesFoster"</span></span>
-<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>    fit_c <span class="ot">&lt;-</span> <span class="fu">fit_cscp_mc</span>(</span>
-<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>      X,</span>
-<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>      <span class="at">bw =</span> fit_args<span class="sc">$</span>bw,</span>
-<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>      <span class="at">correction =</span> <span class="st">"isotropic"</span>,</span>
-<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>      <span class="at">divisor =</span> <span class="st">"a"</span>,</span>
-<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>      <span class="at">zerocor =</span> <span class="st">"JonesFoster"</span></span>
-<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>    results_lgcp_list[[counter]] <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>      <span class="at">generator =</span> <span class="st">"LGCP"</span>,</span>
-<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>      <span class="at">phi_true =</span> phi_true,</span>
-<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>      <span class="at">s_true =</span> s_true,</span>
-<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>      <span class="at">r_half_true =</span> <span class="fu">half_decay_lgcp</span>(phi_true, s_true),</span>
-<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>      <span class="at">rep =</span> i,</span>
-<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>      <span class="at">fit_model =</span> <span class="st">"LGCP"</span>,</span>
-<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>      <span class="at">phi_hat =</span> fit_l<span class="sc">$</span>par[[<span class="st">"phi"</span>]],</span>
-<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>      <span class="at">s_hat =</span> fit_l<span class="sc">$</span>par[[<span class="st">"s"</span>]],</span>
-<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>      <span class="at">r_half =</span> <span class="fu">half_decay_lgcp</span>(fit_l<span class="sc">$</span>par[[<span class="st">"phi"</span>]], fit_l<span class="sc">$</span>par[[<span class="st">"s"</span>]])</span>
-<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>    counter <span class="ot">&lt;-</span> counter <span class="sc">+</span> <span class="dv">1</span></span>
-<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a>    results_lgcp_list[[counter]] <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a>      <span class="at">generator =</span> <span class="st">"LGCP"</span>,</span>
-<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a>      <span class="at">phi_true =</span> phi_true,</span>
-<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a>      <span class="at">s_true =</span> s_true,</span>
-<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a>      <span class="at">r_half_true =</span> <span class="fu">half_decay_lgcp</span>(phi_true, s_true),</span>
-<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a>      <span class="at">rep =</span> i,</span>
-<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a>      <span class="at">fit_model =</span> <span class="st">"CSCP"</span>,</span>
-<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a>      <span class="at">phi_hat =</span> fit_c<span class="sc">$</span>par[[<span class="st">"phi"</span>]],</span>
-<span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a>      <span class="at">s_hat =</span> fit_c<span class="sc">$</span>par[[<span class="st">"s"</span>]],</span>
-<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a>      <span class="at">r_half =</span> <span class="fu">half_decay_cscp</span>(fit_c<span class="sc">$</span>par[[<span class="st">"phi"</span>]], fit_c<span class="sc">$</span>par[[<span class="st">"s"</span>]])</span>
-<span id="cb7-52"><a href="#cb7-52" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb7-53"><a href="#cb7-53" aria-hidden="true" tabindex="-1"></a>    counter <span class="ot">&lt;-</span> counter <span class="sc">+</span> <span class="dv">1</span></span>
-<span id="cb7-54"><a href="#cb7-54" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb7-55"><a href="#cb7-55" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb7-56"><a href="#cb7-56" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-57"><a href="#cb7-57" aria-hidden="true" tabindex="-1"></a>results_lgcp <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">bind_rows</span>(results_lgcp_list)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>results_lgcp_list <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>counter <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(scenarios)) {</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  phi_true <span class="ot">&lt;-</span> scenarios<span class="sc">$</span>phi[j]</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  s_true   <span class="ot">&lt;-</span> scenarios<span class="sc">$</span>s[j]</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n_rep) {</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    X <span class="ot">&lt;-</span> <span class="fu">sim_lgcp</span>(W, <span class="at">lambda =</span> <span class="dv">300</span>, <span class="at">phi =</span> phi_true, <span class="at">s =</span> s_true)<span class="sc">$</span>pp</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    fit_l <span class="ot">&lt;-</span> <span class="fu">fit_lgcp_mc</span>(</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>      X,</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>      <span class="at">bw =</span> fit_args<span class="sc">$</span>bw,</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>      <span class="at">correction =</span> <span class="st">"isotropic"</span>,</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>      <span class="at">divisor =</span> <span class="st">"a"</span>,</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>      <span class="at">zerocor =</span> <span class="st">"JonesFoster"</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>    fit_c <span class="ot">&lt;-</span> <span class="fu">fit_cscp_mc</span>(</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>      X,</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>      <span class="at">bw =</span> fit_args<span class="sc">$</span>bw,</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>      <span class="at">correction =</span> <span class="st">"isotropic"</span>,</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>      <span class="at">divisor =</span> <span class="st">"a"</span>,</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>      <span class="at">zerocor =</span> <span class="st">"JonesFoster"</span></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>    results_lgcp_list[[counter]] <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>      <span class="at">generator =</span> <span class="st">"LGCP"</span>,</span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>      <span class="at">phi_true =</span> phi_true,</span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>      <span class="at">s_true =</span> s_true,</span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>      <span class="at">r_half_true =</span> <span class="fu">half_decay_lgcp</span>(phi_true, s_true),</span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>      <span class="at">rep =</span> i,</span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>      <span class="at">fit_model =</span> <span class="st">"LGCP"</span>,</span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>      <span class="at">phi_hat =</span> fit_l<span class="sc">$</span>par[[<span class="st">"phi"</span>]],</span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>      <span class="at">s_hat =</span> fit_l<span class="sc">$</span>par[[<span class="st">"s"</span>]],</span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>      <span class="at">r_half =</span> <span class="fu">half_decay_lgcp</span>(fit_l<span class="sc">$</span>par[[<span class="st">"phi"</span>]], fit_l<span class="sc">$</span>par[[<span class="st">"s"</span>]])</span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a>    counter <span class="ot">&lt;-</span> counter <span class="sc">+</span> <span class="dv">1</span></span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a>    results_lgcp_list[[counter]] <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a>      <span class="at">generator =</span> <span class="st">"LGCP"</span>,</span>
+<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a>      <span class="at">phi_true =</span> phi_true,</span>
+<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a>      <span class="at">s_true =</span> s_true,</span>
+<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a>      <span class="at">r_half_true =</span> <span class="fu">half_decay_lgcp</span>(phi_true, s_true),</span>
+<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a>      <span class="at">rep =</span> i,</span>
+<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a>      <span class="at">fit_model =</span> <span class="st">"CSCP"</span>,</span>
+<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a>      <span class="at">phi_hat =</span> fit_c<span class="sc">$</span>par[[<span class="st">"phi"</span>]],</span>
+<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a>      <span class="at">s_hat =</span> fit_c<span class="sc">$</span>par[[<span class="st">"s"</span>]],</span>
+<span id="cb5-51"><a href="#cb5-51" aria-hidden="true" tabindex="-1"></a>      <span class="at">r_half =</span> <span class="fu">half_decay_cscp</span>(fit_c<span class="sc">$</span>par[[<span class="st">"phi"</span>]], fit_c<span class="sc">$</span>par[[<span class="st">"s"</span>]])</span>
+<span id="cb5-52"><a href="#cb5-52" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb5-53"><a href="#cb5-53" aria-hidden="true" tabindex="-1"></a>    counter <span class="ot">&lt;-</span> counter <span class="sc">+</span> <span class="dv">1</span></span>
+<span id="cb5-54"><a href="#cb5-54" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb5-55"><a href="#cb5-55" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-56"><a href="#cb5-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-57"><a href="#cb5-57" aria-hidden="true" tabindex="-1"></a>results_lgcp <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">bind_rows</span>(results_lgcp_list)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p>We again compare the fitted models visually through the distribution of estimated clustering strength and half-decay distance across simulations.</p>
@@ -1463,76 +1444,76 @@ Note
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>results_lgcp <span class="ot">&lt;-</span> results_lgcp <span class="sc">%&gt;%</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">r_half_true =</span> <span class="fu">half_decay_lgcp</span>(phi_true, s_true),</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">phi_error =</span> phi_hat <span class="sc">-</span> phi_true,</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">r_half_error =</span> r_half <span class="sc">-</span> r_half_true</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>agreement_table_lgcp <span class="ot">&lt;-</span> results_lgcp <span class="sc">%&gt;%</span></span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(generator, phi_true, s_true, rep, fit_model, phi_hat, r_half) <span class="sc">%&gt;%</span></span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  tidyr<span class="sc">::</span><span class="fu">pivot_wider</span>(</span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_from =</span> fit_model,</span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_from =</span> <span class="fu">c</span>(phi_hat, r_half)</span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">delta_phi =</span> <span class="fu">abs</span>(phi_hat_CSCP <span class="sc">-</span> phi_hat_LGCP),</span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">delta_r_half =</span> <span class="fu">abs</span>(r_half_CSCP <span class="sc">-</span> r_half_LGCP),</span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">rel_delta_phi =</span> delta_phi <span class="sc">/</span> phi_true,</span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">rel_delta_r_half =</span> delta_r_half <span class="sc">/</span> <span class="fu">half_decay_lgcp</span>(phi_true, s_true)</span>
-<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">group_by</span>(generator, phi_true, s_true) <span class="sc">%&gt;%</span></span>
-<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">summarise</span>(</span>
-<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_delta_phi =</span> <span class="fu">mean</span>(delta_phi, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_delta_r_half =</span> <span class="fu">mean</span>(delta_r_half, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_rel_delta_phi =</span> <span class="fu">mean</span>(rel_delta_phi, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_rel_delta_r_half =</span> <span class="fu">mean</span>(rel_delta_r_half, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">median_rel_delta_phi =</span> <span class="fu">median</span>(rel_delta_phi, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">median_rel_delta_r_half =</span> <span class="fu">median</span>(rel_delta_r_half, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
-<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>agreement_table_lgcp_clean <span class="ot">&lt;-</span> agreement_table_lgcp <span class="sc">%&gt;%</span></span>
-<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">median_rel_delta_phi =</span> <span class="dv">100</span> <span class="sc">*</span> median_rel_delta_phi,</span>
-<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">median_rel_delta_r_half =</span> <span class="dv">100</span> <span class="sc">*</span> median_rel_delta_r_half</span>
-<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(</span>
-<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>    phi_true, s_true,</span>
-<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a>    mean_delta_phi,</span>
-<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a>    median_rel_delta_phi,</span>
-<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a>    median_rel_delta_r_half</span>
-<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>results_lgcp <span class="ot">&lt;-</span> results_lgcp <span class="sc">%&gt;%</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">r_half_true =</span> <span class="fu">half_decay_lgcp</span>(phi_true, s_true),</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">phi_error =</span> phi_hat <span class="sc">-</span> phi_true,</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">r_half_error =</span> r_half <span class="sc">-</span> r_half_true</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>agreement_table_lgcp <span class="ot">&lt;-</span> results_lgcp <span class="sc">%&gt;%</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(generator, phi_true, s_true, rep, fit_model, phi_hat, r_half) <span class="sc">%&gt;%</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  tidyr<span class="sc">::</span><span class="fu">pivot_wider</span>(</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_from =</span> fit_model,</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_from =</span> <span class="fu">c</span>(phi_hat, r_half)</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">delta_phi =</span> <span class="fu">abs</span>(phi_hat_CSCP <span class="sc">-</span> phi_hat_LGCP),</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">delta_r_half =</span> <span class="fu">abs</span>(r_half_CSCP <span class="sc">-</span> r_half_LGCP),</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">rel_delta_phi =</span> delta_phi <span class="sc">/</span> phi_true,</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">rel_delta_r_half =</span> delta_r_half <span class="sc">/</span> <span class="fu">half_decay_lgcp</span>(phi_true, s_true)</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">group_by</span>(generator, phi_true, s_true) <span class="sc">%&gt;%</span></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">summarise</span>(</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_delta_phi =</span> <span class="fu">mean</span>(delta_phi, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_delta_r_half =</span> <span class="fu">mean</span>(delta_r_half, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_rel_delta_phi =</span> <span class="fu">mean</span>(rel_delta_phi, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_rel_delta_r_half =</span> <span class="fu">mean</span>(rel_delta_r_half, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">median_rel_delta_phi =</span> <span class="fu">median</span>(rel_delta_phi, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">median_rel_delta_r_half =</span> <span class="fu">median</span>(rel_delta_r_half, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>agreement_table_lgcp_clean <span class="ot">&lt;-</span> agreement_table_lgcp <span class="sc">%&gt;%</span></span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">median_rel_delta_phi =</span> <span class="dv">100</span> <span class="sc">*</span> median_rel_delta_phi,</span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">median_rel_delta_r_half =</span> <span class="dv">100</span> <span class="sc">*</span> median_rel_delta_r_half</span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(</span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>    phi_true, s_true,</span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>    mean_delta_phi,</span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a>    median_rel_delta_phi,</span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>    median_rel_delta_r_half</span>
+<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>variability_table_lgcp <span class="ot">&lt;-</span> results_lgcp <span class="sc">%&gt;%</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">group_by</span>(generator, phi_true, s_true, fit_model) <span class="sc">%&gt;%</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">summarise</span>(</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">sd_phi_hat =</span> <span class="fu">sd</span>(phi_hat, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">sd_r_half =</span> <span class="fu">sd</span>(r_half, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>comparison_table_lgcp <span class="ot">&lt;-</span> agreement_table_lgcp <span class="sc">%&gt;%</span></span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(</span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    variability_table_lgcp <span class="sc">%&gt;%</span></span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>      <span class="fu">group_by</span>(phi_true, s_true) <span class="sc">%&gt;%</span></span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>      <span class="fu">summarise</span>(</span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>        <span class="at">sd_phi =</span> <span class="fu">mean</span>(sd_phi_hat),</span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>        <span class="at">sd_r_half =</span> <span class="fu">mean</span>(sd_r_half),</span>
-<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>        <span class="at">.groups =</span> <span class="st">"drop"</span></span>
-<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>      ),</span>
-<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"phi_true"</span>, <span class="st">"s_true"</span>)</span>
-<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">ratio_phi =</span> mean_delta_phi <span class="sc">/</span> sd_phi,</span>
-<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">ratio_r_half =</span> mean_delta_r_half <span class="sc">/</span> sd_r_half</span>
-<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(phi_true, s_true, ratio_phi, ratio_r_half)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>variability_table_lgcp <span class="ot">&lt;-</span> results_lgcp <span class="sc">%&gt;%</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">group_by</span>(generator, phi_true, s_true, fit_model) <span class="sc">%&gt;%</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">summarise</span>(</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">sd_phi_hat =</span> <span class="fu">sd</span>(phi_hat, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">sd_r_half =</span> <span class="fu">sd</span>(r_half, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>comparison_table_lgcp <span class="ot">&lt;-</span> agreement_table_lgcp <span class="sc">%&gt;%</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    variability_table_lgcp <span class="sc">%&gt;%</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>      <span class="fu">group_by</span>(phi_true, s_true) <span class="sc">%&gt;%</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>      <span class="fu">summarise</span>(</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>        <span class="at">sd_phi =</span> <span class="fu">mean</span>(sd_phi_hat),</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>        <span class="at">sd_r_half =</span> <span class="fu">mean</span>(sd_r_half),</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>        <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>      ),</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"phi_true"</span>, <span class="st">"s_true"</span>)</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">ratio_phi =</span> mean_delta_phi <span class="sc">/</span> sd_phi,</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">ratio_r_half =</span> mean_delta_r_half <span class="sc">/</span> sd_r_half</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(phi_true, s_true, ratio_phi, ratio_r_half)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <div class="cell">
@@ -1867,7 +1848,7 @@ Note
 <p>Moreover, the differences between the models were small relative to the overall Monte Carlo variability of the estimators. In other words, fitting the “wrong” model did not meaningfully degrade second-order inference.</p>
 <section id="what-does-this-mean" class="level3" data-number="42.8.1">
 <h3 data-number="42.8.1" class="anchored" data-anchor-id="what-does-this-mean"><span class="header-section-number">42.8.1</span> What does this mean?</h3>
-<p>At a practical level, these results suggest that inference based on second-order summaries—such as minimum contrast estimation using the pair correlation function—is largely driven by the <em>shape of the PCF</em>, rather than the specific underlying model.</p>
+<p>At a practical level, these results suggest that inference based on second-order summaries, such as minimum contrast estimation using the pair correlation function, is largely driven by the <em>shape of the PCF</em>, rather than the specific underlying model.</p>
 <p>Since the LGCP and CSCP are capable of generating very similar PCFs, they also lead to very similar second-order inference, even under model misspecification.</p>
 <p>This implies that, in many realistic settings, it may be difficult to distinguish between these model classes using second-order statistics alone.</p>
 </section>
@@ -1881,6 +1862,22 @@ Note
 <li>computational considerations,</li>
 <li>and the specific scientific questions of interest.</li>
 </ul>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Some thoughts I have:</p>
+<p>I really think the two most important pieces of information that need to be provided here are (1) that the models actually perform well and (2) that the difference between the models is smaller than the variation in the empirical PCF estimator.</p>
+<p>Right now I don’t think I do a very good job of framing this.</p>
+<p>I will continue to work on this, but regardless, it seems we are not going to be very successful in distinguishing between the two models using PCF-based methods.</p>
+</div>
+</div>
 </section>
 <section id="future-directions" class="level3" data-number="42.8.3">
 <h3 data-number="42.8.3" class="anchored" data-anchor-id="future-directions"><span class="header-section-number">42.8.3</span> Future directions</h3>
@@ -2305,8 +2302,8 @@ Note
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../thesis/third_introduction.html" class="pagination-link" aria-label="🚧 Identifiability Beyond Second-Order Structure">
-        <span class="nav-page-text"><span class="chapter-number">43</span>&nbsp; <span class="chapter-title">🚧 Identifiability Beyond Second-Order Structure</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../thesis/third_introduction.html" class="pagination-link" aria-label="🚧 Looking Beyond Second-Order Structure">
+        <span class="nav-page-text"><span class="chapter-number">43</span>&nbsp; <span class="chapter-title">🚧 Looking Beyond Second-Order Structure</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

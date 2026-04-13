@@ -69,10 +69,8 @@ and to understand how small this discrepancy can be as $\phi$ varies over $[0,2]
 
 ## Reduction to a scale-ratio
 
-At first glance, this appears to be a one-dimensional optimisation over $s_L$.
-
-However, rewriting the problem reveals that the discrepancy depends only on the 
-**relative scale** between the two models, rather than their absolute values.
+A useful reparameterisation of the problem, reveals that the discrepancy depends 
+only on the **relative scale** between the two models, rather than their absolute values.
 
 :::callout-note
 Having this as a proposition feels kind of goofy. Only have it structured like this
