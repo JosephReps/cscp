@@ -1,0 +1,1819 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.27">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>44&nbsp; 🚧 Inspecting the Margin(al)s – (Super Hot Fire) Thesis Notes</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../thesis/third_marginal_emp.html" rel="next">
+<link href="../thesis/third_introduction.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-985aa47af68dae11cd4d235c71fb941e.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-364982630eef5352dd1537128a8ed5cb.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../styles.css">
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../thesis/third_introduction.html">CSCP III</a></li><li class="breadcrumb-item"><a href="../thesis/third_marginal.html"><span class="chapter-number">44</span>&nbsp; <span class="chapter-title">🚧 Inspecting the Margin(al)s</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">(Super Hot Fire) Thesis Notes</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/JosephReps/cscp" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-github"></i></a>
+    <a href="mailto:joseph.reps@gmail.com" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-envelope"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false">
+ <span class="menu-text">Point Process Foundations</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pp/introduction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction to Point Processes</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pp/point_process_definition.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Point Process Definition</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pp/poisson_process.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">The Poisson Process</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pp/exercises.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Exercises</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false">
+ <span class="menu-text">First-Order Structure</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../structure/intensity_function.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Intensity function</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../structure/intensity_estimation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Intensity estimation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../structure/exercises1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Exercises</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
+ <span class="menu-text">Second-Order Structure</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../structure/second_order_product_density.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Second-Order Product Density</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../structure/pcf.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Pair Correlation Function</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../structure/k_function.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">K-function</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../structure/second_order_estimation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Second-Order Estimation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../structure/exercises2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Exercises</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false">
+ <span class="menu-text">Structural Assumptions</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../structure/stationarity.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Stationarity</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../structure/isotropy.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Isotropy</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../structure/exercises3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Exercises</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false">
+ <span class="menu-text">Random Fields</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../rf/gaussian_random_fields.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Gaussian Random Fields</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../rf/covariance_functions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Covariance Functions</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../rf/exercises.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Exercises</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="false">
+ <span class="menu-text">Cox Processes</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../cox/cox_process_definition.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Introduction to Cox Processes</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../cox/moment_properties.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Moment Properties</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../cox/exercises.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Exercises</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false">
+ <span class="menu-text">Log-Gaussian Cox Processes</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../lgcp/lgcp_definition.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Introduction to Log-Gaussian Cox Processes</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../lgcp/lgcp_moments.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Moment Properties of the LGCP</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../lgcp/lgcp_pcf.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Pair Correlation Function of the LGCP</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../lgcp/exercises.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Exercises</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="false">
+ <span class="menu-text">Estimation and Inference</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../inference/likelihood.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Likelihood</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../inference/minimum_contrast.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Minimum Contrast Estimation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../inference/composite_likelihood.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Composite Likelihood</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../inference/pseudolikelihood.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">Pseudolikelihood</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../inference/exercises.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">30</span>&nbsp; <span class="chapter-title">Exercises</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="false">
+ <span class="menu-text">CSCP I</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../thesis/cscp_preface.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">31</span>&nbsp; <span class="chapter-title">Defining the CSCP</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../thesis/cscp_definition.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">32</span>&nbsp; <span class="chapter-title">The Non-Central Model</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../thesis/cscp_definition2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">33</span>&nbsp; <span class="chapter-title">The Central Model</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../thesis/cscp_definition3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">34</span>&nbsp; <span class="chapter-title">The Shifted Model</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../thesis/cscp_parameterisations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">35</span>&nbsp; <span class="chapter-title">Parameterizations</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../thesis/cscp_parameterisations_derivations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">36</span>&nbsp; <span class="chapter-title">Parameterizations - Derivations</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../thesis/cscp_model_selection.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">37</span>&nbsp; <span class="chapter-title">Model interpretation</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" role="navigation" aria-expanded="false">
+ <span class="menu-text">CSCP II</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-10" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../thesis/lgcp_motivation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">38</span>&nbsp; <span class="chapter-title">Second-order Structure Comparison to LGCPs</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../thesis/lgcp_identifiability.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">39</span>&nbsp; <span class="chapter-title">Model Setup</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../thesis/lgcp_PCF_comparison.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">40</span>&nbsp; <span class="chapter-title">🚧 Theoretical(ish) Comparison of PCFs</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../thesis/lgcp_PCF_comparison_emp.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">41</span>&nbsp; <span class="chapter-title">🚧 Empirical comparison of PCF families</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../thesis/lgcp_PCF_study.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">42</span>&nbsp; <span class="chapter-title">Implications for Statistical Inference</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" role="navigation" aria-expanded="true">
+ <span class="menu-text">CSCP III</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-11" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../thesis/third_introduction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">43</span>&nbsp; <span class="chapter-title">🚧 Looking Beyond Second-Order Structure</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../thesis/third_marginal.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">44</span>&nbsp; <span class="chapter-title">🚧 Inspecting the Margin(al)s</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../thesis/third_marginal_emp.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">45</span>&nbsp; <span class="chapter-title">🚧 Empirical Study w/ Marginals</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../thesis/third_aggregate.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">46</span>&nbsp; <span class="chapter-title">🚧 Local Aggregates</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" role="navigation" aria-expanded="false">
+ <span class="menu-text">Package Docs</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-12" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../package_docs/basics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">47</span>&nbsp; <span class="chapter-title">🚧 Getting Started</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../package_docs/minimum_contrast.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">48</span>&nbsp; <span class="chapter-title">Minimum contrast</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#recapping" id="toc-recapping" class="nav-link active" data-scroll-target="#recapping"><span class="header-section-number">44.1</span> Recapping</a></li>
+  <li><a href="#recap---corrected" id="toc-recap---corrected" class="nav-link" data-scroll-target="#recap---corrected"><span class="header-section-number">44.2</span> Recap - corrected</a></li>
+  <li><a href="#trying-to-understand-what-is-going-on" id="toc-trying-to-understand-what-is-going-on" class="nav-link" data-scroll-target="#trying-to-understand-what-is-going-on"><span class="header-section-number">44.3</span> Trying to understand what is going on</a></li>
+  <li><a href="#true-marginals" id="toc-true-marginals" class="nav-link" data-scroll-target="#true-marginals"><span class="header-section-number">44.4</span> True marginals</a>
+  <ul class="collapse">
+  <li><a href="#marginal-distribution-of-the-cscp" id="toc-marginal-distribution-of-the-cscp" class="nav-link" data-scroll-target="#marginal-distribution-of-the-cscp"><span class="header-section-number">44.4.1</span> Marginal distribution of the CSCP</a></li>
+  <li><a href="#marginal-distribution-of-the-lgcp" id="toc-marginal-distribution-of-the-lgcp" class="nav-link" data-scroll-target="#marginal-distribution-of-the-lgcp"><span class="header-section-number">44.4.2</span> Marginal distribution of the LGCP</a></li>
+  </ul></li>
+  <li><a href="#plotting-the-pdf" id="toc-plotting-the-pdf" class="nav-link" data-scroll-target="#plotting-the-pdf"><span class="header-section-number">44.5</span> Plotting the PDF</a>
+  <ul class="collapse">
+  <li><a href="#what-are-we-seeing" id="toc-what-are-we-seeing" class="nav-link" data-scroll-target="#what-are-we-seeing"><span class="header-section-number">44.5.1</span> What are we seeing?</a></li>
+  </ul></li>
+  <li><a href="#maybe-cdf-is-a-little-nicer" id="toc-maybe-cdf-is-a-little-nicer" class="nav-link" data-scroll-target="#maybe-cdf-is-a-little-nicer"><span class="header-section-number">44.6</span> Maybe CDF is a little nicer?</a>
+  <ul class="collapse">
+  <li><a href="#cdf-of-the-cscp-marginal" id="toc-cdf-of-the-cscp-marginal" class="nav-link" data-scroll-target="#cdf-of-the-cscp-marginal"><span class="header-section-number">44.6.1</span> CDF of the CSCP marginal</a></li>
+  <li><a href="#cdf-of-the-lgcp-marginal" id="toc-cdf-of-the-lgcp-marginal" class="nav-link" data-scroll-target="#cdf-of-the-lgcp-marginal"><span class="header-section-number">44.6.2</span> CDF of the LGCP marginal</a></li>
+  <li><a href="#comparison" id="toc-comparison" class="nav-link" data-scroll-target="#comparison"><span class="header-section-number">44.6.3</span> Comparison</a></li>
+  <li><a href="#marginal-survival-functions" id="toc-marginal-survival-functions" class="nav-link" data-scroll-target="#marginal-survival-functions"><span class="header-section-number">44.6.4</span> Marginal survival functions</a></li>
+  </ul></li>
+  <li><a href="#plotting-the-cdfs" id="toc-plotting-the-cdfs" class="nav-link" data-scroll-target="#plotting-the-cdfs"><span class="header-section-number">44.7</span> Plotting the CDFs</a></li>
+  <li><a href="#relative-scale-plot" id="toc-relative-scale-plot" class="nav-link" data-scroll-target="#relative-scale-plot"><span class="header-section-number">44.8</span> Relative scale plot</a></li>
+  <li><a href="#quantiles-table" id="toc-quantiles-table" class="nav-link" data-scroll-target="#quantiles-table"><span class="header-section-number">44.9</span> Quantiles table</a></li>
+  <li><a href="#tail-ratio-plot" id="toc-tail-ratio-plot" class="nav-link" data-scroll-target="#tail-ratio-plot"><span class="header-section-number">44.10</span> Tail ratio plot</a></li>
+  <li><a href="#final-verdict" id="toc-final-verdict" class="nav-link" data-scroll-target="#final-verdict"><span class="header-section-number">44.11</span> Final Verdict</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../thesis/third_introduction.html">CSCP III</a></li><li class="breadcrumb-item"><a href="../thesis/third_marginal.html"><span class="chapter-number">44</span>&nbsp; <span class="chapter-title">🚧 Inspecting the Margin(al)s</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">44</span>&nbsp; <span class="chapter-title">🚧 Inspecting the Margin(al)s</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>Having established that LGCP and CSCP models can exhibit nearly identical second-order structure, we now ask: where do these models differ?</p>
+<p>Our first foray into non-first- and second-order statistics begins with the marginal distributions of the latent fields. While the pair correlation function captures second-order dependence, it does not fully characterise the distribution of <span class="math inline">\(\Lambda(u)\)</span> at a fixed location.</p>
+<p>Importantly: although the latent intensity is not directly observed, it still determines the local behaviour of the process, and therefore influences observable quantities such as counts in small regions. The hope is that the differences are large enough that they are able to survive what is becoming increasingly apparent as a total nuclear homogenizing poisson sampling step.</p>
+<p>The most obvious way to start investigating the difference is to plot the two processes marginal intensity distributions, for a fixed <span class="math inline">\((\lambda, \phi)\)</span>, and obviously using the best-matching scale parameters (now easily calculatable using the amazing <code>match_lgcp_scale()</code> function).</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>I don’t know why I thought we needed to vary the scale parameters here. As we will see below, the scale has no effect on the marginal distribution. Reason being: the scale describes the decay of the spatial dependence. The marginal distribution is for a single location, no spatial dependence is involved.</p>
+</div>
+</div>
+<section id="recapping" class="level2" data-number="44.1">
+<h2 data-number="44.1" class="anchored" data-anchor-id="recapping"><span class="header-section-number">44.1</span> Recapping</h2>
+<p>So before we cover the differences in marginal distributions, it is probably a good idea for us to revise what the marginal distributions even are.</p>
+<p>So recall, a cox process is defined by it’s random intensity function <span class="math inline">\(\Lambda(u)\)</span>.</p>
+<p>Now, this random intensity function is a Random Field, meaning that each location <span class="math inline">\(u\)</span> over which <span class="math inline">\(\Lambda\)</span> is defined, is distributed according to the full joint distribution specified by <span class="math inline">\(\Lambda\)</span>.</p>
+<p>What does this actually mean though?</p>
+<p>Well, <span class="math inline">\(\Lambda(u)\)</span> is essentially assigning a random distribution to each one of the uncountably infinite number of locations over which it is defined, and the exact distributions being assigned are determined by the functional form and parameters of <span class="math inline">\(\Lambda\)</span>.</p>
+<p>In the case of the LGCP (and CSCP), the random field <span class="math inline">\(\Lambda\)</span>, is a special kind of random field called a Gaussian Random Field. This means that if we consider any finite set of locations, say <span class="math inline">\(\{u_1, u_2, u_3, \dots, u_n\}\)</span>, then they will be distributed according to a multivariate normal distribution (with WHAT parameters?).</p>
+<p>So you could imagine drawing an infinite number of random distributions, positioned vertically at each location, and transforming them according to whatever functional form <span class="math inline">\(\Lambda\)</span> takes. This is exactly what <span class="math inline">\(\Lambda\)</span> represents. An inifite number of <em>possible</em> inhomogeneous intensity surfaces.</p>
+<p>Now, what we have described is the full joint-distribution of <span class="math inline">\(\Lambda\)</span>. But, this is a <em>very</em> difficult object to estimate for observed point patterns.</p>
+<p>If we want to find differences between two <span class="math inline">\(\Lambda\)</span>’s, and we can directly observe, or even estimate it well, then perhaps we could look at some <em>properties</em> of the <span class="math inline">\(\Lambda\)</span>’s, and if the <span class="math inline">\(\Lambda\)</span>’s we are comparing are sufficiently different, then we might be able to tell them apart (poorly phrased).</p>
+<p>One example of this we saw in the last few chapters, where the “property” we were looking at was the PCF, a summary of essentially the <em>covariance</em> between two locations.</p>
+<p>This section, we are considering a different “property”, that is the <em>marginal</em> distribution of the <span class="math inline">\(\Lambda\)</span>’s.</p>
+<p>So how exactly are the marginal distributions different than the full joint distribution?</p>
+<p>Essentially, we are “accounting for” all possible values of the other locations and taking the correlation of them into account, and “averaging out” the effects due to the correlation / covariance.</p>
+<p>The marginal distribution is essentially telling us: in the complete absence of information about any other locations, what would the distribution of the intensity look like at this single point.</p>
+<p>In other words: If we repeatedly resampled from <em>just this single point</em>, after resampling the entire surface <span class="math inline">\(\Lambda\)</span> many times, what would the distribution of the intensity surfaces look like?</p>
+</section>
+<section id="recap---corrected" class="level2" data-number="44.2">
+<h2 data-number="44.2" class="anchored" data-anchor-id="recap---corrected"><span class="header-section-number">44.2</span> Recap - corrected</h2>
+<p>So before we cover the differences in marginal distributions, it is probably a good idea for us to revise what the marginal distributions even are.</p>
+<p>Recall, a cox process is defined by its random intensity function <span class="math inline">\(\Lambda(u)\)</span>.</p>
+<p>This is a function which takes a location <span class="math inline">\(u\)</span> as an argument, and outputs a random variable, which describes the intensity of the field at that location.</p>
+<p>The form <span class="math inline">\(\Lambda\)</span> takes, is a transformation of some Random Field.</p>
+<p>Note that both LGCP and CSCP transform <em>Gaussian</em> random fields. GRFs are random fields such that any finite subset of them will be multivariate-normally distributed.</p>
+<p>Now note, <span class="math inline">\(\Lambda(u)\)</span> determines the full joint distribution of the Cox Process, over all locations. This means (better would be: can be thought of as…) it is essentially responsible for assigning a random variable to each one of the uncountably infinite number of locations over which it is defined, and the exact distributions of these RVs being assigned are determined by the functional form and parameters of <span class="math inline">\(\Lambda\)</span>.</p>
+<p>This full joint distribution is a <em>very</em> difficult object to estimate from just observed point patterns.</p>
+<p>So if we want to find differences between two <span class="math inline">\(\Lambda\)</span>’s, and we can’t directly observe, or even estimate them well, then perhaps we could look at some <em>properties</em> of the <span class="math inline">\(\Lambda\)</span>’s, and if the <span class="math inline">\(\Lambda\)</span>’s we are comparing are sufficiently different, then we might be able to tell them apart (poorly phrased).</p>
+<p>One example of this we saw in the last few chapters, where the “property” we were looking at was the PCF, a summary of essentially the <em>covariance</em> between two locations.</p>
+<p>This section, we are considering a different “property”, that is the <em>marginal</em> distribution of the <span class="math inline">\(\Lambda\)</span>’s.</p>
+<p>So how exactly are the marginal distributions different than the full joint distribution?</p>
+<p>Essentially, we are “accounting for” all possible values of the other locations and taking the correlation of them into account, and integrating out the dependence on all other locations.</p>
+<p>The marginal distribution is essentially telling us: in the complete absence of information about any other locations, what would the distribution of the intensity look like at this single point.</p>
+<p>In other words, if we repeatedly simulated the full intensity surface <span class="math inline">\(\Lambda\)</span>, and recorded the value at a fixed location <span class="math inline">\(u\)</span>, the resulting values would follow the marginal distribution of <span class="math inline">\(\Lambda(u)\)</span>.</p>
+</section>
+<section id="trying-to-understand-what-is-going-on" class="level2" data-number="44.3">
+<h2 data-number="44.3" class="anchored" data-anchor-id="trying-to-understand-what-is-going-on"><span class="header-section-number">44.3</span> Trying to understand what is going on</h2>
+<p>OK so I’m happy with the <em>idea</em> of what the marginal distribution is.</p>
+<p>I’m thinking about it almost as a summary / property of the full distribution. (Is this ok?)</p>
+<p>So we want to use this unobservable summary to distinguish between the two processes, in the same way we were trying to use the unobserved <em>true</em> PCFs to distinguish between them.</p>
+<p>Note that the way we approached the PCFs, was by esitmating them using minimum contrast, and then basically “hoping” we did a good enough job (turns out we didn’t). So we would now like to do the same thing here. &lt;&lt; Robot didn’t like this.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Some thoughts as I process:</p>
+<p>The PCF is a summary / property of the joint-distribution, which just so happens to be observable in realized point patterns.</p>
+<p>The marginal is NOT reflected in a direct way, in the observable point pattern. So essentially, we will have to use a summary of the marginal of some kind i.e.&nbsp; the quadrat stuff. But then we are essentially trying to ditnguish between two lambdas using a summary of a summary, which seems not good?</p>
+</div>
+</div>
+<p>Ok trying again:</p>
+<p>So we saw previously that using the PCF failed to distinguish between the two processes.</p>
+<p>The PCF is just one possible summary of the true full joint distribution, <span class="math inline">\(\Lambda\)</span>. In particular, the PCF is a quantification of how often pairs of points occur at a distance, <span class="math inline">\(r\)</span>. This is useful, as this quantity is a good (clear and interpretable) way of describing what we might think of as “clustering”. Unfortunately however, as we saw, the clustering behaivour alone is not enough (or not able to be estimated accurately enough) to distnguish between the two processes.</p>
+<p>So now, we have made the decision to try a different summary of the true full joint distribution, in the marginal distribution, <span class="math inline">\(\Lambda(u)\)</span>. Now, notice there is a <em>big</em> difference in using the marginal as a summary of the true <span class="math inline">\(\Lambda\)</span>, versus the PCF: unlike the PCF, the marginal is NOT directly observable from the observed point patterns. The PCF is very nice, because while it is a “direct” summary / property of the true underlying <span class="math inline">\(\Lambda\)</span>, we can directly estimate it using the observed point pattern. For the marginal however, <em>this cannot be done</em>.</p>
+<p>So instead of estimating the marginal directly, we are effectively going to have to use a summary derived from the observed point process, in order to estimate the marginal, which in turn is a summary of the true <span class="math inline">\(\Lambda\)</span>.</p>
+<p>Now the hope is that the marginal distributions are different enough between the two processes, that even looking at summaries, they will be distinguishable.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>OK robot didn’t like “PCF is a summary of <span class="math inline">\(\Lambda\)</span>.”</p>
+<p>Kind of confused by this, why is the marginal distribution considered a summary of <span class="math inline">\(\Lambda\)</span>, but the PCF is not?</p>
+<p>What is the PCF a summary of? Is it a summary of the <em>covariance</em> between two locations in <span class="math inline">\(\Lambda\)</span>?</p>
+<p>What the fuck is a functional omg bruh</p>
+</div>
+</div>
+<p>So with this in mind we now need to address two key questions:</p>
+<ol type="1">
+<li><p>What are the <em>true</em> marginal distributions of the two processes?</p></li>
+<li><p>How can these marginal properties be accessed or approximated from observed point pattern data? Note here we are not trying to estimate the actual marginal distributions, just estimating properties of it.</p></li>
+<li><p>Are the marginals actually distinguishable in practice?</p></li>
+</ol>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>So I’m wondering about estimating the actual marginals.</p>
+<p>Is this easier than estimating the full joint distribution? I would assume so.</p>
+<p>But how much more difficult? Apparently kernel smoothing, then histogram of intensity values over discretized grid? Not very complicated, but subject to issues with bandwidth and pixel size?</p>
+<p>And then some deconvolution, poisson-mixture thing.</p>
+</div>
+</div>
+</section>
+<section id="true-marginals" class="level2" data-number="44.4">
+<h2 data-number="44.4" class="anchored" data-anchor-id="true-marginals"><span class="header-section-number">44.4</span> True marginals</h2>
+<p>Obvious first step. Derive these bad boys. Starting with the CSCP.</p>
+<section id="marginal-distribution-of-the-cscp" class="level3" data-number="44.4.1">
+<h3 data-number="44.4.1" class="anchored" data-anchor-id="marginal-distribution-of-the-cscp"><span class="header-section-number">44.4.1</span> Marginal distribution of the CSCP</h3>
+<p>Recall the definition of our beautiful CSCP:</p>
+<p><span class="math display">\[
+\Lambda(u) = \mu + Z(u)^2, \quad Z(u) \sim N(0, \sigma^2)
+\]</span></p>
+<p>Fix a location <span class="math inline">\(u\)</span>. Since</p>
+<p><span class="math display">\[
+Z(u) \sim N(0, \sigma^2)
+\]</span></p>
+<p>we can standardise, to obtain:</p>
+<p><span class="math display">\[
+\frac{Z(u)}{\sigma} \sim N(0, 1)
+\]</span></p>
+<p>Now squaring both sides, we get:</p>
+<p><span class="math display">\[
+(\frac{Z(u)}{\sigma})^2 \sim \chi_1^2
+\]</span></p>
+<p>since the square of a standard normal RV is chi-square with 1 df.</p>
+<p>So we have:</p>
+<p><span class="math display">\[
+\frac{Z(u)^2}{\sigma^2} \sim \chi_1^2
+\]</span></p>
+<p>Now, recall that</p>
+<p><span class="math display">\[
+\Lambda(u) = \mu + Z(u)^2
+\]</span></p>
+<p>so</p>
+<p><span class="math display">\[
+\Lambda(u) - \mu = Z(u)^2 \Longrightarrow \frac{\Lambda(u) - \mu}{\sigma^2} = \frac{Z(u)^2}{\sigma^2}
+\]</span></p>
+<p>And using the above we have:</p>
+<p><span class="math display">\[
+\frac{\Lambda(u) - \mu}{\sigma^2} \sim \chi_1^2
+\]</span></p>
+<p>OK cool, so now what?</p>
+<p>Let</p>
+<p><span class="math display">\[
+Y = \frac{\Lambda(u) - \mu}{\sigma^2}
+\]</span></p>
+<p>Then, from above we have <span class="math inline">\(Y \sim \chi_1^2\)</span> and also</p>
+<p><span class="math display">\[
+\Lambda(u) = \mu + \sigma^2 \Big(\frac{\Lambda(u) - \mu}{\sigma^2}\Big) = \mu + \sigma^2Y
+\]</span></p>
+<p>And so we can use the change-of-variable formula:</p>
+<p><span class="math display">\[
+f_{\Lambda(u)}(\lambda) = f_Y(\frac{\lambda - \mu}{\sigma^2})|\frac{d}{d\lambda}\Big( \frac{\lambda - \mu}{\sigma^2}\Big)|
+\]</span></p>
+<p>and since</p>
+<p><span class="math display">\[
+\frac{d}{d\lambda}\Big( \frac{\lambda - \mu}{\sigma^2}\Big) = \frac{1}{\sigma^2}
+\]</span></p>
+<p>we obtain</p>
+<p><span class="math display">\[
+f_{\Lambda(u)}(\lambda) = \frac{1}{\sigma^2} f_{\chi_1^2}\Big( \frac{\lambda - \mu}{\sigma^2}\Big), \quad \lambda &gt; \mu
+\]</span></p>
+<p>Also since <span class="math inline">\(Z(u)^2 \ge 0\)</span>, we must have <span class="math inline">\(\Lambda(u) \ge \mu\)</span>, so the density is zero for <span class="math inline">\(\lambda \le \mu\)</span>.</p>
+<p>Now, if we want to be extra explicit, we have:</p>
+<p><span class="math display">\[
+f_{\chi_1^2} = \frac{1}{\sqrt{2\pi}}x^{-1/2}e^{-x/2},\quad x &gt; 0
+\]</span></p>
+<p>and so subbing this in we get:</p>
+<p><span class="math display">\[
+f_{\Lambda(u)}(\lambda) = \frac{1}{\sigma^2} \frac{1}{\sqrt{2\pi}}\Big( \frac{\lambda - \mu}{\sigma^2}\Big)^{-1/2}\exp\Big(- \frac{\lambda - \mu}{2\sigma^2}\Big), \quad \lambda &gt; \mu
+\]</span></p>
+<p>Or equivalently:</p>
+<p><span class="math display">\[
+f_{\Lambda(u)}(\lambda) =  \frac{1}{\sqrt{2\pi \sigma^2 (\lambda - \mu)}}\exp\Big(- \frac{\lambda - \mu}{2\sigma^2}\Big), \quad \lambda &gt; \mu
+\]</span></p>
+<p>So, at a fixed location <span class="math inline">\(u\)</span>, the marginal distribution follows a shifted and scaled Chi-square.</p>
+<p>In particular:</p>
+<ul>
+<li><p>it has support over <span class="math inline">\((\mu, \infty)\)</span></p></li>
+<li><p>explodes to infinity (?) as <span class="math inline">\(\lambda \to \mu\)</span></p></li>
+<li><p>Right tail decays exponentially</p></li>
+</ul>
+</section>
+<section id="marginal-distribution-of-the-lgcp" class="level3" data-number="44.4.2">
+<h3 data-number="44.4.2" class="anchored" data-anchor-id="marginal-distribution-of-the-lgcp"><span class="header-section-number">44.4.2</span> Marginal distribution of the LGCP</h3>
+<p>Now recall the definition of the LGCP:</p>
+<p><span class="math display">\[
+\Lambda(u) = \exp(Z(u)), \quad Z(u) \sim N(\mu, \sigma^2)
+\]</span></p>
+<p>Fix a location <span class="math inline">\(u\)</span>. Since</p>
+<p><span class="math display">\[
+Z(u) \sim N(\mu, \sigma^2)
+\]</span></p>
+<p>and</p>
+<p><span class="math display">\[
+\Lambda(u) = \exp(Z(u))
+\]</span></p>
+<p>we can take logs of both sides to obtain</p>
+<p><span class="math display">\[
+\log \Lambda(u) = Z(u)
+\]</span></p>
+<p>But then, since <span class="math inline">\(Z(u) \sim N(\mu, \sigma^2)\)</span>, we immediately have</p>
+<p><span class="math display">\[
+\log \Lambda(u) \sim N(\mu, \sigma^2)
+\]</span></p>
+<p>And this is exactly the definition of a lognormal random variable. Hence</p>
+<p><span class="math display">\[
+\Lambda(u) \sim \operatorname{Lognormal}(\mu, \sigma^2)
+\]</span></p>
+<p>OK cool, so now what?</p>
+<p>If we want to write down the density explicitly, let</p>
+<p><span class="math display">\[
+Y = Z(u)
+\]</span></p>
+<p>Then</p>
+<p><span class="math display">\[
+Y \sim N(\mu, \sigma^2)
+\]</span></p>
+<p>and also</p>
+<p><span class="math display">\[
+\Lambda(u) = e^Y
+\]</span></p>
+<p>Equivalently,</p>
+<p><span class="math display">\[
+Y = \log \Lambda(u)
+\]</span></p>
+<p>So we can use the change-of-variable formula:</p>
+<p><span class="math display">\[
+f_{\Lambda(u)}(\lambda) = f_Y(\log \lambda)\Big|\frac{d}{d\lambda}(\log \lambda)\Big|,
+\qquad \lambda &gt; 0
+\]</span></p>
+<p>Now since</p>
+<p><span class="math display">\[
+\frac{d}{d\lambda}(\log \lambda) = \frac{1}{\lambda}
+\]</span></p>
+<p>we obtain</p>
+<p><span class="math display">\[
+f_{\Lambda(u)}(\lambda) = \frac{1}{\lambda} f_{N(\mu,\sigma^2)}(\log \lambda),
+\qquad \lambda &gt; 0
+\]</span></p>
+<p>Now, if we want to be extra explicit, recall that the density of a normal random variable is</p>
+<p><span class="math display">\[
+f_{N(\mu,\sigma^2)}(y)
+=
+\frac{1}{\sigma \sqrt{2\pi}}
+\exp\Big(
+-\frac{(y-\mu)^2}{2\sigma^2}
+\Big), \quad y \in \mathbb{r echo = FALSE}
+\]</span></p>
+<p>So substituting <span class="math inline">\(y = \log \lambda\)</span>, we get</p>
+<p><span class="math display">\[
+f_{\Lambda(u)}(\lambda)
+=
+\frac{1}{\lambda}
+\frac{1}{\sigma \sqrt{2\pi}}
+\exp\Big(
+-\frac{(\log \lambda - \mu)^2}{2\sigma^2}
+\Big), \quad \lambda &gt; 0
+\]</span></p>
+<p>That is,</p>
+<p><span class="math display">\[
+f_{\Lambda(u)}(\lambda)
+=
+\frac{1}{\lambda \sigma \sqrt{2\pi}}
+\exp\Big(
+-\frac{(\log \lambda - \mu)^2}{2\sigma^2}
+\Big), \quad \lambda &gt; 0
+\]</span></p>
+<p>Also, since <span class="math inline">\(\Lambda(u)=\exp(Z(u)) &gt; 0\)</span> always, the density is zero for <span class="math inline">\(\lambda \le 0\)</span>.</p>
+<p>So, at a fixed location <span class="math inline">\(u\)</span>, the marginal intensity follows a lognormal random variable.</p>
+<p>In particular:</p>
+<ul>
+<li><p>it has support over <span class="math inline">\((0, \infty)\)</span></p></li>
+<li><p>tends to <span class="math inline">\(0\)</span> as <span class="math inline">\(\lambda \to 0\)</span></p></li>
+<li><p>has a heavier right tail than the CSCP marginal</p></li>
+</ul>
+</section>
+</section>
+<section id="plotting-the-pdf" class="level2" data-number="44.5">
+<h2 data-number="44.5" class="anchored" data-anchor-id="plotting-the-pdf"><span class="header-section-number">44.5</span> Plotting the PDF</h2>
+<p>Setup</p>
+<div class="cell">
+<div class="cell-output cell-output-stderr">
+<pre><code>ℹ Loading cscp</code></pre>
+</div>
+</div>
+<p>Standard PDF on ordinary scale</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="third_marginal_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="third_marginal_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Varying phi:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="third_marginal_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="third_marginal_files/figure-html/unnamed-chunk-5-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="third_marginal_files/figure-html/unnamed-chunk-5-3.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Vary lambda (phi = 2):</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="third_marginal_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="third_marginal_files/figure-html/unnamed-chunk-6-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="third_marginal_files/figure-html/unnamed-chunk-6-3.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Vary lambda (phi = 0.1)</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="third_marginal_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="third_marginal_files/figure-html/unnamed-chunk-7-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="third_marginal_files/figure-html/unnamed-chunk-7-3.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Zoom near the left boundary</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="third_marginal_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>PDF with log-scaled y-axis</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="third_marginal_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<section id="what-are-we-seeing" class="level3" data-number="44.5.1">
+<h3 data-number="44.5.1" class="anchored" data-anchor-id="what-are-we-seeing"><span class="header-section-number">44.5.1</span> What are we seeing?</h3>
+<p>???</p>
+</section>
+</section>
+<section id="maybe-cdf-is-a-little-nicer" class="level2" data-number="44.6">
+<h2 data-number="44.6" class="anchored" data-anchor-id="maybe-cdf-is-a-little-nicer"><span class="header-section-number">44.6</span> Maybe CDF is a little nicer?</h2>
+<p>Corresponding cumulative distribution functions follow immediately from the transformed representations used above.</p>
+<p>Hopefully useful as: firstly, they provide a cumulative description of the one-point marginal laws. secondly, they will later allow us to investigate the upper-tail behaviour of the two models through their survival functions.</p>
+<section id="cdf-of-the-cscp-marginal" class="level3" data-number="44.6.1">
+<h3 data-number="44.6.1" class="anchored" data-anchor-id="cdf-of-the-cscp-marginal"><span class="header-section-number">44.6.1</span> CDF of the CSCP marginal</h3>
+<p>Recall that under the shifted CSCP, <span class="math display">\[
+\Lambda(u) = \mu + Z(u)^2, \quad Z(u) \sim N(0, \sigma^2)
+\]</span> and from the previous subsection we showed that</p>
+<p><span class="math display">\[
+\frac{\Lambda(u) - \mu}{\sigma^2} \sim \chi_1^2
+\]</span></p>
+<p>So for any <span class="math inline">\(\lambda &gt; \mu\)</span>, we have</p>
+<p><span class="math display">\[
+F_{\Lambda(u)}(\lambda)
+=
+P(\Lambda(u) \le \lambda)
+\]</span></p>
+<p>Using the transformation above, this becomes</p>
+<p><span class="math display">\[
+P(\Lambda(u) \le \lambda)
+=
+P\Big( \frac{\Lambda(u) - \mu}{\sigma^2} \le \frac{\lambda - \mu}{\sigma^2} \Big)
+\]</span></p>
+<p>Since <span class="math display">\[
+\frac{\Lambda(u) - \mu}{\sigma^2} \sim \chi_1^2
+\]</span> it follows that</p>
+<p><span class="math display">\[
+F_{\Lambda(u)}(\lambda)
+=
+F_{\chi_1^2}\Big( \frac{\lambda - \mu}{\sigma^2} \Big), \quad \lambda &gt; \mu
+\]</span></p>
+<p>Also, since <span class="math inline">\(\Lambda(u) \ge \mu\)</span> always, we have</p>
+<p><span class="math display">\[
+F_{\Lambda(u)}(\lambda) = 0, \quad \lambda \le \mu
+\]</span></p>
+<p>So the full CDF is</p>
+<p><span class="math display">\[
+F_{\Lambda(u)}(\lambda)
+=
+\begin{cases}
+0, &amp; \lambda \le \mu, \\
+F_{\chi_1^2}\Big( \frac{\lambda - \mu}{\sigma^2} \Big), &amp; \lambda &gt; \mu
+\end{cases}
+\]</span></p>
+<p>So, at a fixed location <span class="math inline">\(u\)</span>, the marginal CDF of the CSCP is simply a shifted and scaled chi-square CDF.</p>
+</section>
+<section id="cdf-of-the-lgcp-marginal" class="level3" data-number="44.6.2">
+<h3 data-number="44.6.2" class="anchored" data-anchor-id="cdf-of-the-lgcp-marginal"><span class="header-section-number">44.6.2</span> CDF of the LGCP marginal</h3>
+<p>Now recall that under the LGCP, <span class="math display">\[
+\Lambda(u) = \exp(Z(u)), \quad Z(u) \sim N(\mu, \sigma^2)
+\]</span></p>
+<p>From the previous subsection, we showed that</p>
+<p><span class="math display">\[
+\log \Lambda(u) \sim N(\mu, \sigma^2)
+\]</span></p>
+<p>So for any <span class="math inline">\(\lambda &gt; 0\)</span>, we have</p>
+<p><span class="math display">\[
+F_{\Lambda(u)}(\lambda)
+=
+P(\Lambda(u) \le \lambda)
+\]</span></p>
+<p>Taking logs of both sides inside the probability gives</p>
+<p><span class="math display">\[
+P(\Lambda(u) \le \lambda)
+=
+P(\log \Lambda(u) \le \log \lambda)
+\]</span></p>
+<p>But since <span class="math display">\[
+\log \Lambda(u) \sim N(\mu, \sigma^2)
+\]</span> this becomes</p>
+<p><span class="math display">\[
+F_{\Lambda(u)}(\lambda)
+=
+P(Z(u) \le \log \lambda)
+\]</span></p>
+<p>Now standardising,</p>
+<p><span class="math display">\[
+P(Z(u) \le \log \lambda)
+=
+P\Big( \frac{Z(u)-\mu}{\sigma} \le \frac{\log \lambda - \mu}{\sigma} \Big)
+\]</span></p>
+<p>Since <span class="math display">\[
+\frac{Z(u)-\mu}{\sigma} \sim N(0,1)
+\]</span></p>
+<p>it follows that</p>
+<p><span class="math display">\[
+F_{\Lambda(u)}(\lambda)
+=
+\Phi\Big( \frac{\log \lambda - \mu}{\sigma} \Big), \quad \lambda &gt; 0
+\]</span></p>
+<p>where <span class="math inline">\(\Phi\)</span> is the standard normal CDF.</p>
+<p>Also, since <span class="math inline">\(\Lambda(u) = \exp(Z(u)) &gt; 0\)</span> always, we have</p>
+<p><span class="math display">\[
+F_{\Lambda(u)}(\lambda) = 0, \quad \lambda \le 0
+\]</span></p>
+<p>So the full CDF is</p>
+<p><span class="math display">\[
+F_{\Lambda(u)}(\lambda)
+=
+\begin{cases}
+0, &amp; \lambda \le 0 \\
+\Phi\Big( \frac{\log \lambda - \mu}{\sigma} \Big), &amp; \lambda &gt; 0
+\end{cases}
+\]</span></p>
+<p>So, at a fixed location <span class="math inline">\(u\)</span>, the marginal CDF of the LGCP is the CDF of a lognormal random variable.</p>
+</section>
+<section id="comparison" class="level3" data-number="44.6.3">
+<h3 data-number="44.6.3" class="anchored" data-anchor-id="comparison"><span class="header-section-number">44.6.3</span> Comparison</h3>
+<p>While the CSCP and LGCP can exhibit very similar second-order structure, their one-point marginal cumulative distributions are fundamentally different (although <em>how</em> different, I feel is not very much).</p>
+<p>In particular:</p>
+<ul>
+<li><p>the CSCP marginal CDF is that of a shifted and scaled chi-square random variable</p></li>
+<li><p>the LGCP marginal CDF is that of a lognormal random variable</p></li>
+</ul>
+</section>
+<section id="marginal-survival-functions" class="level3" data-number="44.6.4">
+<h3 data-number="44.6.4" class="anchored" data-anchor-id="marginal-survival-functions"><span class="header-section-number">44.6.4</span> Marginal survival functions</h3>
+<p>Since we are especially interested in how the two marginals differ in their upper tails, it is natural to also consider the survival functions,</p>
+<p><span class="math display">\[
+\bar F_{\Lambda(u)}(\lambda) = 1 - F_{\Lambda(u)}(\lambda)
+\]</span></p>
+<p>For the CSCP, this gives</p>
+<p><span class="math display">\[
+\bar F_{\Lambda(u)}(\lambda)
+=
+\begin{cases}
+1, &amp; \lambda \le \mu \\
+1 - F_{\chi_1^2}\Big( \frac{\lambda - \mu}{\sigma^2} \Big), &amp; \lambda &gt; \mu
+\end{cases}
+\]</span></p>
+<p>and for the LGCP,</p>
+<p><span class="math display">\[
+\bar F_{\Lambda(u)}(\lambda)
+=
+\begin{cases}
+1, &amp; \lambda \le 0 \\
+1 - \Phi\Big( \frac{\log \lambda - \mu}{\sigma} \Big), &amp; \lambda &gt; 0
+\end{cases}
+\]</span></p>
+</section>
+</section>
+<section id="plotting-the-cdfs" class="level2" data-number="44.7">
+<h2 data-number="44.7" class="anchored" data-anchor-id="plotting-the-cdfs"><span class="header-section-number">44.7</span> Plotting the CDFs</h2>
+<p>Standard CDF</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="third_marginal_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Varying phi</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="third_marginal_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="third_marginal_files/figure-html/unnamed-chunk-12-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="third_marginal_files/figure-html/unnamed-chunk-12-3.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Left-endpoint zoom</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="third_marginal_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>And survival plots I guess?</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="third_marginal_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="third_marginal_files/figure-html/unnamed-chunk-14-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Varying phi:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="third_marginal_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="third_marginal_files/figure-html/unnamed-chunk-15-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="third_marginal_files/figure-html/unnamed-chunk-15-3.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="relative-scale-plot" class="level2" data-number="44.8">
+<h2 data-number="44.8" class="anchored" data-anchor-id="relative-scale-plot"><span class="header-section-number">44.8</span> Relative scale plot</h2>
+<p>Relative scale survival plot</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="third_marginal_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Relative-scale PDF</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="third_marginal_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="quantiles-table" class="level2" data-number="44.9">
+<h2 data-number="44.9" class="anchored" data-anchor-id="quantiles-table"><span class="header-section-number">44.9</span> Quantiles table</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>probs <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.90</span>, <span class="fl">0.95</span>, <span class="fl">0.99</span>, <span class="fl">0.999</span>, <span class="fl">0.9999</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>q_lgcp <span class="ot">&lt;-</span> <span class="fu">qlnorm</span>(probs, <span class="at">meanlog =</span> mu_log, <span class="at">sdlog =</span> sigma_log)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>q_cscp <span class="ot">&lt;-</span> mu_cscp <span class="sc">+</span> sigma2_cscp <span class="sc">*</span> <span class="fu">qchisq</span>(probs, <span class="at">df =</span> <span class="dv">1</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>quantile_tab <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">prob =</span> probs,</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">LGCP =</span> q_lgcp,</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">CSCP =</span> q_cscp,</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">LGCP_over_mean =</span> q_lgcp <span class="sc">/</span> lambda,</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">CSCP_over_mean =</span> q_cscp <span class="sc">/</span> lambda</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(quantile_tab, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   prob      LGCP      CSCP LGCP_over_mean CSCP_over_mean
+ 0.9000  221.2113  270.5543       2.212113       2.705543
+ 0.9500  323.7309  384.1459       3.237309       3.841459
+ 0.9900  661.3074  663.4897       6.613074       6.634897
+ 0.9990 1472.7431 1082.7566      14.727431      10.827566
+ 0.9999 2846.7700 1513.6705      28.467700      15.136705</code></pre>
+</div>
+</div>
+</section>
+<section id="tail-ratio-plot" class="level2" data-number="44.10">
+<h2 data-number="44.10" class="anchored" data-anchor-id="tail-ratio-plot"><span class="header-section-number">44.10</span> Tail ratio plot</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>rel_grid <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fl">0.5</span>, <span class="dv">20</span>, <span class="at">length.out =</span> <span class="dv">10000</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>x_abs <span class="ot">&lt;-</span> lambda <span class="sc">*</span> rel_grid</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>S_lgcp <span class="ot">&lt;-</span> <span class="fu">s_lgcp_marginal</span>(x_abs, <span class="at">mu_log =</span> mu_log, <span class="at">sigma_log =</span> sigma_log)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>S_cscp <span class="ot">&lt;-</span> <span class="fu">s_cscp_marginal</span>(x_abs, <span class="at">mu =</span> mu_cscp, <span class="at">sigma2 =</span> sigma2_cscp)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>tail_ratio <span class="ot">&lt;-</span> S_lgcp <span class="sc">/</span> S_cscp</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>tail_ratio[<span class="sc">!</span><span class="fu">is.finite</span>(tail_ratio)] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  rel_grid, tail_ratio,</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="st">"l"</span>,</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">lwd =</span> <span class="dv">2</span>,</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">col =</span> <span class="st">"black"</span>,</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">log =</span> <span class="st">"y"</span>,</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab =</span> <span class="fu">expression</span>(<span class="fu">Lambda</span>(u) <span class="sc">/</span> E[<span class="fu">Lambda</span>(u)]),</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab =</span> <span class="st">"LGCP survival / CSCP survival"</span>,</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">main =</span> <span class="st">"Relative tail probability ratio"</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">h =</span> <span class="dv">1</span>, <span class="at">lty =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="third_marginal_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>ratio &gt; 1: LGCP has heavier upper tail there ratio &lt; 1: CSCP heavier there</p>
+</section>
+<section id="final-verdict" class="level2" data-number="44.11">
+<h2 data-number="44.11" class="anchored" data-anchor-id="final-verdict"><span class="header-section-number">44.11</span> Final Verdict</h2>
+<p>So what we thinking??</p>
+<p>The two models are nearly indistinguishable across the <strong>majority</strong> of the distribution, and only diverge in the extreme tail corresponding to intensities exceeding approximately 10–15 times the mean. Not promising at ALL.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../thesis/third_introduction.html" class="pagination-link" aria-label="🚧 Looking Beyond Second-Order Structure">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">43</span>&nbsp; <span class="chapter-title">🚧 Looking Beyond Second-Order Structure</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../thesis/third_marginal_emp.html" class="pagination-link" aria-label="🚧 Empirical Study w/ Marginals">
+        <span class="nav-page-text"><span class="chapter-number">45</span>&nbsp; <span class="chapter-title">🚧 Empirical Study w/ Marginals</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

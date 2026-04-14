@@ -261,3 +261,147 @@ cscp_nc_params <- function(mu = NULL, sigma = NULL, s = NULL,
     df = df
   )
 }
+
+#' Match an LGCP scale to a CSCP scale
+#'
+#' Numerically finds the LGCP correlation scale that best matches the
+#' theoretical CSCP pair correlation function, for fixed clustering strength
+#' `phi`, by minimizing the sup-norm discrepancy over a grid in
+#' \eqn{x \in [0,1]}.
+#'
+#' The matching is based on the theoretical pair correlation functions
+#'
+#' \deqn{
+#' g_{CSCP}(r) = 1 + \phi \exp(-2r / s_C)
+#' }
+#'
+#' and
+#'
+#' \deqn{
+#' g_{LGCP}(r) = (1+\phi)^{\exp(-r / s_L)}.
+#' }
+#'
+#' Writing \eqn{\alpha = s_L / s_C}, the function numerically minimizes
+#'
+#' \deqn{
+#' \sup_{x \in [0,1]}
+#' \left| \exp\{ \log(1+\phi)\, x^{1/(2\alpha)} \} - 1 - \phi x \right|.
+#' }
+#'
+#' @param phi Numeric scalar or vector of clustering strengths.
+#'   Must satisfy `phi >= 0`.
+#' @param s_cscp Numeric scalar or vector of CSCP correlation scales.
+#'   Must be strictly positive.
+#' @param x_grid Numeric grid on `[0, 1]` used to approximate the sup norm.
+#' @param alpha_lower Lower bound for the scale ratio
+#'   \eqn{\alpha = s_L / s_C}.
+#' @param alpha_upper Upper bound for the scale ratio
+#'   \eqn{\alpha = s_L / s_C}.
+#' @param return_full Logical; if `FALSE`, returns the matched LGCP scale(s).
+#'   If `TRUE`, returns a data frame with matching details.
+#'
+#' @return If `return_full = FALSE`, a numeric vector of matched LGCP scales.
+#'
+#' If `return_full = TRUE`, a data frame with columns:
+#' \describe{
+#'   \item{phi}{Clustering strength.}
+#'   \item{s_cscp}{Input CSCP scale.}
+#'   \item{alpha_opt}{Optimal scale ratio `s_lgcp / s_cscp`.}
+#'   \item{s_lgcp}{Matched LGCP scale.}
+#'   \item{p_opt}{Equivalent exponent `1 / (2 * alpha_opt)`.}
+#'   \item{match_error}{Approximated minimum sup-norm discrepancy.}
+#' }
+#'
+#' @export
+#'
+#' @examples
+#' match_lgcp_scale(phi = 1, s_cscp = 0.05)
+#'
+#' match_lgcp_scale(
+#'   phi = c(0.1, 0.8, 1.5),
+#'   s_cscp = 0.05,
+#'   return_full = TRUE
+#' )
+match_lgcp_scale <- function(phi,
+                             s_cscp,
+                             x_grid = seq(0, 1, length.out = 4000),
+                             alpha_lower = 0.05,
+                             alpha_upper = 5,
+                             return_full = FALSE) {
+
+  if (!is.numeric(phi) || any(!is.finite(phi)) || any(phi < 0)) {
+    stop("phi must be a numeric vector of finite non-negative values.",
+         call. = FALSE)
+  }
+
+  if (!is.numeric(s_cscp) || any(!is.finite(s_cscp)) || any(s_cscp <= 0)) {
+    stop("s_cscp must be a numeric vector of finite positive values.",
+         call. = FALSE)
+  }
+
+  if (!is.numeric(x_grid) || any(!is.finite(x_grid)) ||
+      any(x_grid < 0) || any(x_grid > 1)) {
+    stop("x_grid must be a numeric vector with values in [0, 1].",
+         call. = FALSE)
+  }
+
+  if (!is.numeric(alpha_lower) || length(alpha_lower) != 1 ||
+      !is.finite(alpha_lower) || alpha_lower <= 0) {
+    stop("alpha_lower must be a single finite positive number.",
+         call. = FALSE)
+  }
+
+  if (!is.numeric(alpha_upper) || length(alpha_upper) != 1 ||
+      !is.finite(alpha_upper) || alpha_upper <= alpha_lower) {
+    stop("alpha_upper must be a single finite number greater than alpha_lower.",
+         call. = FALSE)
+  }
+
+  n <- max(length(phi), length(s_cscp))
+
+  if (!(length(phi) %in% c(1, n) && length(s_cscp) %in% c(1, n))) {
+    stop("phi and s_cscp must have compatible lengths.",
+         call. = FALSE)
+  }
+
+  phi <- rep_len(phi, n)
+  s_cscp <- rep_len(s_cscp, n)
+
+  match_one <- function(phi_i, s_i) {
+    obj_alpha <- function(alpha) {
+      p <- 1 / (2 * alpha)
+      cval <- log(1 + phi_i)
+      max(abs(exp(cval * x_grid^p) - 1 - phi_i * x_grid))
+    }
+
+    opt <- stats::optimize(
+      f = obj_alpha,
+      interval = c(alpha_lower, alpha_upper)
+    )
+
+    alpha_opt <- opt$minimum
+    s_lgcp <- alpha_opt * s_i
+
+    data.frame(
+      phi = phi_i,
+      s_cscp = s_i,
+      alpha_opt = alpha_opt,
+      s_lgcp = s_lgcp,
+      p_opt = 1 / (2 * alpha_opt),
+      match_error = opt$objective
+    )
+  }
+
+  out <- do.call(
+    rbind,
+    Map(match_one, phi_i = phi, s_i = s_cscp)
+  )
+
+  rownames(out) <- NULL
+
+  if (return_full) {
+    return(out)
+  }
+
+  out$s_lgcp
+}

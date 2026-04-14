@@ -1,0 +1,6 @@
+# 🚧 Empirical Study w/ Marginals
+
+Thinking I will just use maybe two summary / classifier type things.
+
+Definitely the histogram of discretized KDE. Maybe something like quantiles of 
+quadrats as the other? Maximum?

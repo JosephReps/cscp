@@ -1,0 +1,66 @@
+# Third-order Intensity?
+
+```{r}
+library(tibble)
+library(dplyr)
+library(ggplot2)
+
+# ------------------------------------------------------------
+# Third-order comparison for equilateral configurations
+# ------------------------------------------------------------
+
+g3_lgcp_eq <- function(r, phi, sL) {
+  c <- log(1 + phi)
+  exp(3 * c * exp(-r / sL))
+}
+
+g3_cscp_eq <- function(r, phi, sC) {
+  1 + 3 * phi * exp(-2 * r / sC) +
+    2 * sqrt(2) * phi^(3/2) * exp(-3 * r / sC)
+}
+
+# choose parameters
+phi <- 1
+sC  <- 0.05
+sL  <- 0.68 * sC   # or your best matched LGCP scale
+
+r_grid <- seq(0, 0.25, length.out = 1000)
+
+g3_df <- tibble(
+  r = rep(r_grid, 2),
+  g3 = c(
+    g3_cscp_eq(r_grid, phi = phi, sC = sC),
+    g3_lgcp_eq(r_grid, phi = phi, sL = sL)
+  ),
+  model = rep(c("CSCP", "LGCP"), each = length(r_grid))
+)
+
+ggplot(g3_df, aes(x = r, y = g3, colour = model, linetype = model)) +
+  geom_line(linewidth = 1) +
+  labs(
+    x = "r",
+    y = expression(g[3](r, r, r)),
+    title = expression("Third-order comparison for equilateral triples")
+  ) +
+  theme_bw()
+```
+
+Difference directly
+
+```{r}
+diff_df <- tibble(
+  r = r_grid,
+  diff = g3_lgcp_eq(r_grid, phi = phi, sL = sL) -
+         g3_cscp_eq(r_grid, phi = phi, sC = sC)
+)
+
+ggplot(diff_df, aes(x = r, y = diff)) +
+  geom_line(linewidth = 1) +
+  labs(
+    x = "r",
+    y = "LGCP - CSCP",
+    title = "Difference in equilateral third-order product densities"
+  ) +
+  theme_bw()
+```
+

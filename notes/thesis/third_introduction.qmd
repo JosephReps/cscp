@@ -1,3 +1,5 @@
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+
 # 🚧 Looking Beyond Second-Order Structure
 
 Second-order summaries are insufficient to distinguish LGCP and CSCP in practice.
@@ -56,9 +58,11 @@ These distributions are fundamentally different. The LGCP produces a log-normal
 intensity field with heavy right tails, while the CSCP produces a more concentrated
 but still skewed distribution.
 
-This suggests that, even if the second-order structure is similar, differences may
-be detectable through summaries that reflect the marginal distribution of the
-intensity, such as quadrat counts or local intensity estimates.
+Crucially, these differences are not reflected in the pair correlation function,
+and therefore cannot be detected by second-order methods.
+
+However, they may be detectable through summaries that reflect local variation
+in intensity, such as quadrat counts or local aggregation statistics.
 
 ## Higher-order structure
 
@@ -66,12 +70,12 @@ Another possibility is to consider higher-order interaction structure.
 
 While the pair correlation function captures only second-order (pairwise)
 dependence, higher-order summaries involve interactions between three or more
-points, and therefore contain additional information about the underlying process.
+points, and therefore encode additional structural information about the process.
 
-Since the LGCP is driven by a Gaussian random field, while the CSCP is based on
-a squared Gaussian field, their higher-order moment structures differ. These
-differences are not visible at the level of the PCF, but may become apparent
-when considering third- or fourth-order interactions.
+Since the LGCP is driven by a Gaussian random field, whereas the CSCP is based on
+a squared Gaussian field, their higher-order moment structures differ fundamentally.
+These differences are not visible at the level of second-order summaries, but may
+be revealed through third- or higher-order statistics.
 
 In principle, this provides a route to distinguishing between the models.
 
@@ -92,8 +96,8 @@ allow the two models to be distinguished.
 
 However, for Cox processes the likelihood is typically intractable, and must be
 approximated using techniques such as composite likelihood or numerical methods.
-
-## Next up cuhhhh
+  
+## <span class="fancy-title">In the proceeding chapters</span>
 
 To begin, we look at the marginal distribution.
 

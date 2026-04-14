@@ -30,7 +30,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../package_docs/basics.html" rel="next">
+<link href="../thesis/third_marginal.html" rel="next">
 <link href="../thesis/lgcp_PCF_study.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -524,6 +524,24 @@ window.Quarto = {
  <span class="menu-text"><span class="chapter-number">43</span>&nbsp; <span class="chapter-title">🚧 Looking Beyond Second-Order Structure</span></span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../thesis/third_marginal.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">44</span>&nbsp; <span class="chapter-title">🚧 Inspecting the Margin(al)s</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../thesis/third_marginal_emp.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">45</span>&nbsp; <span class="chapter-title">🚧 Empirical Study w/ Marginals</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../thesis/third_aggregate.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">46</span>&nbsp; <span class="chapter-title">🚧 Local Aggregates</span></span></a>
+  </div>
+</li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
@@ -538,13 +556,13 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../package_docs/basics.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">44</span>&nbsp; <span class="chapter-title">🚧 Getting Started</span></span></a>
+ <span class="menu-text"><span class="chapter-number">47</span>&nbsp; <span class="chapter-title">🚧 Getting Started</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../package_docs/minimum_contrast.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">45</span>&nbsp; <span class="chapter-title">Minimum contrast</span></span></a>
+ <span class="menu-text"><span class="chapter-number">48</span>&nbsp; <span class="chapter-title">Minimum contrast</span></span></a>
   </div>
 </li>
       </ul>
@@ -563,7 +581,7 @@ window.Quarto = {
   <li><a href="#marginal-distribution-of-lambdau" id="toc-marginal-distribution-of-lambdau" class="nav-link" data-scroll-target="#marginal-distribution-of-lambdau"><span class="header-section-number">43.2</span> Marginal distribution of <span class="math inline">\(\Lambda(u)\)</span></a></li>
   <li><a href="#higher-order-structure" id="toc-higher-order-structure" class="nav-link" data-scroll-target="#higher-order-structure"><span class="header-section-number">43.3</span> Higher-order structure</a></li>
   <li><a href="#likelihood-based-inference" id="toc-likelihood-based-inference" class="nav-link" data-scroll-target="#likelihood-based-inference"><span class="header-section-number">43.4</span> Likelihood-based inference</a></li>
-  <li><a href="#next-up-cuhhhh" id="toc-next-up-cuhhhh" class="nav-link" data-scroll-target="#next-up-cuhhhh"><span class="header-section-number">43.5</span> Next up cuhhhh</a></li>
+  <li><a href="#in-the-proceeding-chapters" id="toc-in-the-proceeding-chapters" class="nav-link" data-scroll-target="#in-the-proceeding-chapters"><span class="header-section-number">43.5</span> <span class="fancy-title">In the proceeding chapters</span></a></li>
   </ul>
 </nav>
     </div>
@@ -589,6 +607,7 @@ window.Quarto = {
 </header>
 
 
+<p><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&amp;display=swap" rel="stylesheet"></p>
 <p>Second-order summaries are insufficient to distinguish LGCP and CSCP in practice.</p>
 <p>We now investigate what additional structure may allow these models to be separated.</p>
 <p>The central question of this section is:</p>
@@ -626,13 +645,14 @@ window.Quarto = {
 \]</span></p>
 <p>that is, a shifted and scaled chi-square distribution.</p>
 <p>These distributions are fundamentally different. The LGCP produces a log-normal intensity field with heavy right tails, while the CSCP produces a more concentrated but still skewed distribution.</p>
-<p>This suggests that, even if the second-order structure is similar, differences may be detectable through summaries that reflect the marginal distribution of the intensity, such as quadrat counts or local intensity estimates.</p>
+<p>Crucially, these differences are not reflected in the pair correlation function, and therefore cannot be detected by second-order methods.</p>
+<p>However, they may be detectable through summaries that reflect local variation in intensity, such as quadrat counts or local aggregation statistics.</p>
 </section>
 <section id="higher-order-structure" class="level2" data-number="43.3">
 <h2 data-number="43.3" class="anchored" data-anchor-id="higher-order-structure"><span class="header-section-number">43.3</span> Higher-order structure</h2>
 <p>Another possibility is to consider higher-order interaction structure.</p>
-<p>While the pair correlation function captures only second-order (pairwise) dependence, higher-order summaries involve interactions between three or more points, and therefore contain additional information about the underlying process.</p>
-<p>Since the LGCP is driven by a Gaussian random field, while the CSCP is based on a squared Gaussian field, their higher-order moment structures differ. These differences are not visible at the level of the PCF, but may become apparent when considering third- or fourth-order interactions.</p>
+<p>While the pair correlation function captures only second-order (pairwise) dependence, higher-order summaries involve interactions between three or more points, and therefore encode additional structural information about the process.</p>
+<p>Since the LGCP is driven by a Gaussian random field, whereas the CSCP is based on a squared Gaussian field, their higher-order moment structures differ fundamentally. These differences are not visible at the level of second-order summaries, but may be revealed through third- or higher-order statistics.</p>
 <p>In principle, this provides a route to distinguishing between the models.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -655,8 +675,8 @@ Note
 <p>Unlike minimum contrast estimation, which relies only on second-order summaries, likelihood-based inference incorporates the full distributional structure of the model. In principle, this provides access to information beyond the PCF, and may allow the two models to be distinguished.</p>
 <p>However, for Cox processes the likelihood is typically intractable, and must be approximated using techniques such as composite likelihood or numerical methods.</p>
 </section>
-<section id="next-up-cuhhhh" class="level2" data-number="43.5">
-<h2 data-number="43.5" class="anchored" data-anchor-id="next-up-cuhhhh"><span class="header-section-number">43.5</span> Next up cuhhhh</h2>
+<section id="in-the-proceeding-chapters" class="level2" data-number="43.5">
+<h2 data-number="43.5" class="anchored" data-anchor-id="in-the-proceeding-chapters"><span class="header-section-number">43.5</span> <span class="fancy-title">In the proceeding chapters</span></h2>
 <p>To begin, we look at the marginal distribution.</p>
 
 
@@ -1069,8 +1089,8 @@ Note
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../package_docs/basics.html" class="pagination-link" aria-label="🚧 Getting Started">
-        <span class="nav-page-text"><span class="chapter-number">44</span>&nbsp; <span class="chapter-title">🚧 Getting Started</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../thesis/third_marginal.html" class="pagination-link" aria-label="🚧 Inspecting the Margin(al)s">
+        <span class="nav-page-text"><span class="chapter-number">44</span>&nbsp; <span class="chapter-title">🚧 Inspecting the Margin(al)s</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

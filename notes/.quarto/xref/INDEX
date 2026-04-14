@@ -157,5 +157,14 @@
   },
   "package_docs/minimum_contrast.qmd": {
     "minimum_contrast.html": "dc2308d5"
+  },
+  "thesis/third_marginal.qmd": {
+    "third_marginal.html": "4c73b384"
+  },
+  "thesis/third_marginal_emp.qmd": {
+    "third_marginal_emp.html": "277e47d4"
+  },
+  "thesis/third_aggregate.qmd": {
+    "third_aggregate.html": "2630f8c8"
   }
 }
