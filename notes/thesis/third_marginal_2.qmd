@@ -1,0 +1,1433 @@
+```{r include = FALSE}
+devtools::load_all()
+library(spatstat)
+library(tidyr)
+```
+
+# Marginal Distributions
+
+Having established that LGCP and CSCP models can exhibit nearly identical
+second-order structure, we now ask: where do these models differ?
+
+Our first foray into non-first- and second-order statistics begins with the
+marginal distributions of the latent fields. Unlike the pair correlation function, 
+which captures second-order dependence, the marginal distribution $\Lambda(u)$ 
+captuers the structure of the distribution at a fixed location.
+
+Importantly: although the latent intensity is not directly observed, it still
+determines the local behaviour of the process, and therefore influences 
+observable quantities such as counts in small regions. The hope is that the 
+differences are large enough that they are able to survive what is becoming 
+increasingly apparent as a total nuclear homogenizing poisson sampling step.
+
+The most obvious way to start investigating the difference is to plot the two
+processes marginal intensity distributions, for fixed $(\lambda, \phi)$.
+
+## Intro - corrected
+
+Having established that LGCP and CSCP models can exhibit nearly identical
+second-order structure, we now ask: where do these models differ?
+
+Our first step beyond second-order summaries is to examine the marginal
+distributions of the latent intensity field. Unlike the pair correlation
+function, which captures dependence between locations, the marginal distribution
+of $\Lambda(u)$ describes the behaviour of the intensity at a single location.
+
+Although the latent intensity surface is not directly observed, it governs the local
+behaviour of the process, and therefore influences observable quantities such
+as counts in small regions. The key question is whether differences in these
+marginal distributions are large enough to remain detectable after the Poisson 
+sampling step that generates the observed point pattern.
+
+:::callout-note
+>Although the latent intensity surface is not directly observed, it governs the local
+behaviour of the process, and therefore influences observable quantities such
+as counts in small regions.
+
+So I understand the latent intensity is obviously not observable. I don't fully
+understand why we phrase it as governing the "local behaviour" of the process.
+
+Like, would this be better: "*it is determined by* the local behaviour of the process"?
+
+What does "local behaivour" mean exactly here? I feel like this is a big source
+of my confusion. Because it is not exactly clear not me, how the marginal 
+distribution is reflected in the observed point patterns.
+:::
+
+## Recap - corrected
+
+So before we cover the differences in marginal distributions, it is probably a 
+good idea for us to revise what the marginal distributions are.
+
+Recall, a cox process is defined by its random intensity function $\Lambda(u)$.
+
+This is a function which takes a location $u$ as an argument, and outputs a 
+random variable, which describes the intensity of the field at that location.
+
+The form $\Lambda$ takes, is a transformation of some Random Field.
+
+Note that the random intensities of both LGCP and CSCP transform *Gaussian* 
+random fields. GRFs are random fields such that any finite subset of them will 
+be multivariate-normally distributed.
+
+Now, $\Lambda$ determines the full joint distribution of the Cox Process, 
+over all locations. This can be thought of as $\Lambda$ being responsible for 
+assigning a random variable to each one of the uncountably infinite number of 
+locations over which it is defined, and the exact distributions of these RVs 
+being assigned are determined by the functional form and parameters of $\Lambda$.
+
+This full joint distribution is a *very* difficult object to estimate from just 
+observed point patterns.
+
+So if we want to find differences between two $\Lambda$'s, and we can't directly 
+observe, or even estimate them well, then perhaps we could look at some *properties*
+of the $\Lambda$'s, and if the $\Lambda$'s we are comparing are sufficiently different,
+then we might be able to tell them apart (poorly phrased).
+
+One example of this we saw in the last few chapters, where the "property" we were
+looking at was the PCF, a summary of essentially the *covariance* between two 
+locations.
+
+This section, we are considering a different "property", that is the *marginal*
+distribution of the $\Lambda$'s.
+
+So how exactly are the marginal distributions different than the full joint
+distribution?
+
+Essentially, we are "accounting for" all possible values of the other locations,
+taking the correlation of them into account, and integrating out the 
+dependence on all other locations.
+
+The marginal distribution is essentially telling us: in the complete absence of 
+information about any other locations, what would the distribution of the intensity
+look like at this single point.
+
+In other words, if we repeatedly simulated the full intensity surface $\Lambda$,
+and recorded the value at a fixed location $u$, the resulting values would follow
+the marginal distribution of $\Lambda(u)$.
+
+:::callout-note
+Suggested:
+
+It is important to distinguish between marginal and joint structure.
+
+The full random field $\Lambda$ defines a joint distribution over all locations,
+which is typically intractable to estimate from observed point patterns.
+In contrast, the marginal distribution of $\Lambda(u)$ describes the distribution
+of the intensity at a single fixed location.
+
+Crucially, for Gaussian random fields, the marginal distribution at a point
+depends only on the mean and variance, and not on the spatial correlation
+structure. This means that marginal distributions capture fundamentally
+different information from second-order summaries such as the pair correlation
+function.
+
+**This means that marginal distributions capture fundamentally different information from second-order summaries such as the pair correlation function.**
+
+To me this is the most important sentence here, but I feel that we are not doing
+nearly enough to justify it, or at least make it convincing / clear.
+:::
+
+:::callout-note
+Another sugestion:
+
+The marginal distribution can be understood operationally as follows:
+if we repeatedly simulate the full intensity surface $\Lambda$, and record the
+value at a fixed location $u$, the resulting values will follow the marginal
+distribution of $\Lambda(u)$.
+
+This perspective highlights that the marginal distribution describes the
+variability of the intensity at a single point, independent of its relationship
+with other locations.
+:::
+
+## Recap - V3
+
+Before investigating differences in marginal distributions, it is helpful to
+revisit exactly what these objects represent.
+
+Recall that a Cox process is defined through a random intensity function
+$\Lambda(u)$.
+
+This is a function which takes a location $u$ as input, and returns a random
+variable describing the local intensity of the process at that location.
+Conditional on $\Lambda$, the point pattern is generated as an inhomogeneous
+Poisson process.
+
+In both the LGCP and CSCP models, the random intensity $\Lambda(u)$ is obtained
+as a transformation of an underlying Gaussian random field (GRF).
+
+A Gaussian random field is defined by the property that any finite collection
+$(Z(u_1), \dots, Z(u_k))$ is jointly multivariate normal. As such, the field is
+completely characterised by its mean function and covariance function (special 
+property we get from the normal distribution).
+
+### Joint structure
+
+The random field $\Lambda$ induces a joint distribution over all locations
+$\{ \Lambda(u) : u \in W \}$.
+
+Conceptually, this corresponds to assigning a random variable to each point in
+space, with dependence between locations governed by the covariance structure
+of the underlying Gaussian field (which we also specify).
+
+This joint distribution is extremely high-dimensional (infinite-dimensional,
+due to uncountably infinite locations in any region), and is generally intractable 
+to estimate from observed point pattern data.
+
+### Marginal structure
+
+Rather than attempting to approximate the full joint distribution, we may instead
+consider *properties* of the field.
+
+One such property is the **marginal distribution** of $\Lambda(u)$ at a fixed
+location $u$.
+
+Formally, this is the distribution obtained by considering only the random
+variable at a single location, and ignoring all others. Equivalently, it can be
+viewed as integrating out the dependence on all other locations.
+
+Another way of thinking about this is as follows: if we repeatedly simulate the
+full intensity surface $\Lambda$, and record the value at a fixed location $u$,
+then the resulting values follow the marginal distribution of $\Lambda(u)$.
+
+### Marginals vs second-order structure
+
+It is important to distinguish between marginal structure and second-order structure.
+
+- The **marginal distribution** of $\Lambda(u)$ describes variability of the 
+intensity at a single location.
+
+- The **pair correlation function (PCF)** describes *dependence between pairs*
+of locations, and is therefore a second-order summary.
+
+For Gaussian random fields, this distinction becomes particularly clear.
+
+At any fixed location $u$, we have
+$$
+Z(u) \sim N(\mu, \sigma^2)
+$$
+so the marginal distribution depends only on the mean and variance.
+
+In contrast, the joint behaviour of two locations depends on the correlation
+function:
+
+$$
+\mathrm{Cov}(Z(u), Z(v)) = \sigma^2 \rho(r)
+$$
+
+where $r = \|u - v\|$.
+
+As a consequence:
+
+- Marginal distributions depend only on $(\mu, \sigma^2)$  
+- Second-order summaries (such as the PCF) depend on the correlation function $\rho(r)$  
+
+These are fundamentally different components of the model.
+
+:::callout-note
+The whole of the last part was only considering the exponential correlation
+function. 
+
+Would changing this make any difference? I guess what I'm asking is are there any
+correlation functions for which squaring them is MUCH different to exponentiating?
+:::
+
+:::callout-note
+Suggested note:
+
+Marginal distributions and second-order summaries capture *distinct and complementary* 
+aspects of the latent field.
+
+Two models may have nearly identical second-order structure (i.e., similar PCFs),
+while having substantially different marginal distributions, and vice versa.
+
+This motivates the investigation of marginal behaviour as a potential avenue for
+distinguishing between LGCP and CSCP models.
+
+I still don't feel it is clear exactly that these two objects (marginal distributions
+& second order summaries) encode different information. In particular, it's not
+obvious to me why any second-order summary doesn't include information about the
+marginal distribution? Still getting comfortable with this difference
+:::
+
+:::callout-note
+Also I still don't understand why the PCF happens to be "observable in realized 
+point patterns", while the marginal distribution is not.
+
+I understand that when we estimate the PCF, we are estimating a property of the
+full joint distribution, but there are plenty of other properties (i.e. the
+marginal distribution) which are NOT directly estimable from observed point 
+patterns. When is / isn't a property directly estimable? What does directly 
+estimable even mean?
+:::
+
+:::callout-note
+Also is it accurate to say "the PCF is a summary of the *covariance* between two 
+locations in the random field $\Lambda$?"
+
+Or maybe "the PCF is a *functional based on* the *covariance* between two 
+locations in the random field $\Lambda$?
+:::
+
+:::callout-note
+Another suggested include:
+
+Importantly, this separation implies that second-order summaries alone cannot
+recover the marginal distribution, and vice versa. As such, any attempt to
+distinguish models based solely on second-order structure may fail if the models
+differ primarily in their marginal behaviour.
+:::
+
+:::callout-note
+Might be interesting to find an example of a Cox process for which the second order
+behaivour is identical (or almost), but the marginal distributions are much different.
+:::
+
+## PDFs
+
+Obvious first step. Derive these bad boys. Starting with the CSCP.
+
+### Marginal distribution of the CSCP
+
+Recall the definition of our beautiful CSCP:
+
+$$
+\Lambda(u) = \mu + Z(u)^2, \quad Z(u) \sim N(0, \sigma^2)
+$$
+
+Fix a location $u$. Since
+
+$$
+Z(u) \sim N(0, \sigma^2)
+$$
+
+we can standardise, to obtain:
+
+$$
+\frac{Z(u)}{\sigma} \sim N(0, 1)
+$$
+
+Now squaring both sides, we get:
+
+$$
+(\frac{Z(u)}{\sigma})^2 \sim \chi_1^2
+$$
+
+since the square of a standard normal RV is chi-square with 1 df.
+
+So we have:
+
+$$
+\frac{Z(u)^2}{\sigma^2} \sim \chi_1^2
+$$
+
+Now, recall that
+
+$$
+\Lambda(u) = \mu + Z(u)^2
+$$
+
+so
+
+$$
+\Lambda(u) - \mu = Z(u)^2 \Longrightarrow \frac{\Lambda(u) - \mu}{\sigma^2} = \frac{Z(u)^2}{\sigma^2}
+$$
+
+And using the above we have:
+
+$$
+\frac{\Lambda(u) - \mu}{\sigma^2} \sim \chi_1^2
+$$
+
+OK cool, so now what?
+
+Let 
+
+$$
+Y = \frac{\Lambda(u) - \mu}{\sigma^2} 
+$$
+
+Then, from above we have $Y \sim \chi_1^2$ and also
+
+$$
+\Lambda(u) = \mu + \sigma^2 \Big(\frac{\Lambda(u) - \mu}{\sigma^2}\Big) = \mu + \sigma^2Y
+$$
+
+And so we can use the change-of-variable formula:
+
+$$
+f_{\Lambda(u)}(\lambda) = f_Y(\frac{\lambda - \mu}{\sigma^2})|\frac{d}{d\lambda}\Big( \frac{\lambda - \mu}{\sigma^2}\Big)|
+$$
+
+and since
+
+$$
+\frac{d}{d\lambda}\Big( \frac{\lambda - \mu}{\sigma^2}\Big) = \frac{1}{\sigma^2}
+$$
+
+we obtain
+
+$$
+f_{\Lambda(u)}(\lambda) = \frac{1}{\sigma^2} f_{\chi_1^2}\Big( \frac{\lambda - \mu}{\sigma^2}\Big), \quad \lambda > \mu
+$$
+
+Also since $Z(u)^2 \ge 0$, we must have $\Lambda(u) \ge \mu$, so the density is
+zero for $\lambda \le \mu$.
+
+Now, if we want to be extra explicit, we have:
+
+$$
+f_{\chi_1^2} = \frac{1}{\sqrt{2\pi}}x^{-1/2}e^{-x/2},\quad x > 0
+$$
+
+and so subbing this in we get:
+
+$$
+f_{\Lambda(u)}(\lambda) = \frac{1}{\sigma^2} \frac{1}{\sqrt{2\pi}}\Big( \frac{\lambda - \mu}{\sigma^2}\Big)^{-1/2}\exp\Big(- \frac{\lambda - \mu}{2\sigma^2}\Big), \quad \lambda > \mu
+$$
+
+Or equivalently:
+
+$$
+f_{\Lambda(u)}(\lambda) =  \frac{1}{\sqrt{2\pi \sigma^2 (\lambda - \mu)}}\exp\Big(- \frac{\lambda - \mu}{2\sigma^2}\Big), \quad \lambda > \mu
+$$
+
+So, at a fixed location $u$, the marginal distribution follows a shifted and 
+scaled Chi-square with 1 df.
+
+In particular:
+
+- it has support over $(\mu, \infty)$
+
+- explodes to infinity as $\lambda \to \mu$
+
+- Right tail decays exponentially
+
+
+### Marginal distribution of the LGCP
+
+Now recall the definition of the LGCP:
+
+$$
+\Lambda(u) = \exp(Z(u)), \quad Z(u) \sim N(\mu, \sigma^2)
+$$
+
+Fix a location $u$. Since
+
+$$
+Z(u) \sim N(\mu, \sigma^2)
+$$
+
+and
+
+$$
+\Lambda(u) = \exp(Z(u))
+$$
+
+we can take logs of both sides to obtain
+
+$$
+\log \Lambda(u) = Z(u)
+$$
+
+But then, since $Z(u) \sim N(\mu, \sigma^2)$, we immediately have
+
+$$
+\log \Lambda(u) \sim N(\mu, \sigma^2)
+$$
+
+And this is exactly the definition of a lognormal random variable. Hence
+
+$$
+\Lambda(u) \sim \operatorname{Lognormal}(\mu, \sigma^2)
+$$
+
+OK cool, so now what?
+
+If we want to write down the density explicitly, let
+
+$$
+Y = Z(u)
+$$
+
+Then
+
+$$
+Y \sim N(\mu, \sigma^2)
+$$
+
+and also
+
+$$
+\Lambda(u) = e^Y
+$$
+
+Equivalently,
+
+$$
+Y = \log \Lambda(u)
+$$
+
+So we can use the change-of-variable formula:
+
+$$
+f_{\Lambda(u)}(\lambda) = f_Y(\log \lambda)\Big|\frac{d}{d\lambda}(\log \lambda)\Big|,
+\qquad \lambda > 0
+$$
+
+Now since
+
+$$
+\frac{d}{d\lambda}(\log \lambda) = \frac{1}{\lambda}
+$$
+
+we obtain
+
+$$
+f_{\Lambda(u)}(\lambda) = \frac{1}{\lambda} f_{N(\mu,\sigma^2)}(\log \lambda),
+\qquad \lambda > 0
+$$
+
+Now, if we want to be extra explicit, recall that the density of a normal random
+variable is
+
+$$
+f_{N(\mu,\sigma^2)}(y)
+=
+\frac{1}{\sigma \sqrt{2\pi}}
+\exp\Big(
+-\frac{(y-\mu)^2}{2\sigma^2}
+\Big), \quad y \in \mathbb{R}
+$$
+
+So substituting $y = \log \lambda$, we get
+
+$$
+f_{\Lambda(u)}(\lambda)
+=
+\frac{1}{\lambda}
+\frac{1}{\sigma \sqrt{2\pi}}
+\exp\Big(
+-\frac{(\log \lambda - \mu)^2}{2\sigma^2}
+\Big), \quad \lambda > 0
+$$
+
+That is,
+
+$$
+f_{\Lambda(u)}(\lambda)
+=
+\frac{1}{\lambda \sigma \sqrt{2\pi}}
+\exp\Big(
+-\frac{(\log \lambda - \mu)^2}{2\sigma^2}
+\Big), \quad \lambda > 0
+$$
+
+Also, since $\Lambda(u)=\exp(Z(u)) > 0$ always, the density is zero for
+$\lambda \le 0$.
+
+So, at a fixed location $u$, the marginal intensity follows a lognormal random
+variable.
+
+In particular:
+
+- it has support over $(0, \infty)$
+
+- tends to $0$ as $\lambda \to 0$
+
+- has a (supposedly) heavier right tail than the CSCP marginal
+
+## Plotting the PDFs
+
+Setup code:
+
+```{r message=FALSE, warning=FALSE}
+#| code-fold: true
+
+s  <- 0.05 # not used in marginals, kept for consistency
+df <- 1
+
+# Marginal density functions
+
+d_lgcp_marginal <- function(x, mu_log, sigma_log) {
+  dlnorm(x, meanlog = mu_log, sdlog = sigma_log)
+}
+
+d_cscp_marginal <- function(x, mu, sigma2, df = 1) {
+  out <- numeric(length(x))
+  ok <- x > mu
+  out[ok] <- dchisq((x[ok] - mu) / sigma2, df = df) / sigma2
+  out
+}
+
+# Parameter extraction + density evaluation
+
+get_marginal_densities <- function(x, lambda, phi, s = 0.05, df = 1) {
+  lgcp_pars <- lgcp_params(lambda = lambda, phi = phi, s = s)
+  cscp_pars <- cscp_params(lambda = lambda, phi = phi, s = s, df = df)
+
+  y_lgcp <- d_lgcp_marginal(
+    x,
+    mu_log = lgcp_pars$mu,
+    sigma_log = lgcp_pars$sigma
+  )
+
+  y_cscp <- d_cscp_marginal(
+    x,
+    mu = cscp_pars$mu,
+    sigma2 = cscp_pars$var,
+    df = df
+  )
+
+  list(
+    y_lgcp = y_lgcp,
+    y_cscp = y_cscp,
+    lgcp_pars = lgcp_pars,
+    cscp_pars = cscp_pars
+  )
+}
+
+# Plotting helper 
+plot_marginal_pdf <- function(x, lambda, phi, s = 0.05, df = 1,
+                              ylim = NULL, main = NULL,
+                              show_legend = FALSE) {
+  dens <- get_marginal_densities(x, lambda, phi, s = s, df = df)
+
+  if (is.null(ylim)) {
+    ylim <- range(c(dens$y_lgcp, dens$y_cscp), finite = TRUE)
+  }
+
+  plot(
+    x, dens$y_lgcp,
+    type = "l",
+    lwd = 2,
+    col = 1,
+    xlab = expression(lambda),
+    ylab = "Density",
+    ylim = ylim,
+    main = main
+  )
+  lines(x, dens$y_cscp, lwd = 2, col = 2)
+
+  if (show_legend) {
+    legend(
+      "topright",
+      legend = c("LGCP", "CSCP"),
+      col = c(1, 2),
+      lwd = 2,
+      bty = "n"
+    )
+  }
+}
+```
+
+First we look at a single plot of the PDF with $(\lambda = 100, \phi = 2)$.
+
+```{r echo=FALSE, fig.width=7, fig.height=6}
+lambda0 <- 100
+phi0 <- 2
+
+x_base <- seq(0.001, 500, length.out = 5000)
+
+plot_marginal_pdf(
+  x = x_base,
+  lambda = lambda0,
+  phi = phi0,
+  s = s,
+  df = df,
+  main = bquote("Marginal PDFs at " ~ lambda == .(lambda0) ~ "," ~ phi == .(phi0)),
+  show_legend = TRUE,
+  ylim = c(0, 0.04)
+)
+```
+
+Immediately some interesting things to observe here:
+
+- Firstly, because we have $\phi = 2$ (maximum clustering strength under CSCP), 
+the corresponding $\mu$ parameter of the random intensity must be 0 (recall that
+the clustering strength decreases as $\mu$ grows, and we require $\mu \ge 0$, 
+hence maximum clustering necessarily has $\mu = 0$). And so because $\mu = 0$, 
+the PDF of the CSCP here mirror *exactly* that of a (scaled) single df Chi-square. 
+
+- Second interesting thing to note is that, for matched $(\lambda, \phi)$, 
+the LGCP density is smoother and spreads probability mass more broadly over 
+moderate intensities, whereas the CSCP puts more mass near its lower boundary 
+because of the boundary singularity.
+
+- Thirdly, obviously, note that the CSCP has a left-asymptote at $\infty$.
+
+- Lastly, and I think the most important observation, is that the tails are,
+at least visually, on this scale, *extremely* similar. I was expecting at least 
+a visible difference between the two, but they are almost indistinguishable.
+
+We now look at the effect of varying $\phi$ on the PDF.
+
+```{r echo=FALSE, fig.width=7, fig.height=12}
+phi_vals <- c(0.5, 1, 2)
+lambda_fix <- 100
+x_phi <- seq(0.001, 500, length.out = 5000)
+
+# Use a common y-limit across panels
+phi_dens_list <- lapply(phi_vals, function(phi) {
+  get_marginal_densities(x_phi, lambda = lambda_fix, phi = phi, s = s, df = df)
+})
+
+par(mfrow = c(3, 1), mar = c(4, 4, 2.5, 1))
+
+for (phi in phi_vals) {
+  plot_marginal_pdf(
+    x = x_phi,
+    lambda = lambda_fix,
+    phi = phi,
+    s = s,
+    df = df,
+    ylim = c(0, 0.04),
+    main = bquote(lambda == .(lambda_fix) ~ "," ~ phi == .(phi))
+  )
+}
+
+legend(
+  "topright",
+  legend = c("LGCP", "CSCP"),
+  col = c(1, 2),
+  lwd = 2,
+  bty = "n"
+)
+```
+
+We can see exactly as we expected. Decreasing $\phi$ corresponds to a higher 
+$\mu$ for the CSCP, and a right-shift of the PDF curve.
+
+It is difficult to tell if the actual curvature is changing so we overlay the CSCP 
+curves below.
+
+```{r echo=FALSE, fig.width=7, fig.height=6}
+plot(
+  x_phi,
+  phi_dens_list[[1]]$y_cscp,
+  type = "l",
+  lwd = 2,
+  col = 1,
+  xlab = expression(lambda),
+  ylab = "Density",
+  ylim = c(0, 0.04),
+  main = bquote("CSCP marginal PDFs, varying " * phi ~ "(" * lambda == .(lambda_fix) * ")")
+)
+
+for (i in 2:length(phi_vals)) {
+  lines(x_phi, phi_dens_list[[i]]$y_cscp, lwd = 2, col = i)
+}
+
+legend(
+  "topright",
+  legend = paste0("phi = ", phi_vals),
+  col = seq_along(phi_vals),
+  lwd = 2,
+  bty = "n"
+)
+```
+
+So it does not appear that the curvature is changing, only the right shift.
+
+:::callout-note
+I want to add some sort of explanation why the curvature isn't changing, but it is
+kind of hard to do when we only have the PDF in terms of $\mu$ and $\sigma^2$.
+
+I think it might be worth quickly rewriting the PDF in terms of $\lambda$ and 
+$\phi$ to make some more meaningful comments.
+:::
+
+And finally, looking at the effect of varying $\lambda$.
+
+```{r echo=FALSE, fig.width=7, fig.height=12}
+lambda_vals <- c(50, 100, 200, 1000, 10000)
+phi_fix <- 2
+x_lambda <- seq(0.001, 500, length.out = 5000)
+
+# Common y-limit across panels
+lambda_dens_list <- lapply(lambda_vals, function(lambda) {
+  get_marginal_densities(x_lambda, lambda = lambda, phi = phi_fix, s = s, df = df)
+})
+
+par(mfrow = c(5, 1), mar = c(4, 4, 2.5, 1))
+
+for (lambda in lambda_vals) {
+  plot_marginal_pdf(
+    x = x_lambda,
+    lambda = lambda,
+    phi = phi_fix,
+    s = s,
+    df = df,
+    ylim = c(0, 0.04),
+    main = bquote(lambda == .(lambda) ~ "," ~ phi == .(phi_fix))
+  )
+}
+
+legend(
+  "topright",
+  legend = c("LGCP", "CSCP"),
+  col = c(1, 2),
+  lwd = 2,
+  bty = "n"
+)
+```
+
+:::callout-note
+So varying $\lambda$ has confused me quite a lot.
+
+I believe it is just the equivalent of "stretching" out the two curves. And because
+we are matching $\lambda$ and $\phi$, changing $\lambda$ does not actually have
+any type of influence on whether the curves are more more or less similar.
+
+To illustrate this, notice that we can plot two plots with different $\lambda$ 
+values, and make them look exactly the same by changing the range of x values we
+are plotting over:
+
+[OK WAIT nvm I was wrong I guess?]
+
+```{r}
+lambda_eg1 <- 100
+lambda_eg2 <- 1000
+phi0 <- 2
+
+x_eg1_base <- seq(0.001, 500, length.out = 500)
+x_eg2_base <- seq(0.001, 5000, length.out = 5000)
+
+par(mfrow = c(1, 2))
+
+plot_marginal_pdf(
+  x = x_eg1_base,
+  lambda = lambda_eg1,
+  phi = phi0,
+  s = s,
+  df = df,
+  main = bquote("Marginal PDFs at " ~ lambda == .(lambda0) ~ "," ~ phi == .(phi0)),
+  show_legend = TRUE,
+  ylim = c(0, 0.04)
+)
+plot_marginal_pdf(
+  x = x_eg2_base,
+  lambda = lambda_eg2,
+  phi = phi0,
+  s = s,
+  df = df,
+  main = bquote("Marginal PDFs at " ~ lambda == .(lambda0) ~ "," ~ phi == .(phi0)),
+  show_legend = TRUE,
+  ylim = c(0, 0.04)
+)
+```
+:::
+
+:::callout-note
+Ok so what I now believe is happening, is that the "heavier tails" of the LGCP
+mean that as $\lambda$ increases, the PDF get "spread out" much faster than the
+CSCP.
+
+To confirm this, it would be nice to have a clear way of seeing the $\mu$ and $\simga$
+values for the LGCP and CSCP in the plot legends or something.
+
+We might expect to see the rate of increase in $\sigma$ relative to $\lambda$,
+to be higher than that of the CSCP?
+:::
+
+Here I just wanted to demonstrate that changing $\lambda$ but holding $\phi$ fixed,
+effects both the shift *and* curvature of the CSCP.
+
+```{r echo=FALSE, fig.width=7, fig.height=12}
+lambda_vals <- c(50, 100, 200, 1000, 10000)
+x_lambda <- seq(0.001, 500, length.out = 5000)
+
+par(mfrow = c(3, 1))
+
+for (phi_fixed in c(0.1, 1, 2)) {
+  # Common y-limit across panels
+  lambda_dens_list <- lapply(lambda_vals, function(lambda) {
+    get_marginal_densities(x_lambda, lambda = lambda, phi = phi_fixed, s = s, df = df)
+  })
+  plot(
+    x_lambda,
+    lambda_dens_list[[1]]$y_cscp,
+    type = "l",
+    lwd = 2,
+    col = 1,
+    xlab = expression(lambda),
+    ylab = "Density",
+    ylim = c(0, 0.04),
+    main = bquote("CSCP marginal PDFs, varying " * lambda ~ "(" * phi == .(phi_fixed) * ")")
+  )
+  
+  for (i in 2:length(lambda_vals)) {
+    lines(x_lambda, lambda_dens_list[[i]]$y_cscp, lwd = 2, col = i)
+  }
+  
+  legend(
+    "topright",
+    legend = paste0("lambda = ", lambda_vals),
+    col = seq_along(lambda_vals),
+    lwd = 2,
+    bty = "n"
+  )
+}
+```
+
+```{r echo=FALSE, fig.width=7, fig.height=6}
+lambda_vals <- c(50, 100, 200, 1000, 10000)
+x_lambda <- seq(0.001, 500, length.out = 5000)
+
+par(mfrow = c(3, 1))
+
+for (phi_fixed in c(0.1, 1, 2)) {
+  # Common y-limit across panels
+  lambda_dens_list <- lapply(lambda_vals, function(lambda) {
+    get_marginal_densities(x_lambda, lambda = lambda, phi = phi_fixed, s = s, df = df)
+  })
+  plot(
+    x_lambda,
+    lambda_dens_list[[1]]$y_lgcp,
+    type = "l",
+    lwd = 2,
+    col = 1,
+    xlab = expression(lambda),
+    ylab = "Density",
+    ylim = c(0, 0.04),
+    main = bquote("CSCP marginal PDFs, varying " * lambda ~ "(" * phi == .(phi_fixed) * ")")
+  )
+  
+  for (i in 2:length(lambda_vals)) {
+    lines(x_lambda, lambda_dens_list[[i]]$y_lgcp, lwd = 2, col = i)
+  }
+  
+  legend(
+    "topright",
+    legend = paste0("lambda = ", lambda_vals),
+    col = seq_along(lambda_vals),
+    lwd = 2,
+    bty = "n"
+  )
+}
+```
+
+Taken together, these plots show that the LGCP and CSCP have structurally 
+different marginal intensity distributions. The CSCP density has a hard lower 
+bound and a boundary singularity, while the LGCP density is smoother near zero 
+and more diffuse over moderate intensities. 
+
+Despite these structural differences, the two distributions can still appear 
+surprisingly similar on ordinary scales over practically relevant parameter 
+ranges.
+
+It might help instead to look at the CDF of the marginal distributions, as these 
+have a more natural interpretation.
+
+## CDFs
+
+Corresponding cumulative distribution functions follow immediately from the 
+transformed representations used above.
+
+Hopefully useful as: firstly, they provide a cumulative description
+of the one-point marginal laws. secondly, they will later allow us to investigate
+the upper-tail behaviour of the two models through their survival functions.
+
+:::callout-note
+I feel like it is slightly easier to think about how the marginal distribution
+might "effect" the observed patterns, by considering the CDF rather than PDF.
+:::
+
+### CDF of the CSCP marginal
+
+Recall that under the shifted CSCP,
+$$
+\Lambda(u) = \mu + Z(u)^2, \quad Z(u) \sim N(0, \sigma^2)
+$$
+and from the previous subsection we showed that
+
+$$
+\frac{\Lambda(u) - \mu}{\sigma^2} \sim \chi_1^2
+$$
+
+So for any $\lambda > \mu$, we have
+
+$$
+F_{\Lambda(u)}(\lambda)
+=
+P(\Lambda(u) \le \lambda)
+$$
+
+Using the transformation above, this becomes
+
+$$
+P(\Lambda(u) \le \lambda)
+=
+P\Big( \frac{\Lambda(u) - \mu}{\sigma^2} \le \frac{\lambda - \mu}{\sigma^2} \Big)
+$$
+
+Since
+$$
+\frac{\Lambda(u) - \mu}{\sigma^2} \sim \chi_1^2
+$$
+it follows that
+
+$$
+F_{\Lambda(u)}(\lambda)
+=
+F_{\chi_1^2}\Big( \frac{\lambda - \mu}{\sigma^2} \Big), \quad \lambda > \mu
+$$
+
+Also, since $\Lambda(u) \ge \mu$ always, we have
+
+$$
+F_{\Lambda(u)}(\lambda) = 0, \quad \lambda \le \mu
+$$
+
+So the full CDF is
+
+$$
+F_{\Lambda(u)}(\lambda)
+=
+\begin{cases}
+0, & \lambda \le \mu, \\
+F_{\chi_1^2}\Big( \frac{\lambda - \mu}{\sigma^2} \Big), & \lambda > \mu
+\end{cases}
+$$
+
+So, at a fixed location $u$, the marginal CDF of the CSCP is simply a shifted
+and scaled chi-square CDF.
+
+### CDF of the LGCP marginal
+
+Now recall that under the LGCP,
+$$
+\Lambda(u) = \exp(Z(u)), \quad Z(u) \sim N(\mu, \sigma^2)
+$$
+
+From the previous subsection, we showed that
+
+$$
+\log \Lambda(u) \sim N(\mu, \sigma^2)
+$$
+
+So for any $\lambda > 0$, we have
+
+$$
+F_{\Lambda(u)}(\lambda)
+=
+P(\Lambda(u) \le \lambda)
+$$
+
+Taking logs of both sides inside the probability gives
+
+$$
+P(\Lambda(u) \le \lambda)
+=
+P(\log \Lambda(u) \le \log \lambda)
+$$
+
+But since
+$$
+\log \Lambda(u) \sim N(\mu, \sigma^2)
+$$
+this becomes
+
+$$
+F_{\Lambda(u)}(\lambda)
+=
+P(Z(u) \le \log \lambda)
+$$
+
+Now standardising,
+
+$$
+P(Z(u) \le \log \lambda)
+=
+P\Big( \frac{Z(u)-\mu}{\sigma} \le \frac{\log \lambda - \mu}{\sigma} \Big)
+$$
+
+Since
+$$
+\frac{Z(u)-\mu}{\sigma} \sim N(0,1)
+$$
+
+it follows that
+
+$$
+F_{\Lambda(u)}(\lambda)
+=
+\Phi\Big( \frac{\log \lambda - \mu}{\sigma} \Big), \quad \lambda > 0
+$$
+
+where $\Phi$ is the standard normal CDF.
+
+Also, since $\Lambda(u) = \exp(Z(u)) > 0$ always, we have
+
+$$
+F_{\Lambda(u)}(\lambda) = 0, \quad \lambda \le 0
+$$
+
+So the full CDF is
+
+$$
+F_{\Lambda(u)}(\lambda)
+=
+\begin{cases}
+0, & \lambda \le 0 \\
+\Phi\Big( \frac{\log \lambda - \mu}{\sigma} \Big), & \lambda > 0
+\end{cases}
+$$
+
+So, at a fixed location $u$, the marginal CDF of the LGCP is the CDF of a
+lognormal random variable.
+
+### Comparison
+
+While the CSCP and LGCP can exhibit very similar second-order structure,
+their one-point marginal cumulative distributions are fundamentally different.
+
+In particular:
+
+- the CSCP marginal CDF is that of a shifted and scaled chi-square random variable
+
+- the LGCP marginal CDF is that of a lognormal random variable
+
+So the difference between the CDFs of these distributions over the parameter 
+space is going to largely determine how successful we are at distinguishing 
+between the two processes.
+
+### Marginal survival functions
+
+Note we could also consider:
+
+$$
+\bar F_{\Lambda(u)}(\lambda) = 1 - F_{\Lambda(u)}(\lambda)
+$$
+
+For the CSCP, this gives
+
+$$
+\bar F_{\Lambda(u)}(\lambda)
+=
+\begin{cases}
+1, & \lambda \le \mu \\
+1 - F_{\chi_1^2}\Big( \frac{\lambda - \mu}{\sigma^2} \Big), & \lambda > \mu
+\end{cases}
+$$
+
+and for the LGCP,
+
+$$
+\bar F_{\Lambda(u)}(\lambda)
+=
+\begin{cases}
+1, & \lambda \le 0 \\
+1 - \Phi\Big( \frac{\log \lambda - \mu}{\sigma} \Big), & \lambda > 0
+\end{cases}
+$$
+
+## Plotting the CDFs
+
+Setup code:
+
+```{r message=FALSE, warning=FALSE}
+#| code-fold: true
+
+# Marginal CDF functions
+
+p_lgcp_marginal <- function(x, mu_log, sigma_log) {
+  plnorm(x, meanlog = mu_log, sdlog = sigma_log)
+}
+
+p_cscp_marginal <- function(x, mu, sigma2, df = 1) {
+  out <- numeric(length(x))
+  ok <- x > mu
+  out[ok] <- pchisq((x[ok] - mu) / sigma2, df = df)
+  out
+}
+
+# Parameter extraction + CDF evaluation
+
+get_marginal_cdfs <- function(x, lambda, phi, s = 0.05, df = 1) {
+  lgcp_pars <- lgcp_params(lambda = lambda, phi = phi, s = s)
+  cscp_pars <- cscp_params(lambda = lambda, phi = phi, s = s, df = df)
+
+  y_lgcp <- p_lgcp_marginal(
+    x,
+    mu_log = lgcp_pars$mu,
+    sigma_log = lgcp_pars$sigma
+  )
+
+  y_cscp <- p_cscp_marginal(
+    x,
+    mu = cscp_pars$mu,
+    sigma2 = cscp_pars$var,
+    df = df
+  )
+
+  list(
+    y_lgcp = y_lgcp,
+    y_cscp = y_cscp,
+    lgcp_pars = lgcp_pars,
+    cscp_pars = cscp_pars
+  )
+}
+
+# Plotting helper
+
+plot_marginal_cdf <- function(x, lambda, phi, s = 0.05, df = 1,
+                              main = NULL, show_legend = FALSE) {
+  cdfs <- get_marginal_cdfs(x, lambda, phi, s = s, df = df)
+
+  plot(
+    x, cdfs$y_lgcp,
+    type = "l",
+    lwd = 2,
+    col = 1,
+    xlab = expression(Lambda(u)),
+    ylab = "CDF",
+    ylim = c(0, 0.65),
+    main = main
+  )
+  lines(x, cdfs$y_cscp, lwd = 2, col = 2)
+
+  if (show_legend) {
+    legend(
+      "bottomright",
+      legend = c("LGCP", "CSCP"),
+      col = c(1, 2),
+      lwd = 2,
+      bty = "n"
+    )
+  }
+}
+```
+
+Baseline CDF
+
+```{r echo=FALSE, fig.width=7, fig.height=6}
+lambda0 <- 5000
+phi0 <- 2
+x_base <- seq(0.001, 5000, length.out = 5000)
+
+plot_marginal_cdf(
+  x = x_base,
+  lambda = lambda0,
+  phi = phi0,
+  s = s,
+  df = df,
+  main = bquote("Marginal CDFs at " ~ lambda == .(lambda0) ~ "," ~ phi == .(phi0)),
+  show_legend = TRUE
+)
+```
+
+As we saw in the PDF plots, for $\phi = 2$, the CSCP has more mass in the small
+ranges of x, indicating that we might expect more areas of lower intensity in the
+surface, which would be reflected in point patterns as more empty area in the 
+observation region.
+
+:::callout-note
+Not sure about that last sentence. Is this a safe claim to make?
+:::
+
+:::callout-note
+Also, I believe this is he point I wanted to make earlier, regarding varying 
+$\lambda$ but keeping $\phi$ fixed:
+
+```{r}
+lambda0_eg3 <- 100
+lambda0_eg4 <- 1000
+phi0 <- 2
+x_base_eg3 <- seq(0.001, 500, length.out = 5000)
+x_base_eg4 <- seq(0.001, 5000, length.out = 5000)
+
+par(mfrow = c(1,2))
+
+plot_marginal_cdf(
+  x = x_base_eg3,
+  lambda = lambda0_eg3,
+  phi = phi0,
+  s = s,
+  df = df,
+  main = bquote("Marginal CDFs at " ~ lambda == .(lambda0) ~ "," ~ phi == .(phi0)),
+  show_legend = TRUE
+)
+
+plot_marginal_cdf(
+  x = x_base_eg4,
+  lambda = lambda0_eg4,
+  phi = phi0,
+  s = s,
+  df = df,
+  main = bquote("Marginal CDFs at " ~ lambda == .(lambda0) ~ "," ~ phi == .(phi0)),
+  show_legend = TRUE
+)
+```
+
+So, as demonstrated here, if we fix $\phi$ and vary $\lambda$, the the curves 
+**do not** become more distinguishable (in the sense that the features do not
+change. Obviously, higher $\lambda$ would mean more observed points and hence
+better classification).
+:::
+
+Varying $\phi$, fixed $\lambda$.
+
+```{r echo=FALSE, fig.width=7, fig.height=12}
+phi_vals <- c(0.5, 1, 2)
+lambda_fix <- 100
+x_phi <- seq(0.001, 500, length.out = 5000)
+
+oldpar <- par(mfrow = c(3, 1), mar = c(4, 4, 2.5, 1))
+
+for (phi in phi_vals) {
+  plot_marginal_cdf(
+    x = x_phi,
+    lambda = lambda_fix,
+    phi = phi,
+    s = s,
+    df = df,
+    main = bquote(lambda == .(lambda_fix) ~ "," ~ phi == .(phi))
+  )
+}
+
+legend(
+  "bottomright",
+  legend = c("LGCP", "CSCP"),
+  col = c(1, 2),
+  lwd = 2,
+  bty = "n"
+)
+```
+
+Skipping the varying $\lambda$, as per the callout above.
+
+
+## Comparing the tails
+
+For the last part of this section, I want to focus on comparing the tails of the
+LGCP and CSCP. 
+
+In particular, I'm interested in investigating this "heavy tail" of the LGCP, because
+visually, at the scales plotted, it is very hard to identify.
+
+The table below compares upper-tail quantiles for both models.
+
+For a probability level $p$, the "LGCP quantile" is the value $q_p$ such that
+
+$$
+P(\Lambda(u) \le q_p) = p
+$$
+
+under the LGCP marginal distribution, and similarly for the CSCP.
+
+The columns labelled "quantile / mean" express each quantile relative to the
+mean intensity $\lambda$, so that, for example, a value of 3 means that the
+corresponding upper-tail quantile is three times the mean intensity.
+
+Lastly, the column "LGCP / CSCP quantile ratio" compares the two models directly:
+values larger than 1 indicate that the LGCP has the larger quantile at that
+probability level.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+quantile_probs <- c(0.90, 0.99, 0.999, 0.9999, 0.99999)
+
+make_quantile_table <- function(lambda, phi, s = 0.05, df = 1,
+                                probs = quantile_probs) {
+  lgcp_pars <- lgcp_params(lambda = lambda, phi = phi, s = s)
+  cscp_pars <- cscp_params(lambda = lambda, phi = phi, s = s, df = df)
+
+  q_lgcp <- qlnorm(
+    probs,
+    meanlog = lgcp_pars$mu,
+    sdlog = lgcp_pars$sigma
+  )
+
+  q_cscp <- cscp_pars$mu + cscp_pars$var * qchisq(probs, df = df)
+
+  tibble(
+    `Quantile level` = probs,
+    `LGCP quantile` = q_lgcp,
+    `CSCP quantile` = q_cscp,
+    `LGCP quantile / mean` = q_lgcp / lambda,
+    `CSCP quantile / mean` = q_cscp / lambda,
+    `LGCP / CSCP quantile ratio` = q_lgcp / q_cscp
+  )
+}
+
+lambda_fix <- 100
+phi_vals <- c(0.5, 1, 2)
+
+for (phi in phi_vals) {
+  tab <- make_quantile_table(
+    lambda = lambda_fix,
+    phi = phi,
+    s = s,
+    df = df
+  )
+
+  # cat("\n\n")
+
+  print(
+    knitr::kable(
+      tab,
+      digits = 5,
+      caption = paste0(
+        "Upper-tail quantiles of the LGCP and CSCP marginal distributions, ",
+        "with $\\lambda = ", lambda_fix, "$ and $\\phi = ", phi, "$."
+      )
+    )
+  )
+  # cat("\n\n")
+}
+```
+
+Across all values of $\phi$, the same pattern is observed. At moderate
+quantile levels (up to around 0.99), the LGCP and CSCP marginal distributions
+are very similar, and in some cases the CSCP even produces slightly larger
+quantiles.
+
+The difference between the models only becomes apparent in the extreme upper
+tail. Beyond the 0.999 quantile, the LGCP quantiles exceed those of the CSCP,
+and this gap increases rapidly as the quantile level increases. This effect
+is most pronounced for larger values of $\phi$, where the LGCP can produce
+substantially more extreme intensity values.
+
+Overall, while the LGCP does exhibit a heavier upper tail, this is primarily 
+very-extreme-tail behaivour and is not visible in the bulk of the distribution.
+
+## Thoughts
+
+Overall, the marginal distributions of the LGCP and CSCP differ in two key ways:
+
+- the CSCP places more mass near small intensity values, while the LGCP places
+  relatively more mass over moderate values
+
+- the LGCP has a heavier tail at extreme quantiles
+
+Both effects present challenges for practical discrimination. The excess mass 
+at small intensity values in the CSCP may be difficult to estimate reliably from
+observed data, as the underlying intensity surface is not directly observed.
+Similarly, the heavier tail of the LGCP manifests only at extreme quantiles,
+which correspond to rare events in finite samples.
+
+Taken together, these results suggest that while the marginal distributions
+of the two models are theoretically distinct, these differences are subtle and
+may be difficult to exploit in practice. This motivates the need to consider
+more informative summaries, potentially involving joint behaviour over multiple
+locations, for reliable model discrimination.
+
+To investigate whether these marginal differences can be detected empirically,
+we now conduct a pilot study based on kernel density estimation of the intensity 
+surface...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
