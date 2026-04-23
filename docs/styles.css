@@ -37,3 +37,154 @@
   font-weight: 600;
   letter-spacing: 0.5px;
 }
+
+
+/* GAME SHIT */
+
+.guess-game-wrap {
+  max-width: 760px;
+  margin: 2rem auto;
+  padding: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+}
+
+.guess-game-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.guess-game-score {
+  font-weight: 600;
+  font-size: 1.05rem;
+}
+
+.guess-game-reset,
+.guess-btn {
+  border: none;
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.guess-game-reset {
+  background: #efefef;
+}
+
+.guess-game-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.guess-btn {
+  min-width: 120px;
+  background: #111;
+  color: white;
+}
+
+.guess-btn:hover {
+  transform: translateY(-1px);
+}
+
+.guess-game-canvas-wrap {
+  position: relative;
+  width: fit-content;
+  margin: 0 auto;
+}
+
+#guess-game-canvas {
+  display: block;
+  width: min(90vw, 520px);
+  height: min(90vw, 520px);
+  border-radius: 14px;
+  border: 1px solid #ccc;
+  background: #fafafa;
+}
+
+.guess-game-feedback {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 7rem;
+  font-weight: 800;
+  opacity: 0;
+  pointer-events: none;
+  border-radius: 14px;
+}
+
+.guess-game-feedback.show.correct {
+  background: rgba(60, 180, 75, 0.22);
+  color: #1f8f3a;
+  opacity: 1;
+  animation: popFade 0.8s ease;
+}
+
+.guess-game-feedback.show.wrong {
+  background: rgba(220, 53, 69, 0.22);
+  color: #c62839;
+  opacity: 1;
+  animation: popFade 0.8s ease;
+}
+
+@keyframes popFade {
+  0%   { opacity: 0; transform: scale(0.7); }
+  20%  { opacity: 1; transform: scale(1.05); }
+  70%  { opacity: 1; transform: scale(1.0); }
+  100% { opacity: 0; transform: scale(0.95); }
+}
+
+/* Carousel */
+.example-carousel-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin: 1rem 0 0.5rem 0;
+}
+
+.example-carousel {
+  width: 85%;
+  max-width: 950px;
+  position: relative;
+}
+
+.example-slide {
+  display: none;
+  width: 100%;
+  border-radius: 8px;
+}
+
+.example-slide.active {
+  display: block;
+}
+
+.example-carousel-btn {
+  border: none;
+  background: #f0f0f0;
+  color: #333;
+  font-size: 28px;
+  line-height: 1;
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.example-carousel-btn:hover {
+  background: #dddddd;
+}
+
+.example-carousel-caption {
+  text-align: center;
+  font-size: 0.95rem;
+  color: #444;
+  margin-bottom: 1rem;
+}

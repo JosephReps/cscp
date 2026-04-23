@@ -93,11 +93,12 @@ book:
     - part: "CSCP III"
       chapters:
         - thesis/third_introduction.qmd
-        - thesis/third_marginal.qmd
-        - thesis/third_marginal_2.qmd
-        - thesis/third_marginal_emp.qmd
-        - thesis/third_aggregate.qmd
         # - thesis/third_marginal.qmd
+        - thesis/third_marginal_2.qmd
+        - thesis/third_marginal_emp_2.qmd
+        # - thesis/third_aggregate.qmd
+        # - thesis/third_marginal.qmd
+        - thesis/third_quadrats.qmd
 
     - part: "Package Docs"
       chapters:

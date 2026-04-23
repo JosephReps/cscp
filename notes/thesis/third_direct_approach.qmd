@@ -1,0 +1,177 @@
+# A more direct approach
+
+## Motivation
+
+The previous section showed that kernel reconstruction is not an effective way to
+recover the marginal differences between LGCP and CSCP models. Although the two
+models have different theoretical marginal distributions for the latent
+intensity field, these differences are heavily blurred once we:
+
+1. observe only a Poisson realisation of the process,
+2. reconstruct the intensity surface by kernel smoothing, and
+3. treat the resulting pixel values as a proxy sample from the marginal.
+
+This suggests that estimating the entire latent surface may be an unnecessarily
+indirect route.
+
+Instead, we now take a more direct approach based on quantities that are
+observable from the point pattern itself.
+
+## Why quadrat counts?
+
+For a small region $B \subseteq W$, the number of observed points in $B$ satisfies
+
+$$
+N(B) \mid \Lambda \sim \text{Poisson}\left(\int_B \Lambda(u)\,du\right).
+$$
+
+Thus, a quadrat count is a direct noisy measurement of the **local average intensity** 
+over that region.
+
+This is important for two reasons.
+
+First, quadrat counts are obtained directly from the observed point pattern,
+without first reconstructing the full two-dimensional intensity surface.
+
+Second, if LGCP and CSCP models differ in how often the latent intensity is very
+small or very large, then these differences may also appear in the distribution
+of counts across small quadrats. In other words, quadrat counts do not recover
+the pointwise marginal distribution of $\Lambda(u)$ exactly, but they may retain
+some of the same lower-tail and upper-tail information in a more directly
+observable form.
+
+## Aim of this section
+
+Our goal is therefore not to estimate the marginal density of $\Lambda(u)$
+itself. Rather, it is to ask whether simple summaries of quadrat counts can
+capture enough of the local intensity behaviour to distinguish the two models in
+practice.
+
+If these summaries still fail to separate LGCP and CSCP models, this would
+provide stronger evidence that the marginal differences, while present in
+theory, are difficult to exploit from a single observed point pattern.
+
+## Constructing empirical summaries from quadrat counts
+
+Given a partition of the observation window $W$ into a grid of disjoint
+quadrats $\{B_1, \dots, B_K\}$, we observe counts
+
+$$
+N_i = N(B_i), \quad i = 1, \dots, K.
+$$
+
+These counts can be interpreted as noisy measurements of the local average
+intensity over each quadrat.
+
+A natural idea is therefore to treat the collection $\{N_1, \dots, N_K\}$ as a
+sample from a distribution reflecting local intensity behaviour, and to study
+its empirical distribution.
+
+In particular, we consider the empirical cumulative distribution function
+(ECDF)
+
+$$
+\hat{F}(t) = \frac{1}{K} \sum_{i=1}^K \mathbf{1}\{N_i \leq t\},
+$$
+
+and the corresponding empirical density (via histogram or smoothing).
+
+These summaries provide a direct analogue of the marginal CDF and PDF of the
+latent intensity, but constructed entirely from observable quantities.
+
+## Interpretation
+
+It is important to emphasise what these summaries represent.
+
+The quadrat counts $N_i$ are not samples from the marginal distribution of
+$\Lambda(u)$. Instead, they follow a mixture of Poisson distributions with
+random means
+
+$$
+\int_{B_i} \Lambda(u)\,du.
+$$
+
+Thus, the empirical distribution of $\{N_i\}$ reflects both:
+
+- variation in the latent intensity field across space, and
+- additional Poisson variability from the observation process.
+
+Despite this, if LGCP and CSCP models differ in how frequently the latent
+intensity is very small or very large, these differences may still be reflected
+in the distribution of quadrat counts.
+
+In particular:
+
+- regions of very low intensity correspond to quadrats with many zeros or
+  small counts,
+- regions of very high intensity correspond to quadrats with unusually large
+  counts.
+
+Thus, the lower and upper tails of the quadrat count distribution may still
+contain information about the underlying marginal differences.
+
+## Practical considerations
+
+Several choices must be made when constructing quadrat-based summaries.
+
+First, the **grid resolution** determines the scale at which local intensity is
+averaged:
+
+- coarse grids produce stable counts but may wash out local variation,
+- fine grids capture more detail but introduce higher variability.
+
+Second, the number of quadrats $K$ controls the effective sample size of the
+empirical distribution.
+
+Finally, the quadrat counts are spatially dependent, as neighbouring quadrats
+are influenced by similar values of the latent field.
+
+As a result, these empirical distributions should be interpreted as heuristic
+summaries rather than exact estimates of an underlying distribution.
+
+## Aim of the empirical study
+
+We now investigate whether these quadrat-based summaries can distinguish
+between LGCP and CSCP models in practice.
+
+Our focus will be on:
+
+1. Comparing the empirical distributions of quadrat counts across models,
+   using both PDF and CDF representations.
+
+2. Investigating how the choice of grid resolution affects the visibility of
+   differences.
+
+3. Evaluating whether simple features of these distributions (such as tail
+   behaviour) can be used for classification.
+
+If these summaries fail to provide clear separation between the models, this
+will provide further evidence that marginal differences, while present in
+theory, are difficult to exploit from observed point patterns.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

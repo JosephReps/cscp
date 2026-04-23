@@ -9,6 +9,8 @@ set.seed(123)
 
 # 🚧 Empirical Study w/ Marginals
 
+
+
 We estimate the intensity surface via KDE, then use simple summaries of the 
 estimated intensities as features.
 
@@ -17,10 +19,10 @@ estimated intensities as features.
 ```{r}
 #| code-fold: true
 # Window
-W <- spatstat.geom::owin(c(0, 1), c(0, 1))
+W <- spatstat.geom::owin(c(0, 10), c(0, 10))
 
 # Main parameter grids
-lambda_vals <- c(100, 500)
+lambda_vals <- c(100)
 phi_vals <- c(1, 2)
 
 # Fixed parameters unless otherwise varied
@@ -37,10 +39,10 @@ intensity_grid <- seq(0, 1000, length.out = 5000)
 tail_multiples <- c(1.5, 2, 3, 5)
 
 # Kernel smoothing bandwidth for estimated intensity
-sigma_kernel <- 0.03
+sigma_kernel <- 0.02
 
 # Resolution of estimated intensity image
-npix <- 128
+npix <- 256
 ```
 
 **Helpers:**
@@ -82,6 +84,19 @@ extract_im_values <- function(im_obj) {
 ecdf_on_grid <- function(values, grid) {
   Fhat <- ecdf(values)
   Fhat(grid)
+}
+
+# Empirical PDF via kernel density estimate, evaluated on a common grid
+density_on_grid <- function(values, grid) {
+  dens <- density(
+    values,
+    from = min(grid),
+    to = max(grid),
+    n = length(grid),
+    cut = 0
+  )
+  
+  dens$y
 }
 
 # Summary helper
@@ -140,7 +155,8 @@ one_empirical_marginal_rep <- function(family, rep, W, lambda, phi, s, df,
     phi = phi,
     s = s,
     x = intensity_grid,
-    cdf = ecdf_on_grid(vals, intensity_grid)
+    cdf = ecdf_on_grid(vals, intensity_grid),
+    pdf = density_on_grid(vals, intensity_grid)
   )
   
   summary_df <- summarise_intensity_values(
@@ -197,19 +213,19 @@ run_empirical_marginal_study <- function(
     list(settings$lambda, settings$phi, seq_len(n_settings)),
     function(lambda, phi, setting_id) {
       
-      # cat(
-      #   "\n====================================================\n",
-      #   "Setting ", setting_id, " of ", n_settings,
-      #   " | lambda = ", lambda,
-      #   " | phi = ", phi, "\n",
-      #   "====================================================\n",
-      #   sep = ""
-      # )
+      cat(
+        "\n====================================================\n",
+        "Setting ", setting_id, " of ", n_settings,
+        " | lambda = ", lambda,
+        " | phi = ", phi, "\n",
+        "====================================================\n",
+        sep = ""
+      )
       
       reps <- map(
         seq_len(n_sims),
         function(rep) {
-          # cat("  Rep", rep, "of", n_sims, "\n")
+          cat("  Rep", rep, "of", n_sims, "\n")
           
           list(
             LGCP = one_empirical_marginal_rep(
@@ -280,7 +296,8 @@ emp_res <- run_empirical_marginal_study(
   n_sims = n_sims,
   sigma_kernel = sigma_kernel,
   npix = npix,
-  tail_multiples = tail_multiples
+  tail_multiples = tail_multiples,
+  intensity_grid = seq(0, 200, length.out = 10000)
 )
 
 curve_df   <- emp_res$curve_df
@@ -296,22 +313,11 @@ mean_curve_df <- curve_df %>%
     mean_cdf = mean(cdf),
     lo_cdf = quantile(cdf, 0.1),
     hi_cdf = quantile(cdf, 0.9),
+    mean_pdf = mean(pdf),
+    lo_pdf = quantile(pdf, 0.1),
+    hi_pdf = quantile(pdf, 0.9),
     .groups = "drop"
   )
-```
-
-Pointwise difference curves
-
-```{r}
-# diff_curve_df <- mean_curve_df %>%
-#   select(lambda, phi, family, x, mean_cdf) %>%
-#   pivot_wider(
-#     names_from = family,
-#     values_from = c(mean_cdf)
-#   ) %>%
-#   mutate(
-#     diff_cdf = mean_cdf_LGCP - mean_cdf_CSCP
-#   )
 ```
 
 ## Plots
@@ -330,92 +336,23 @@ ggplot(mean_curve_df, aes(x = x, y = mean_cdf, colour = family)) +
   theme_bw()
 ```
 
-### CDF difference curves
+### Mean empirical PDF
 
 ```{r}
-# ggplot(diff_curve_df, aes(x = x, y = diff_cdf)) +
-#   geom_hline(yintercept = 0, linetype = 2) +
-#   geom_line(linewidth = 0.9) +
-#   facet_grid(phi ~ lambda, scales = "free_x", labeller = label_both) +
-#   labs(
-#     x = expression(Lambda(u)),
-#     y = expression(F[LGCP](x) - F[CSCP](x))
-#   ) +
-#   theme_bw()
-```
-
-### Pattern summaries
-
-```{r}
-# summary_df %>%
-#   group_by(lambda, phi, family) %>%
-#   summarise(
-#     q90_mean = mean(q90),
-#     q95_mean = mean(q95),
-#     q99_mean = mean(q99),
-#     p_gt_2x_mean_mean = mean(`p_gt_2x_mean`),
-#     p_gt_3x_mean_mean = mean(`p_gt_3x_mean`),
-#     .groups = "drop"
-#   )
-```
-
-### Example boxplots
-
-```{r}
-ggplot(summary_df, aes(x = family, y = q99, fill = family)) +
-  geom_boxplot() +
-  facet_grid(phi ~ lambda, scales = "free_y", labeller = label_both) +
+ggplot(mean_curve_df, aes(x = x, y = mean_pdf, colour = family, fill = family)) +
+  geom_ribbon(aes(ymin = lo_pdf, ymax = hi_pdf), alpha = 0.2, colour = NA) +
+  geom_line(linewidth = 0.9) +
+  facet_grid(phi ~ lambda, scales = "free_x", labeller = label_both) +
   labs(
-    x = NULL,
-    y = "Estimated 95th percentile"
+    x = expression(Lambda(u)),
+    y = "Mean empirical PDF",
+    colour = NULL,
+    fill = NULL
   ) +
-  theme_bw() +
-  theme(legend.position = "none")
+  theme_bw()
 ```
 
-```{r}
-ggplot(summary_df, aes(x = family, y = `p_gt_2x_mean`, fill = family)) +
-  geom_boxplot() +
-  facet_grid(phi ~ lambda, scales = "free_y", labeller = label_both) +
-  labs(
-    x = NULL,
-    y = "Estimated P(intensity > 2 × mean)"
-  ) +
-  theme_bw() +
-  theme(legend.position = "none")
-```
 
-:::callout-note
-So essentially: We have simulated a bunch of replicates with different 
-lambda / phi and run KDE over them all. And now we have looked at the 
-"empirical CDF" by just essentially making a histogram of pixel intensity values.
-
-And now we are saying, look, there is a difference as lambda get large, 
-but now we want to know is this difference: 
-
-a) Larger than the random variation from estimating? and
-
-b) Large enough for us to make a practically useable classifier?
-:::
-
-## Quantifying variability
-
-```{r eval = FALSE}
-sd_curve_df <- curve_df %>%
-  group_by(lambda, phi, family, x) %>%
-  summarise(sd_cdf = sd(cdf), .groups = "drop")
-
-snr_avg <- sd_curve_df %>%
-  left_join(diff_curve_df, by = c("lambda", "phi", "x")) %>%
-  filter(sd_cdf > 1e-6) %>%
-  group_by(lambda, phi) %>%
-  summarise(
-    snr_mean = mean(abs(diff_cdf) / sd_cdf),
-    .groups = "drop"
-  )
-
-snr_avg
-```
 
 
 

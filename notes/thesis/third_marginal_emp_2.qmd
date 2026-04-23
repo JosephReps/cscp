@@ -1,0 +1,953 @@
+```{r include = FALSE}
+library(tidyverse)
+library(purrr)
+library(spatstat)
+devtools::load_all()
+
+set.seed(123)
+```
+
+# 🚧 Recovering marginal intensity differences using KDE
+
+:::callout-note
+So basic idea for this section is:
+
+1. We know the marginal distributions are different for the CSCP and LGCP, we saw
+this in the previous section, by inspecting the CDF and PDFs
+
+2. We want to investigate whether we can leverage these differences
+
+3. The most obvious way, is to try to estimate the actual marginal distributions
+
+4. A naive approach to his, is by use KDE, and then treating each pixel as an 
+independent sample of the marginal distribution. This comes with a number of 
+issues.
+
+5. Regardless of this, we first try this naively, and find obviously that it does
+not work well - curves of both LGCP and CSCP are almost identical, and they do a 
+poor job of approximating the TRUE curves.
+
+6. So in light of this, we try to determine the root cause of the issue. We 
+suspect three potential issues: 
+
+- Smoothing removing too much information 
+
+- Spatial dependence between pixels making it so that the pixels are not truly
+independent samples of the marginal 
+
+- poisson sampling simply does not leave enough information for the differences 
+to survive after kernel estimation which has the above two issues.
+
+7. So we address the smoothing concern by looking at the same kernel smooth of 
+the true intensity surface, and then also just the true surface on its own, and
+compare curves here.
+
+8. Then following that, we use a "thinning" type of procedure to address the spatial
+dependence concern. <- axed
+
+9. Then if after we do both of these, and we still cannot distinguish between the 
+two, then that is solid evidence that KDE based methods will not work well at 
+distinguishing the two processes by attempting to leverage the differences in 
+their marginal distributions.
+
+10. At which point we address the clear issue: why bother estimating the entire 2d 
+surface, when  all we are interested in the marginals... Then queue next section.
+
+Spoiler, next section sucks ahh too, and we get no seperation.
+:::
+
+This section investigates whether kernel-based reconstruction of the latent
+intensity field preserves enough information about the marginal distribution to
+retain the theoretical differences between LGCP and CSCP models.
+
+We begin by clarifying exactly what we are trying to estimate, and what is
+actually observable.
+
+## What is the target?
+
+Let $\Lambda(u)$ denote the latent intensity field of the Cox process. Under
+stationarity, the theoretical marginal distribution of interest is that of
+$\Lambda(u_0)$ for a fixed location $u_0$.
+
+This is the object studied in the previous section, where we showed that the
+marginal distributions of LGCP and CSCP models differ.
+
+However, this quantity is **not directly observable**. From a single realisation
+of a point pattern, we do not observe $\Lambda(u)$, but only a set of points
+generated conditionally on it.
+
+## What do we observe?
+
+Given a point pattern $X$, we observe only the realised points, not the latent
+intensity field that generated them. Any attempt to recover information about
+$\Lambda(u)$ must therefore proceed indirectly.
+
+## KDE-based reconstruction
+
+To recover the latent structure, we construct a kernel estimate of the intensity
+surface,
+
+$$
+\hat{\lambda}(u)
+$$
+
+from the observed point pattern.
+
+This provides a smooth reconstruction of the underlying intensity field. We then
+evaluate $\hat{\lambda}(u)$ on a fine grid of pixels over the observation window,
+yielding a collection of values
+
+$$
+\{ \hat{\lambda}(u_1), \ldots, \hat{\lambda}(u_m) \}
+$$
+
+These values are treated as an **approximate sample** from the marginal distribution.
+
+Why is it not an exact sample of the marginal?
+
+When we using kernel density estimation to reconstruct the latent field, we are 
+introducing several sources sources of distortion:
+
+1. The estimator $\hat{\lambda}(u)$ is a spatially smoothed version of the true 
+   intensity field. In particular, each value $\hat{\lambda}(u)$ is an average of 
+   nearby points, rather than the true value $\Lambda(u)$.  
+   This has the effect of shrinking extreme values and reducing variability, 
+   meaning that features of the marginal distribution, such as heavy tails or 
+   mass near zero, might be blurred.
+   
+:::callout-note
+So from what I gather, in general KDE kind of "drags" all the actual latent field
+value towards the mean, as it is averaging over a neighbourhood when estimating
+each pixels value?
+:::
+
+2. The values $\hat{\lambda}(u_1), \ldots, \hat{\lambda}(u_m)$ are obtained from a 
+   single reconstructed surface, and nearby pixels share many of the same points 
+   in their kernel estimates.  
+   As a result, these values are dependent, and do not form an independent sample 
+   from the marginal distribution of $\Lambda(u)$.
+   
+:::callout-note
+This might not be a problem for locations far enough apart relative to the 
+spatial scale parameter, but is definitely a problem for locations close to each other.
+:::
+   
+3. Lastly, the observed point pattern is itself a random realisation conditional on the 
+   latent field $\Lambda(u)$. Even if $\Lambda(u)$ were fixed, the observed points 
+   would vary due to Poisson randomness.  
+   This variability propagates into $\hat{\lambda}(u)$, meaning that differences 
+   in the reconstructed intensity surface may reflect sampling noise, rather 
+   than true differences in the underlying marginal distribution.
+
+So, the goal of this section is not to estimate the true marginal distribution 
+as best as possible, but rather ask:
+
+> Does KDE-based reconstruction preserve enough information about the marginal 
+distribution of $\Lambda(u)$ to distinguish LGCP and CSCP models in practice.
+
+## Interpretation
+
+This setup allows us to investigate the following question:
+
+> If two models have different latent marginal intensity distributions, do those
+> differences remain visible after reconstructing the intensity field from a
+> single observed point pattern?
+
+If the answer is yes, KDE-based reconstruction may provide a practical route for
+distinguishing the models. If not, this *suggests* that the marginal differences
+are not easily recoverable from observed data using this approach.
+
+## Initial empirical comparison
+
+In the first instance, we focus on the reconstructed PDF as the primary object
+of interest, since it most directly reflects shape differences in the marginal
+distribution. We also examine the reconstructed CDF as a secondary, more stable
+summary.
+
+## Procedure
+
+For each model and parameter setting $(\lambda, \phi, s)$, we repeat the
+following steps:
+
+1. Simulate a point pattern $X$.
+2. Construct a kernel estimate $\hat{\lambda}(u)$ of the latent intensity.
+3. Evaluate $\hat{\lambda}(u)$ on a regular grid over the observation window.
+4. Treat the resulting pixel values as a proxy sample from the marginal
+   distribution.
+5. Compute the empirical PDF and CDF of these values.
+
+This procedure is repeated over many simulations, and the resulting curves are
+averaged pointwise.
+
+:::callout-note
+For the LGCP, we use the scale parameter matched to the CSCP through the
+best-fitting second-order relationship. This ensures that the two models have
+closely matched second-order structure, so that any remaining differences are
+primarily marginal rather than second-order.
+:::
+
+## Sim study setup
+
+Settings used:
+
+```{r}
+W <- spatstat.geom::owin(c(0, 1), c(0, 1))
+
+lambda_vals <- 100
+phi_vals <- c(1)
+
+s_cscp <- 0.05
+df <- 1
+n_sims <- 20
+
+sigma_kernel_vals <- c(0.01, 0.02, 0.05)
+npix <- 256
+
+intensity_grid <- seq(0, 500, length.out = 2000)
+```
+
+Sim functions and helpers:
+
+```{r echo = FALSE}
+#| code-fold: true
+
+# True marginal CDF functions
+true_marginal_cdf_lgcp <- function(x, lambda, phi) {
+  sigma2 <- log(1 + phi)
+  mu_log <- log(lambda) - sigma2 / 2
+  plnorm(x, meanlog = mu_log, sdlog = sqrt(sigma2))
+}
+
+true_marginal_cdf_cscp <- function(x, lambda, phi, df = 1) {
+  if (df != 1) stop("Only df = 1 currently supported.", call. = FALSE)
+
+  sigma2 <- sqrt(phi * lambda^2 / 2)
+  mu_shift <- lambda - sigma2
+
+  out <- numeric(length(x))
+  idx <- x > mu_shift
+  out[idx] <- pchisq((x[idx] - mu_shift) / sigma2, df = 1)
+  out
+}
+
+# True marginal PDF functions
+true_marginal_pdf_lgcp <- function(x, lambda, phi) {
+  sigma2 <- log(1 + phi)
+  mu_log <- log(lambda) - sigma2 / 2
+  dlnorm(x, meanlog = mu_log, sdlog = sqrt(sigma2))
+}
+
+true_marginal_pdf_cscp <- function(x, lambda, phi, df = 1) {
+  if (df != 1) stop("Only df = 1 currently supported.", call. = FALSE)
+
+  sigma2 <- sqrt(phi * lambda^2 / 2)
+  mu_shift <- lambda - sigma2
+
+  out <- numeric(length(x))
+  idx <- x > mu_shift
+  out[idx] <- dchisq((x[idx] - mu_shift) / sigma2, df = 1) / sigma2
+  out
+}
+
+# Simulation & extraction
+simulate_pattern <- function(family, W, lambda, phi, s, df = 1) {
+  family <- match.arg(family, c("LGCP", "CSCP"))
+
+  if (family == "LGCP") {
+    sim_lgcp(W, lambda = lambda, phi = phi, s = s)$pp
+  } else {
+    sim_cscp(W, lambda = lambda, phi = phi, s = s, df = df)$pp
+  }
+}
+
+estimate_intensity_values <- function(X, sigma, npix) {
+  oldopt <- spatstat.options(npixel = npix)
+  on.exit(spatstat.options(oldopt), add = TRUE)
+
+  im <- density.ppp(
+    X,
+    sigma = sigma,
+    at = "pixels",
+    edge = TRUE,
+    positive = TRUE
+  )
+
+  vals <- as.vector(im$v)
+  vals[is.finite(vals)]
+}
+
+one_rep <- function(family, rep, W, lambda, phi, s_cscp, df,
+                    sigma_kernel, npix, intensity_grid) {
+
+  s_lgcp <- match_lgcp_scale(phi = phi, s_cscp = s_cscp)
+  s_used <- if (family == "LGCP") s_lgcp else s_cscp
+
+  X <- simulate_pattern(
+    family = family,
+    W = W,
+    lambda = lambda,
+    phi = phi,
+    s = s_used,
+    df = df
+  )
+
+  vals <- estimate_intensity_values(X, sigma = sigma_kernel, npix = npix)
+
+  true_cdf <- if (family == "LGCP") {
+    true_marginal_cdf_lgcp(intensity_grid, lambda, phi)
+  } else {
+    true_marginal_cdf_cscp(intensity_grid, lambda, phi, df)
+  }
+
+  true_pdf <- if (family == "LGCP") {
+    true_marginal_pdf_lgcp(intensity_grid, lambda, phi)
+  } else {
+    true_marginal_pdf_cscp(intensity_grid, lambda, phi, df)
+  }
+
+  emp_pdf_obj <- density(
+    vals,
+    from = min(intensity_grid),
+    to = max(intensity_grid),
+    n = length(intensity_grid),
+    cut = 0
+  )
+
+  tibble(
+    family = family,
+    rep = rep,
+    lambda = lambda,
+    phi = phi,
+    sigma_kernel = sigma_kernel,
+    x = intensity_grid,
+    emp_cdf = ecdf(vals)(intensity_grid),
+    emp_pdf = emp_pdf_obj$y,
+    true_cdf = true_cdf,
+    true_pdf = true_pdf
+  )
+}
+
+# Main engine
+run_empirical_marginal_study <- function(
+  W,
+  lambda_vals,
+  phi_vals,
+  s_cscp = 0.05,
+  df = 1,
+  n_sims = 50,
+  sigma_kernel_vals = c(0.01, 0.02, 0.04),
+  npix = 256,
+  intensity_grid = seq(0, 2000, length.out = 2000)
+) {
+  settings <- tidyr::crossing(
+    lambda = lambda_vals,
+    phi = phi_vals,
+    sigma_kernel = sigma_kernel_vals
+  )
+
+  purrr::pmap_dfr(
+    settings,
+    function(lambda, phi, sigma_kernel) {
+      purrr::map_dfr(
+        seq_len(n_sims),
+        function(rep) {
+          dplyr::bind_rows(
+            one_rep("LGCP", rep, W, lambda, phi, s_cscp, df,
+                    sigma_kernel, npix, intensity_grid),
+            one_rep("CSCP", rep, W, lambda, phi, s_cscp, df,
+                    sigma_kernel, npix, intensity_grid)
+          )
+        }
+      )
+    }
+  )
+}
+```
+
+
+## Sim study results
+
+```{R echo=FALSE}
+emp_df <- run_empirical_marginal_study(
+  W = W,
+  lambda_vals = lambda_vals,
+  phi_vals = phi_vals,
+  s_cscp = s_cscp,
+  df = df,
+  n_sims = n_sims,
+  sigma_kernel_vals = sigma_kernel_vals,
+  npix = npix,
+  intensity_grid = intensity_grid
+)
+
+mean_curve_df <- emp_df %>%
+  group_by(lambda, phi, family, sigma_kernel, x, true_cdf, true_pdf) %>%
+  summarise(
+    mean_emp_cdf = mean(emp_cdf),
+    mean_emp_pdf = mean(emp_pdf),
+    .groups = "drop"
+  ) %>%
+  mutate(
+    bw_lab = paste0("sigma = ", sigma_kernel)
+  )
+```
+
+```{r echo = FALSE, fig.height=14}
+pdf_panels <- split(
+  mean_curve_df,
+  list(mean_curve_df$phi, mean_curve_df$bw_lab, mean_curve_df$lambda),
+  drop = TRUE
+)
+pdf_panels <- pdf_panels[order(names(pdf_panels))]
+
+n_row_panels <- length(unique(interaction(mean_curve_df$phi, mean_curve_df$bw_lab, drop = TRUE)))
+n_col_panels <- length(unique(mean_curve_df$lambda))
+
+old_par <- par(no.readonly = TRUE)
+on.exit(par(old_par), add = TRUE)
+
+par(
+  mfrow = c(n_row_panels, n_col_panels),
+  mar = c(4, 4, 3, 1),
+  oma = c(0, 0, 3, 0)
+)
+
+cols <- c(LGCP = "black", CSCP = "red3")
+
+for (panel_df in pdf_panels) {
+  xlim <- range(panel_df$x, finite = TRUE)
+  ylim <- range(c(panel_df$mean_emp_pdf, panel_df$true_pdf), finite = TRUE)
+  phi_val <- unique(panel_df$phi)
+  bw_val <- unique(panel_df$bw_lab)
+  lambda_val <- unique(panel_df$lambda)
+
+  plot(
+    NA,
+    xlim = xlim,
+    ylim = c(0, 0.04),
+    xlab = expression(hat(lambda)(u)),
+    ylab = "PDF",
+    main = paste0("lambda = ", lambda_val, ", phi = ", phi_val, ", ", bw_val)
+  )
+
+  for (fam in c("LGCP", "CSCP")) {
+    fam_df <- panel_df[panel_df$family == fam, ]
+    lines(fam_df$x, fam_df$mean_emp_pdf, col = cols[fam], lwd = 2)
+    lines(fam_df$x, fam_df$true_pdf, col = cols[fam], lwd = 2, lty = 2)
+  }
+
+  legend(
+    "topright",
+    legend = c("LGCP empirical", "LGCP true", "CSCP empirical", "CSCP true"),
+    col = c(cols["LGCP"], cols["LGCP"], cols["CSCP"], cols["CSCP"]),
+    lty = c(1, 2, 1, 2),
+    lwd = 2,
+    bty = "n",
+    cex = 1.2
+  )
+}
+
+mtext("Reconstructed PDF", outer = TRUE, cex = 1.2, font = 2)
+```
+
+Reconstructed CDF (with true CDF lines):
+
+```{r echo = FALSE, fig.height=14}
+cdf_panels <- split(
+  mean_curve_df,
+  list(mean_curve_df$phi, mean_curve_df$bw_lab, mean_curve_df$lambda),
+  drop = TRUE
+)
+cdf_panels <- cdf_panels[order(names(cdf_panels))]
+
+n_row_panels <- length(unique(interaction(mean_curve_df$phi, mean_curve_df$bw_lab, drop = TRUE)))
+n_col_panels <- length(unique(mean_curve_df$lambda))
+
+old_par <- par(no.readonly = TRUE)
+on.exit(par(old_par), add = TRUE)
+
+par(
+  mfrow = c(n_row_panels, n_col_panels),
+  mar = c(4, 4, 3, 1),
+  oma = c(0, 0, 3, 0)
+)
+
+cols <- c(LGCP = "black", CSCP = "red3")
+
+for (panel_df in cdf_panels) {
+  xlim <- range(panel_df$x, finite = TRUE)
+  ylim <- range(c(panel_df$mean_emp_cdf, panel_df$true_cdf), finite = TRUE)
+  phi_val <- unique(panel_df$phi)
+  bw_val <- unique(panel_df$bw_lab)
+  lambda_val <- unique(panel_df$lambda)
+
+  plot(
+    NA,
+    xlim = xlim,
+    ylim = ylim,
+    xlab = expression(hat(lambda)(u)),
+    ylab = "CDF",
+    main = paste0("lambda = ", lambda_val, ", phi = ", phi_val, ", ", bw_val)
+  )
+
+  for (fam in c("LGCP", "CSCP")) {
+    fam_df <- panel_df[panel_df$family == fam, ]
+    lines(fam_df$x, fam_df$mean_emp_cdf, col = cols[fam], lwd = 2)
+    lines(fam_df$x, fam_df$true_cdf, col = cols[fam], lwd = 2, lty = 2)
+  }
+
+  legend(
+    "bottomright",
+    legend = c("LGCP empirical", "LGCP true", "CSCP empirical", "CSCP true"),
+    col = c(cols["LGCP"], cols["LGCP"], cols["CSCP"], cols["CSCP"]),
+    lty = c(1, 2, 1, 2),
+    lwd = 2,
+    bty = "n",
+    cex = 1.2
+  )
+}
+
+mtext("Reconstructed CDF", outer = TRUE, cex = 1.2, font = 2)
+```
+
+The reconstructed PDFs and CDFs show very little separation between the LGCP and
+CSCP across the bandwidths considered here, despite the fact that the corresponding
+theoretical marginal distributions differ.
+
+Varying the bandwidth helps clarify the role of smoothing. Smaller bandwidths retain
+slightly more irregularity, while larger bandwidths produce visibly smoother curves,
+but across all three choices the empirical LGCP and CSCP reconstructions remain much
+closer to one another than the corresponding true marginal curves.
+
+This suggests that the loss of practical distinguishability is not tied to a single
+arbitrary bandwidth choice. Rather, at least for the range considered here, KDE-based
+reconstruction does not appear to preserve the theoretical marginal differences clearly
+enough to provide a useful practical distinction between the two models.
+
+To address this, we next compare the true latent intensity field with its
+KDE-based reconstruction, in order to isolate where the information is being
+lost.
+
+:::callout-note
+There is a lot more I might want to say here looking at he curves.
+
+For instance, we know that true $\mu = 29.28$ (using `cscp_params(s = 0.05, lambda = 100, phi = 1)`),
+so why is there so much mass at 0, when the process should have minimum intensity
+at 29? <- dumb question
+
+Also maybe I should have included different bandwidths here, to show effect? <- did that now
+
+There is just so many moving parts it feels really difficult to narrow down what
+we need to show and where. <- almost there
+:::
+
+## Where is the information being lost?
+
+The KDE-reconstructed PDFs and CDFs show very little separation between the LGCP and
+CSCP, despite the fact that their theoretical marginal distributions differ.
+
+This raises a natural question:
+
+> At what stage is the marginal information being lost?
+
+To investigate this, we compare four related objects:
+
+1. the *theoretical marginal PDF / CDF*, derived in the previous section,
+2. the empirical PDF of the *realised true latent intensity surface*,
+3. the empirical PDF of a *smoothed version of the true latent surface*, and
+4. the empirical PDF of the *KDE-reconstructed intensity surface* obtained from the observed point pattern.
+
+These comparisons allow us to separate several possible effects. If the realised
+true surface already looks similar across models, then the issue lies with
+realisation-level variability rather than reconstruction. If smoothing the true
+surface substantially reduces the difference, then smoothing itself is a major
+source of information loss. If the KDE-reconstructed curves are even less
+separated than the smoothed true curves, then the additional loss must arise
+from reconstructing the field from Poisson-sampled point data.
+
+In this way, the diagnostic progression
+
+> theoretical $\rightarrow$ true surface $\rightarrow$ smoothed true surface $\rightarrow$ KDE reconstruction
+
+provides a systematic way to identify where the marginal signal is being lost.
+
+## Diagnostic setup
+
+For each model, we simulate a single point pattern together with its underlying
+latent intensity surface. From this, we construct:
+
+- the raw latent intensity image,
+- a smoothed version of that image using the same bandwidth as the KDE,
+- the KDE reconstruction obtained from the observed point pattern.
+
+For each of these surfaces, we evaluate the image on a fine pixel grid and
+treat the resulting pixel values as a sample from the corresponding marginal
+distribution. We then estimate the associated empirical PDF using a univariate
+kernel density estimate on those pixel values. These are compared with the
+theoretical marginal PDF.
+
+Helpers:
+
+```{r}
+#| code-fold: true
+simulate_pattern <- function(family, W, lambda, phi, s, df = 1) {
+  family <- match.arg(family, c("LGCP", "CSCP"))
+
+  switch(
+    family,
+    LGCP = sim_lgcp(W, lambda = lambda, phi = phi, s = s),
+    CSCP = sim_cscp(W, lambda = lambda, phi = phi, s = s, df = df)
+  )
+}
+
+estimate_intensity_surface <- function(X, sigma = 0.03, npix = 128) {
+  oldopt <- spatstat.options(npixel = npix)
+  on.exit(spatstat.options(oldopt), add = TRUE)
+
+  spatstat.explore::density.ppp(
+    X,
+    sigma = sigma,
+    at = "pixels",
+    edge = TRUE,
+    positive = TRUE
+  )
+}
+
+extract_im_values <- function(im_obj) {
+  vals <- as.vector(im_obj$v)
+  vals[is.finite(vals)]
+}
+
+smooth_true_intensity_surface <- function(im_obj, sigma, positive = TRUE) {
+  spatstat.explore::blur(
+    x = im_obj,
+    sigma = sigma,
+    bleed = TRUE,
+    positive = positive
+  )
+}
+
+pdf_on_grid <- function(values, grid, adjust = 1) {
+  stats::density(
+    values,
+    from = min(grid),
+    to = max(grid),
+    n = length(grid),
+    cut = 0,
+    adjust = adjust
+  )$y
+}
+
+one_diagnostic_rep <- function(
+    family,
+    W,
+    lambda,
+    phi,
+    s_cscp,
+    df = 1,
+    sigma_kernel = 0.01,
+    npix = 512,
+    intensity_grid = seq(0, 2200, length.out = 5000),
+    rep = 1
+) {
+  family <- match.arg(family, c("LGCP", "CSCP"))
+
+  s_lgcp <- match_lgcp_scale(phi = phi, s_cscp = s_cscp)
+  s_used <- if (family == "LGCP") s_lgcp else s_cscp
+
+  sim_obj <- simulate_pattern(
+    family = family,
+    W = W,
+    lambda = lambda,
+    phi = phi,
+    s = s_used,
+    df = df
+  )
+
+  X <- sim_obj$pp
+  true_im <- sim_obj$intensity
+
+  smooth_true_im <- smooth_true_intensity_surface(
+    im_obj = true_im,
+    sigma = sigma_kernel
+  )
+
+  kde_im <- estimate_intensity_surface(
+    X,
+    sigma = sigma_kernel,
+    npix = npix
+  )
+
+  true_vals        <- extract_im_values(true_im)
+  smooth_true_vals <- extract_im_values(smooth_true_im)
+  kde_vals         <- extract_im_values(kde_im)
+
+  true_pdf <- if (family == "LGCP") {
+    dlnorm(
+      intensity_grid,
+      meanlog = log(lambda) - 0.5 * log(phi + 1),
+      sdlog   = sqrt(log(phi + 1))
+    )
+  } else {
+    mu    <- lambda * (1 - sqrt(phi / 2))
+    sigma <- sqrt(lambda * sqrt(phi / 2))
+
+    ifelse(
+      intensity_grid < mu,
+      0,
+      dchisq((intensity_grid - mu) / sigma^2, df = df) / sigma^2
+    )
+  }
+
+  curve_df <- bind_rows(
+    tibble(
+      family = family,
+      rep = rep,
+      lambda = lambda,
+      phi = phi,
+      surface = "Theoretical marginal",
+      x = intensity_grid,
+      pdf = true_pdf
+    ),
+    tibble(
+      family = family,
+      rep = rep,
+      lambda = lambda,
+      phi = phi,
+      surface = "True latent field",
+      x = intensity_grid,
+      pdf = pdf_on_grid(true_vals, intensity_grid)
+    ),
+    tibble(
+      family = family,
+      rep = rep,
+      lambda = lambda,
+      phi = phi,
+      surface = "Smoothed true field",
+      x = intensity_grid,
+      pdf = pdf_on_grid(smooth_true_vals, intensity_grid)
+    ),
+    tibble(
+      family = family,
+      rep = rep,
+      lambda = lambda,
+      phi = phi,
+      surface = "KDE reconstruction",
+      x = intensity_grid,
+      pdf = pdf_on_grid(kde_vals, intensity_grid)
+    )
+  )
+
+  list(
+    curve_df = curve_df,
+    X = X,
+    true_im = true_im,
+    smooth_true_im = smooth_true_im,
+    kde_im = kde_im
+  )
+}
+```
+
+## Running diagnostics
+
+```{r}
+diag_lgcp <- one_diagnostic_rep(
+  family = "LGCP",
+  W = W,
+  lambda = 100,
+  phi = 1,
+  s_cscp = s_cscp,
+  df = df,
+  sigma_kernel = 0.03,
+  npix = npix,
+  intensity_grid = intensity_grid,
+  rep = 1
+)
+
+diag_cscp <- one_diagnostic_rep(
+  family = "CSCP",
+  W = W,
+  lambda = 100,
+  phi = 1,
+  s_cscp = s_cscp,
+  df = df,
+  sigma_kernel = 0.03,
+  npix = npix,
+  intensity_grid = intensity_grid,
+  rep = 1
+)
+
+diag_curve_df <- bind_rows(diag_lgcp$curve_df, diag_cscp$curve_df)
+```
+
+Within family progression:
+
+```{r echo=FALSE, fig.height=12}
+family_panels <- split(diag_curve_df, diag_curve_df$family)
+family_panels <- family_panels[c("LGCP", "CSCP")]
+
+old_par <- par(no.readonly = TRUE)
+on.exit(par(old_par), add = TRUE)
+
+par(mfrow = c(length(family_panels), 1), mar = c(4, 4, 3, 1))
+
+surface_cols <- c(
+  "Theoretical marginal" = "black",
+  "True latent field" = "blue3",
+  "Smoothed true field" = "darkorange2",
+  "KDE reconstruction" = "red3"
+)
+
+surface_lty <- c(
+  "Theoretical marginal" = 1,
+  "True latent field" = 2,
+  "Smoothed true field" = 3,
+  "KDE reconstruction" = 4
+)
+
+for (fam in names(family_panels)) {
+  panel_df <- family_panels[[fam]]
+  xlim <- range(panel_df$x, finite = TRUE)
+  ylim <- range(panel_df$pdf, finite = TRUE)
+
+  plot(
+    NA,
+    xlim = xlim,
+    ylim = ylim,
+    xlab = "Intensity value",
+    ylab = "PDF",
+    main = fam
+  )
+
+  for (surf in names(surface_cols)) {
+    surf_df <- panel_df[panel_df$surface == surf, ]
+    lines(surf_df$x, surf_df$pdf, col = surface_cols[surf], lty = surface_lty[surf], lwd = 2)
+  }
+
+  legend(
+    "topright",
+    legend = names(surface_cols),
+    col = surface_cols,
+    lty = surface_lty,
+    lwd = 2,
+    bty = "n",
+    cex = 0.85
+  )
+}
+```
+
+Between family separation:
+
+```{r echo=FALSE, fig.height=14}
+between_df <- diag_curve_df %>%
+  filter(surface != "Theoretical marginal")
+
+surfaces <- c("True latent field", "Smoothed true field", "KDE reconstruction")
+cols <- c(LGCP = "black", CSCP = "red3")
+
+old_par <- par(no.readonly = TRUE)
+on.exit(par(old_par), add = TRUE)
+
+par(mfrow = c(length(surfaces), 1), mar = c(4, 4, 3, 1))
+
+for (surf in surfaces) {
+  panel_df <- between_df[between_df$surface == surf, ]
+  xlim <- range(panel_df$x, finite = TRUE)
+  ylim <- range(panel_df$pdf, finite = TRUE)
+
+  plot(
+    NA,
+    xlim = xlim,
+    ylim = ylim,
+    xlab = "Intensity value",
+    ylab = "Empirical PDF",
+    main = surf
+  )
+
+  for (fam in c("LGCP", "CSCP")) {
+    fam_df <- panel_df[panel_df$family == fam, ]
+    lines(fam_df$x, fam_df$pdf, col = cols[fam], lwd = 2)
+  }
+
+  legend(
+    "topright",
+    legend = c("LGCP", "CSCP"),
+    col = cols,
+    lty = 1,
+    lwd = 2,
+    bty = "n",
+    cex = 0.85
+  )
+}
+```
+
+Surfaces:
+
+```{r}
+par(mfrow = c(3, 2), mar = c(0,0,0,0))
+
+plot(diag_lgcp$true_im, main = "LGCP: true latent field")
+plot(diag_cscp$true_im, main = "CSCP: true latent field")
+
+plot(diag_lgcp$smooth_true_im, main = "LGCP: smoothed true field")
+plot(diag_cscp$smooth_true_im, main = "CSCP: smoothed true field")
+
+plot(diag_lgcp$kde_im, main = "LGCP: KDE reconstruction")
+plot(diag_cscp$kde_im, main = "CSCP: KDE reconstruction")
+```
+
+:::callout-important
+Mis-spec of the CSCP PDF/CDF??
+:::
+
+## Results
+
+The diagnostic comparison reveals a clear pattern.
+
+First, the theoretical marginal PDFs differ between the LGCP and CSCP, as
+expected from the previous section. This confirms that, at least in principle,
+the models are distinguishable through their marginal distributions.
+
+Second, when examining the realised true latent intensity surfaces, this
+difference remains visible, although it is slightly reduced due to variability 
+of the realizations themselves.
+
+Third, smoothing the true latent surface reduces the separation further. In
+particular, the sharp features of the marginal density are slightly softened, 
+and the two models become (slightly) less visually distinct.
+
+Finally, the KDE-reconstructed PDFs show much less separation between the
+models. The reconstructed marginal densities are nearly indistinguishable,
+despite the underlying theoretical differences.
+
+## Interpretation
+
+These results suggest that the loss of marginal information occurs progressively
+across the reconstruction pipeline.
+
+Smoothing of the latent field contributes to the loss of separation, but does
+not eliminate it entirely. The remaining loss arises when the intensity surface
+must be inferred indirectly from a Poisson-sampled point pattern, introducing
+additional variability and distortion.
+
+In particular, the PDF features that distinguish the two models, such as the
+behaviour near the lower end of the support and the shape of the upper tail, are
+difficult to recover in practice. These features are either smoothed away or
+poorly represented in the observed data, and therefore do not survive the
+reconstruction process.
+
+It is also worth noting that apparent mass near zero in the KDE-reconstructed
+CSCP density does not contradict the theoretical lower bound of the CSCP latent
+intensity. Rather, it reflects the fact that the KDE surface is not a direct
+sample from the latent intensity, but a noisy and smoothed estimate constructed
+from finite observed data.
+
+Overall, these diagnostics indicate that while smoothing plays a role in
+reducing separability, the primary limitation is more fundamental: the marginal
+distribution of the latent intensity is not readily recoverable from a single
+observed point pattern using KDE-based reconstruction.
+
+As a secondary check, one may also examine the corresponding CDFs. These tell
+the same story, but the PDF is the more informative object here, since it shows
+more directly where the models differ and how those differences are erased by
+smoothing and reconstruction.

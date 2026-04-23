@@ -369,6 +369,241 @@ devtools::install_github("https://github.com/JosephReps/coxLab.git")
 
 Under construction...
 
+---
+
+```{r}
+#| label: game-data
+#| echo: false
+#| message: false
+#| warning: false
+
+library(jsonlite)
+source("../R/sim.R")
+source("../R/util.R")
+
+make_round <- function(
+  family,
+  W = spatstat.geom::owin(c(0, 1), c(0, 1)),
+  lambda = 100,
+  phi = 1.5,
+  s = 0.05,
+  df = 1,
+  npix = 64
+) {
+  sim <- if (family == "LGCP") {
+    sim_lgcp(W = W, lambda = lambda, phi = phi, s = s)
+  } else {
+    sim_cscp(W = W, lambda = lambda, phi = phi, s = s, df = df)
+  }
+
+  # Extract the simulated intensity image directly onto a matrix
+  z <- sim$intensity$v
+  
+  # Optional: keep output size manageable / consistent if needed
+  # If your simulated image is not already npix x npix, then resample separately.
+
+  pts <- data.frame(x = sim$pp$x, y = sim$pp$y)
+
+  list(
+    family = family,
+    lambda = lambda,
+    phi = phi,
+    s = s,
+    z = unname(split(z, row(z))),
+    points = unname(lapply(seq_len(nrow(pts)), function(i) {
+      list(x = pts$x[i], y = pts$y[i])
+    }))
+  )
+}
+
+rounds <- c(
+  lapply(seq_len(40), function(i) make_round("LGCP")),
+  lapply(seq_len(40), function(i) make_round("CSCP"))
+)
+
+rounds_json <- jsonlite::toJSON(rounds, auto_unbox = TRUE)
+```
+
+```{r}
+#| echo: false
+#| results: asis
+
+cat('<script id="cscp-game-data" type="application/json">')
+cat(rounds_json)
+cat('</script>')
+```
+
+
+::: {.guess-game-wrap}
+::: {.guess-game-top}
+<div class="guess-game-score">Score: <span id="score-correct">0</span>/<span id="score-attempts">0</span></div>
+<button id="score-reset" class="guess-game-reset" type="button">Reset</button>
+:::
+
+::: {.guess-game-canvas-wrap}
+<canvas id="guess-game-canvas" width="520" height="520"></canvas>
+<div id="guess-game-feedback" class="guess-game-feedback"></div>
+:::
+
+::: {.guess-game-buttons}
+<button id="guess-lgcp" class="guess-btn" type="button">LGCP</button>
+<button id="guess-cscp" class="guess-btn" type="button">CSCP</button>
+:::
+:::
+
+<script>
+function spatstatTerrain(t) {
+  const stops = [
+    [0, 0, 130],      // dark blue
+    [0, 120, 255],    // blue
+    [0, 180, 120],    // green
+    [200, 220, 0],    // yellow-green
+    [255, 160, 0],    // orange
+    [200, 0, 0]       // red
+  ];
+
+  const n = stops.length - 1;
+  const i = Math.min(Math.floor(t * n), n - 1);
+  const f = t * n - i;
+
+  const c0 = stops[i];
+  const c1 = stops[i + 1];
+
+  const r = Math.round(c0[0] + f * (c1[0] - c0[0]));
+  const g = Math.round(c0[1] + f * (c1[1] - c0[1]));
+  const b = Math.round(c0[2] + f * (c1[2] - c0[2]));
+
+  return `rgb(${r}, ${g}, ${b})`;
+}
+
+(function initGuessGame() {
+  const dataNode   = document.getElementById("cscp-game-data");
+  const canvas     = document.getElementById("guess-game-canvas");
+  const feedback   = document.getElementById("guess-game-feedback");
+  const correctEl  = document.getElementById("score-correct");
+  const attemptsEl = document.getElementById("score-attempts");
+  const btnLGCP    = document.getElementById("guess-lgcp");
+  const btnCSCP    = document.getElementById("guess-cscp");
+  const btnReset   = document.getElementById("score-reset");
+
+  if (!dataNode || !canvas || !feedback || !correctEl || !attemptsEl ||
+      !btnLGCP || !btnCSCP || !btnReset) {
+    console.error("Game widget elements not found.");
+    return;
+  }
+
+  const rounds = JSON.parse(dataNode.textContent);
+  const ctx = canvas.getContext("2d");
+
+  let scoreCorrect = 0;
+  let scoreAttempts = 0;
+  let currentRound = null;
+  let locked = false;
+
+  function updateScore() {
+    correctEl.textContent = scoreCorrect;
+    attemptsEl.textContent = scoreAttempts;
+  }
+
+  function drawSurface(z) {
+    const nRow = z.length;
+    const nCol = z[0].length;
+
+    let min = Infinity;
+    let max = -Infinity;
+
+    for (let r = 0; r < nRow; r++) {
+      for (let c = 0; c < nCol; c++) {
+        const v = z[r][c];
+        if (v < min) min = v;
+        if (v > max) max = v;
+      }
+    }
+
+    const cellW = canvas.width / nCol;
+    const cellH = canvas.height / nRow;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    for (let r = 0; r < nRow; r++) {
+      for (let c = 0; c < nCol; c++) {
+        const v = z[r][c];
+        const t = (v - min) / ((max - min) || 1);
+        
+        ctx.fillStyle = spatstatTerrain(t);
+        ctx.fillRect(c * cellW, r * cellH, cellW + 0.5, cellH + 0.5);
+      }
+    }
+  }
+
+  function sampleRound() {
+    currentRound = rounds[Math.floor(Math.random() * rounds.length)];
+    drawSurface(currentRound.z);
+  }
+
+  function showFeedback(isCorrect) {
+    feedback.textContent = isCorrect ? "✓" : "✕";
+    feedback.className = "guess-game-feedback show " + (isCorrect ? "correct" : "wrong");
+
+    setTimeout(() => {
+      feedback.className = "guess-game-feedback";
+    }, 800);
+  }
+
+  function handleGuess(guess) {
+    if (locked || !currentRound) return;
+
+    locked = true;
+
+    const isCorrect = guess === currentRound.family;
+    scoreAttempts += 1;
+    if (isCorrect) scoreCorrect += 1;
+
+    updateScore();
+    showFeedback(isCorrect);
+
+    setTimeout(() => {
+      sampleRound();
+      locked = false;
+    }, 900);
+  }
+
+  function resetGame() {
+    scoreCorrect = 0;
+    scoreAttempts = 0;
+    updateScore();
+    sampleRound();
+  }
+
+  btnLGCP.addEventListener("click", () => handleGuess("LGCP"));
+  btnCSCP.addEventListener("click", () => handleGuess("CSCP"));
+  btnReset.addEventListener("click", resetGame);
+
+  updateScore();
+  sampleRound();
+})();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
