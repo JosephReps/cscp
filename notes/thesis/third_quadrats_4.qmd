@@ -1,0 +1,686 @@
+```{r include=FALSE}
+# All the code from last section, I know I should make this include, sue me AGAIN
+
+# Calculate quadrat counts using spatstat's quadratcount()
+# Example of splitting observation window into 2x2 grid:
+#
+# > get_quadrat_counts(X_lgcp, 2)
+# [1] 32 21 15 28
+get_quadrat_counts <- function(X, nx, ny = nx) {
+  qc <- quadratcount(X, nx = nx, ny = ny)
+  as.numeric(qc)
+}
+
+# Calculate sample skewness summary
+# Making sure to return NA in the case that all counts 
+#       are the same (sample variance = 0)
+safe_skewness <- function(x) {
+  x <- as.numeric(x)
+  if (length(x) < 2) stop("Require at least 2 quadrats")
+  
+  s2 <- stats::var(x)
+  if (!is.finite(s2) || s2 <= 0) return(NA_real_)
+  
+  # Third moment calculation
+  # m3 = mean((N_j - mean(N))^3)
+  m3 <- mean((x - mean(x))^3)
+  
+  # Return standardised skewness
+  # gamma1 = m3 / s^3 (s sample SD)
+  m3 / (sqrt(s2)^3)
+}
+
+
+# Saves the counts vector from above as a dataframe, with extra sim-info 
+# Example with counts = [1] 32 21 15 28:
+#
+# > count_hist_df(test, "lgcp", 1, 2)
+# # A tibble: 4 × 6
+#   model   rep    nx    ny     k  freq
+#   <chr> <dbl> <dbl> <dbl> <int> <dbl>
+# 1 lgcp      1     2     2    15     1
+# 2 lgcp      1     2     2    21     1
+# 3 lgcp      1     2     2    28     1
+# 4 lgcp      1     2     2    32     1
+count_hist_df <- function(counts, model, rep, nx, ny = nx) {
+  # Tabulating to store more compactly
+  # Helps in the case we are using very fine grid resolution
+  tab <- table(counts)
+  
+  tibble(
+    model = model, # "LGCP" or "CSCP"
+    rep = rep, # replicate number
+    nx = nx, # grid resolution
+    ny = ny, # grid resolution
+    k = as.integer(names(tab)), # The unique count values
+    freq = as.numeric(tab) # How many quadrats had each of the above count values
+  )
+}
+
+# Same as above, but instead of saving the raw counts, it saves the stats info
+count_stat_df <- function(counts, model, rep, nx, ny = nx) {
+  counts <- as.numeric(counts)
+  J <- length(counts)
+
+  # Empirical count distribution
+  tab <- table(counts)
+  props <- as.numeric(tab) / J
+  k_vals <- as.integer(names(tab))
+
+  # Peak height and peak width
+  mode_index <- which.max(props)
+  T_peak <- props[mode_index]
+
+  # Interquartile width
+  q25 <- as.numeric(quantile(counts, 0.25, type = 1))
+  q75 <- as.numeric(quantile(counts, 0.75, type = 1))
+  T_iqr_width <- q75 - q25
+
+  # Lower / central / upper quantiles
+  T_q05 <- as.numeric(quantile(counts, 0.05, type = 1))
+  T_median <- as.numeric(quantile(counts, 0.50, type = 1))
+  T_q995 <- as.numeric(quantile(counts, 0.995, type = 1))
+
+  # Baseline dispersion
+  mean_count <- mean(counts)
+  var_count <- stats::var(counts)
+  T_disp <- if (mean_count > 0) var_count / mean_count else NA_real_
+
+  tibble(
+    model = model,
+    rep = rep,
+    nx = nx,
+    ny = ny,
+    T_q05 = T_q05,
+    T_peak = T_peak,
+    T_iqr_width = T_iqr_width,
+    T_median = T_median,
+    T_q995 = T_q995,
+    T_disp = T_disp
+  )
+}
+
+run_quadrat_count_study <- function(
+    W, # Observation window
+    lambda, 
+    phi,
+    s_cscp = 0.05, # LGCP scale will be best-matching
+    grids = c(4, 8, 16, 32),
+    n_sims = 200,
+    seed = NULL
+) {
+  if (!is.null(seed)) set.seed(seed)
+  
+  # Match LGCP scale to CSCP scale
+  s_lgcp <- match_lgcp_scale(phi = phi, s_cscp = s_cscp)
+  
+  # Objects for storing histograms and moments
+  hist_list <- vector("list", length = 2 * n_sims * length(grids))
+  moment_list <- vector("list", length = 2 * n_sims * length(grids))
+  
+  # Index is just for keeping calculated counts and summaries together
+  idx <- 1
+  
+  # Study loop
+  for (rep in seq_len(n_sims)) {
+    # Simulate one LGCP pattern
+    X_lgcp <- sim_lgcp(
+      W = W,
+      lambda = lambda,
+      phi = phi,
+      s = s_lgcp
+    )$pp
+    
+    # Simulate one CSCP pattern
+    X_cscp <- sim_cscp(
+      W = W,
+      lambda = lambda,
+      phi = phi,
+      s = s_cscp,
+      df = 1
+    )$pp
+    
+    # For each grid size
+    for (m in grids) {
+      # Calculate the counts per grid-tile
+      counts_lgcp <- get_quadrat_counts(X_lgcp, nx = m, ny = m)
+      counts_cscp <- get_quadrat_counts(X_cscp, nx = m, ny = m)
+      
+      # Keep track of the counts data plus summaries for each process
+      hist_list[[idx]] <- count_hist_df(counts_lgcp, model = "LGCP", rep = rep, nx = m)
+      moment_list[[idx]] <- count_stat_df(counts_lgcp, model = "LGCP", rep = rep, nx = m)
+      idx <- idx + 1
+      
+      hist_list[[idx]] <- count_hist_df(counts_cscp, model = "CSCP", rep = rep, nx = m)
+      moment_list[[idx]] <- count_stat_df(counts_cscp, model = "CSCP", rep = rep, nx = m)
+      idx <- idx + 1
+    }
+  }
+  
+  # Combine all the data
+  hist_df <- bind_rows(hist_list)
+  moment_df <- bind_rows(moment_list)
+  
+  # Complete missing count values so summaries are comparable
+  # For example if LGCP has counts up to 100 but CSCP only to 50
+  # Then the below code sets all of CSCP counts from 51 to 100 = 0
+  hist_df <- hist_df %>%
+    group_by(nx, ny) %>%
+    tidyr::complete(model, rep, k = 0:max(k), fill = list(freq = 0)) %>%
+    ungroup()
+  
+  # Calculate proportion of each count within each replicate/grid
+  hist_df <- hist_df %>%
+    group_by(model, rep, nx, ny) %>%
+    mutate(prop = freq / sum(freq)) %>%
+    ungroup()
+  
+  # Histogram envelopes across simulations
+  hist_summary <- hist_df %>%
+    group_by(model, nx, ny, k) %>%
+    summarise(
+      mean_prop = mean(prop),
+      med_prop = median(prop),
+      lo_prop = quantile(prop, 0.025),
+      hi_prop = quantile(prop, 0.975),
+      .groups = "drop"
+    )
+  
+  # Statistics summaries across simulations
+  stat_summary <- moment_df %>%
+    group_by(model, nx, ny) %>%
+    summarise(
+      mean_T_q05 = mean(T_q05, na.rm = TRUE),
+      lo_T_q05 = quantile(T_q05, 0.025, na.rm = TRUE),
+      hi_T_q05 = quantile(T_q05, 0.975, na.rm = TRUE),
+  
+      mean_T_peak = mean(T_peak, na.rm = TRUE),
+      lo_T_peak = quantile(T_peak, 0.025, na.rm = TRUE),
+      hi_T_peak = quantile(T_peak, 0.975, na.rm = TRUE),
+  
+      mean_T_iqr_width = mean(T_iqr_width, na.rm = TRUE),
+      lo_T_iqr_width = quantile(T_iqr_width, 0.025, na.rm = TRUE),
+      hi_T_iqr_width = quantile(T_iqr_width, 0.975, na.rm = TRUE),
+  
+      mean_T_median = mean(T_median, na.rm = TRUE),
+      lo_T_median = quantile(T_median, 0.025, na.rm = TRUE),
+      hi_T_median = quantile(T_median, 0.975, na.rm = TRUE),
+  
+      mean_T_q995 = mean(T_q995, na.rm = TRUE),
+      lo_T_q995 = quantile(T_q995, 0.025, na.rm = TRUE),
+      hi_T_q995 = quantile(T_q995, 0.975, na.rm = TRUE),
+  
+      mean_T_disp = mean(T_disp, na.rm = TRUE),
+      lo_T_disp = quantile(T_disp, 0.025, na.rm = TRUE),
+      hi_T_disp = quantile(T_disp, 0.975, na.rm = TRUE),
+  
+      .groups = "drop"
+    )
+  
+  list(
+    hist_df = hist_df,
+    hist_summary = hist_summary,
+    moment_df = moment_df,
+    stat_summary = stat_summary,
+    settings = list(
+      lambda = lambda,
+      phi = phi,
+      s_cscp = s_cscp,
+      s_lgcp = s_lgcp,
+      grids = grids,
+      n_sims = n_sims
+    )
+  )
+}
+```
+
+# Quadrats 4
+
+The pilot study above suggests that the grid strategy
+
+$$
+\mathcal E = \{2,5,10,20,40\}
+$$
+
+provides a robust default among the candidate strategies considered. However,
+this should not be interpreted as universally optimal. In practice, the power of
+the procedure should be assessed under the fitted parameter values, since the
+most informative quadrat scales may depend on the intensity, clustering
+strength, and correlation range.
+
+We now use the same quadrat-distance idea to define a formal Monte Carlo test.
+
+## Test statistic
+
+Let $M_0$ denote the null model and $M_1$ denote the alternative model. For an
+observed point pattern $X$, define
+
+$$
+T(X) = D(X;M_0) - D(X;M_1).
+$$
+
+Large positive values of $T(X)$ indicate that the observed pattern is closer to
+the alternative model than to the null model.
+
+For example, when testing
+
+$$
+H_0: X \sim \text{CSCP}
+\qquad \text{against} \qquad
+H_1: X \sim \text{LGCP},
+$$
+
+we use
+
+$$
+T(X) = D(X;\text{CSCP}) - D(X;\text{LGCP}),
+$$
+
+and reject the CSCP null for large positive values.
+
+## Helper functions
+
+```{r include=FALSE}
+expected_count_to_grid <- function(W, lambda, eta) {
+  area_W <- spatstat.geom::area.owin(W)
+  m <- round(sqrt(lambda * area_W / eta))
+  pmax(1, unique(m))
+}
+
+make_grid_sets_from_eta <- function(W, lambda, eta_sets) {
+  purrr::map(eta_sets, ~ expected_count_to_grid(W, lambda, .x))
+}
+
+make_default_grids <- function(W, lambda, eta = c(2, 5, 10, 20, 40)) {
+  expected_count_to_grid(W, lambda, eta)
+}
+```
+
+```{r}
+quadrat_distance_to_model <- function(X, ref_curves, grids, model_name) {
+  total_dist <- 0
+
+  for (m in grids) {
+    q <- spatstat.geom::quadratcount(X, nx = m, ny = m)
+    counts <- as.vector(q)
+
+    obs_tab <- tibble::tibble(k = counts) |>
+      dplyr::count(k, name = "n") |>
+      dplyr::mutate(prop = n / sum(n))
+
+    ref_tab <- ref_curves |>
+      dplyr::filter(model == model_name, nx == m, ny == m) |>
+      dplyr::select(k, ref_prop = mean_prop)
+
+    dist_m <- dplyr::full_join(obs_tab, ref_tab, by = "k") |>
+      dplyr::mutate(
+        prop = tidyr::replace_na(prop, 0),
+        ref_prop = tidyr::replace_na(ref_prop, 0)
+      ) |>
+      dplyr::summarise(dist = sum(abs(prop - ref_prop))) |>
+      dplyr::pull(dist)
+
+    total_dist <- total_dist + dist_m
+  }
+
+  total_dist
+}
+```
+
+```{r}
+quadrat_test_statistic <- function(X, ref_curves, grids, null_model, alt_model) {
+  d_null <- quadrat_distance_to_model(
+    X = X,
+    ref_curves = ref_curves,
+    grids = grids,
+    model_name = null_model
+  )
+
+  d_alt <- quadrat_distance_to_model(
+    X = X,
+    ref_curves = ref_curves,
+    grids = grids,
+    model_name = alt_model
+  )
+
+  d_null - d_alt
+}
+```
+
+## Monte Carlo p-value
+
+```{r}
+simulate_from_model <- function(model, W, lambda, phi, s_cscp, s_lgcp) {
+  if (model == "CSCP") {
+    sim_cscp(
+      W = W,
+      lambda = lambda,
+      phi = phi,
+      s = s_cscp,
+      df = 1
+    )$pp
+  } else if (model == "LGCP") {
+    sim_lgcp(
+      W = W,
+      lambda = lambda,
+      phi = phi,
+      s = s_lgcp
+    )$pp
+  } else {
+    stop("model must be either 'CSCP' or 'LGCP'")
+  }
+}
+```
+
+```{r}
+run_quadrat_mc_test <- function(
+    X_obs,
+    W,
+    lambda,
+    phi,
+    s_cscp,
+    null_model = "CSCP",
+    alt_model = "LGCP",
+    eta = c(2, 5, 10, 20, 40),
+    n_ref = 300,
+    n_mc = 999,
+    seed = NULL
+) {
+  if (!is.null(seed)) set.seed(seed)
+
+  grids <- make_default_grids(W, lambda, eta)
+
+  ref_study <- run_quadrat_count_study(
+    W = W,
+    lambda = lambda,
+    phi = phi,
+    s_cscp = s_cscp,
+    grids = grids,
+    n_sims = n_ref,
+    seed = seed
+  )
+
+  ref_curves <- ref_study$hist_summary
+  s_lgcp <- ref_study$settings$s_lgcp
+
+  T_obs <- quadrat_test_statistic(
+    X = X_obs,
+    ref_curves = ref_curves,
+    grids = grids,
+    null_model = null_model,
+    alt_model = alt_model
+  )
+
+  T_null <- numeric(n_mc)
+
+  for (i in seq_len(n_mc)) {
+    X_i <- simulate_from_model(
+      model = null_model,
+      W = W,
+      lambda = lambda,
+      phi = phi,
+      s_cscp = s_cscp,
+      s_lgcp = s_lgcp
+    )
+
+    T_null[i] <- quadrat_test_statistic(
+      X = X_i,
+      ref_curves = ref_curves,
+      grids = grids,
+      null_model = null_model,
+      alt_model = alt_model
+    )
+  }
+
+  p_value <- (1 + sum(T_null >= T_obs)) / (n_mc + 1)
+
+  list(
+    T_obs = T_obs,
+    T_null = T_null,
+    p_value = p_value,
+    grids = grids,
+    eta = eta,
+    null_model = null_model,
+    alt_model = alt_model,
+    settings = list(
+      lambda = lambda,
+      phi = phi,
+      s_cscp = s_cscp,
+      s_lgcp = s_lgcp,
+      n_ref = n_ref,
+      n_mc = n_mc
+    )
+  )
+}
+```
+
+## Example test
+
+```{r}
+W <- spatstat.geom::owin(c(0, 1), c(0, 1))
+
+lambda <- 5000
+phi <- 1
+s_cscp <- 0.1
+
+s_lgcp <- match_lgcp_scale(phi = phi, s_cscp = s_cscp)
+
+X_obs <- sim_lgcp(
+  W = W,
+  lambda = lambda,
+  phi = phi,
+  s = s_lgcp
+)$pp
+
+par(mar = c(0,0,2,0))
+plot(X_obs, pch = 16, cex = 0.45)
+```
+
+```{r}
+mc_test <- run_quadrat_mc_test(
+  X_obs = X_obs,
+  W = W,
+  lambda = lambda,
+  phi = phi,
+  s_cscp = s_cscp,
+  null_model = "CSCP",
+  alt_model = "LGCP",
+  eta = c(2, 5, 10, 20, 40),
+  n_ref = 300,
+  n_mc = 100,
+  seed = 123
+)
+
+mc_test$p_value
+mc_test$grids
+```
+
+```{r}
+hist(
+  mc_test$T_null,
+  breaks = 30,
+  main = "Monte Carlo null distribution",
+  xlab = "Test statistic"
+)
+
+abline(v = mc_test$T_obs, lwd = 2, lty = 2)
+```
+
+The dashed vertical line shows the observed test statistic. If this value lies in
+the upper tail of the Monte Carlo null distribution, this provides evidence
+against the null model.
+
+# Power study
+
+The Monte Carlo test gives a formal p-value for one observed point pattern. We
+now use repeated simulation to estimate the power of the test under different
+parameter regimes.
+
+For a fixed regime, power is estimated by simulating point patterns from the
+alternative model and recording the proportion of times the null hypothesis is
+rejected at level $\alpha = 0.05$.
+
+```{r}
+run_quadrat_power_one_regime <- function(
+    W,
+    lambda,
+    phi,
+    s_cscp,
+    null_model = "CSCP",
+    alt_model = "LGCP",
+    eta = c(2, 5, 10, 20, 40),
+    alpha = 0.05,
+    n_ref = 300,
+    n_mc = 499,
+    n_power = 100,
+    seed = NULL
+) {
+  if (!is.null(seed)) set.seed(seed)
+
+  grids <- make_default_grids(W, lambda, eta)
+
+  ref_study <- run_quadrat_count_study(
+    W = W,
+    lambda = lambda,
+    phi = phi,
+    s_cscp = s_cscp,
+    grids = grids,
+    n_sims = n_ref,
+    seed = seed
+  )
+
+  ref_curves <- ref_study$hist_summary
+  s_lgcp <- ref_study$settings$s_lgcp
+
+  T_null <- numeric(n_mc)
+
+  for (i in seq_len(n_mc)) {
+    X_i <- simulate_from_model(
+      model = null_model,
+      W = W,
+      lambda = lambda,
+      phi = phi,
+      s_cscp = s_cscp,
+      s_lgcp = s_lgcp
+    )
+
+    T_null[i] <- quadrat_test_statistic(
+      X = X_i,
+      ref_curves = ref_curves,
+      grids = grids,
+      null_model = null_model,
+      alt_model = alt_model
+    )
+  }
+
+  p_values <- numeric(n_power)
+
+  for (j in seq_len(n_power)) {
+    X_alt <- simulate_from_model(
+      model = alt_model,
+      W = W,
+      lambda = lambda,
+      phi = phi,
+      s_cscp = s_cscp,
+      s_lgcp = s_lgcp
+    )
+
+    T_alt <- quadrat_test_statistic(
+      X = X_alt,
+      ref_curves = ref_curves,
+      grids = grids,
+      null_model = null_model,
+      alt_model = alt_model
+    )
+
+    p_values[j] <- (1 + sum(T_null >= T_alt)) / (n_mc + 1)
+  }
+
+  tibble::tibble(
+    lambda = lambda,
+    phi = phi,
+    s_cscp = s_cscp,
+    s_lgcp = s_lgcp,
+    null_model = null_model,
+    alt_model = alt_model,
+    eta = paste(eta, collapse = ", "),
+    grids = paste(grids, collapse = ", "),
+    alpha = alpha,
+    n_ref = n_ref,
+    n_mc = n_mc,
+    n_power = n_power,
+    power = mean(p_values <= alpha),
+    mean_p_value = mean(p_values),
+    median_p_value = median(p_values)
+  )
+}
+```
+
+## Scan over intensity
+
+```{r}
+lambda_grid <- c(500, 1000, 2000, 5000, 10000, 20000)
+
+power_lambda_scan <- purrr::map_dfr(seq_along(lambda_grid), function(i) {
+  run_quadrat_power_one_regime(
+    W = W,
+    lambda = lambda_grid[i],
+    phi = 1,
+    s_cscp = 0.1,
+    null_model = "CSCP",
+    alt_model = "LGCP",
+    eta = c(2, 5, 10, 20, 40),
+    alpha = 0.05,
+    n_ref = 300,
+    n_mc = 499,
+    n_power = 100,
+    seed = 1000 + i
+  )
+})
+
+power_lambda_scan
+```
+
+```{r}
+plot(
+  power_lambda_scan$lambda,
+  power_lambda_scan$power,
+  type = "b",
+  log = "x",
+  ylim = c(0, 1),
+  xlab = expression(lambda),
+  ylab = "Estimated power",
+  main = "Power of quadrat-distance test"
+)
+
+abline(h = 0.95, lty = 2)
+```
+
+```{r}
+min_lambda_95 <- power_lambda_scan |>
+  dplyr::filter(power >= 0.95) |>
+  dplyr::summarise(min_lambda = min(lambda)) |>
+  dplyr::pull(min_lambda)
+
+min_lambda_95
+```
+
+The smallest value of $\lambda$ for which the estimated power exceeds $0.95$
+gives an approximate minimum intensity required for reliable discrimination
+under this parameter regime.
+
+# Recommended practical workflow
+
+The results above suggest the following practical procedure.
+
+1. Fit both the CSCP and LGCP to the observed point pattern.
+2. Match the models using the fitted first- and second-order properties.
+3. Choose a default grid strategy, such as
+   $\mathcal E = \{2,5,10,20,40\}$.
+4. Simulate reference quadrat-count distributions under both fitted models.
+5. Compute the quadrat-distance test statistic.
+6. Calibrate the statistic using Monte Carlo simulation under the null model.
+7. Estimate power under the fitted alternative model.
+
+The pilot study provides a robust default grid strategy, but the final power of
+the test should always be assessed for the fitted parameter regime.

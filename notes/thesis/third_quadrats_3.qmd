@@ -1,0 +1,963 @@
+```{r include=FALSE}
+devtools::load_all()
+library(dplyr)
+library(purrr)
+library(tidyr)
+library(spatstat)
+```
+# Quadrats 3
+
+```{r include=FALSE}
+# All the code from last section, I know I should make this include, sue me
+
+# Calculate quadrat counts using spatstat's quadratcount()
+# Example of splitting observation window into 2x2 grid:
+#
+# > get_quadrat_counts(X_lgcp, 2)
+# [1] 32 21 15 28
+get_quadrat_counts <- function(X, nx, ny = nx) {
+  qc <- quadratcount(X, nx = nx, ny = ny)
+  as.numeric(qc)
+}
+
+# Calculate sample skewness summary
+# Making sure to return NA in the case that all counts 
+#       are the same (sample variance = 0)
+safe_skewness <- function(x) {
+  x <- as.numeric(x)
+  if (length(x) < 2) stop("Require at least 2 quadrats")
+  
+  s2 <- stats::var(x)
+  if (!is.finite(s2) || s2 <= 0) return(NA_real_)
+  
+  # Third moment calculation
+  # m3 = mean((N_j - mean(N))^3)
+  m3 <- mean((x - mean(x))^3)
+  
+  # Return standardised skewness
+  # gamma1 = m3 / s^3 (s sample SD)
+  m3 / (sqrt(s2)^3)
+}
+
+
+# Saves the counts vector from above as a dataframe, with extra sim-info 
+# Example with counts = [1] 32 21 15 28:
+#
+# > count_hist_df(test, "lgcp", 1, 2)
+# # A tibble: 4 × 6
+#   model   rep    nx    ny     k  freq
+#   <chr> <dbl> <dbl> <dbl> <int> <dbl>
+# 1 lgcp      1     2     2    15     1
+# 2 lgcp      1     2     2    21     1
+# 3 lgcp      1     2     2    28     1
+# 4 lgcp      1     2     2    32     1
+count_hist_df <- function(counts, model, rep, nx, ny = nx) {
+  # Tabulating to store more compactly
+  # Helps in the case we are using very fine grid resolution
+  tab <- table(counts)
+  
+  tibble(
+    model = model, # "LGCP" or "CSCP"
+    rep = rep, # replicate number
+    nx = nx, # grid resolution
+    ny = ny, # grid resolution
+    k = as.integer(names(tab)), # The unique count values
+    freq = as.numeric(tab) # How many quadrats had each of the above count values
+  )
+}
+
+# Same as above, but instead of saving the raw counts, it saves the stats info
+count_stat_df <- function(counts, model, rep, nx, ny = nx) {
+  counts <- as.numeric(counts)
+  J <- length(counts)
+
+  # Empirical count distribution
+  tab <- table(counts)
+  props <- as.numeric(tab) / J
+  k_vals <- as.integer(names(tab))
+
+  # Peak height and peak width
+  mode_index <- which.max(props)
+  T_peak <- props[mode_index]
+
+  # Interquartile width
+  q25 <- as.numeric(quantile(counts, 0.25, type = 1))
+  q75 <- as.numeric(quantile(counts, 0.75, type = 1))
+  T_iqr_width <- q75 - q25
+
+  # Lower / central / upper quantiles
+  T_q05 <- as.numeric(quantile(counts, 0.05, type = 1))
+  T_median <- as.numeric(quantile(counts, 0.50, type = 1))
+  T_q995 <- as.numeric(quantile(counts, 0.995, type = 1))
+
+  # Baseline dispersion
+  mean_count <- mean(counts)
+  var_count <- stats::var(counts)
+  T_disp <- if (mean_count > 0) var_count / mean_count else NA_real_
+
+  tibble(
+    model = model,
+    rep = rep,
+    nx = nx,
+    ny = ny,
+    T_q05 = T_q05,
+    T_peak = T_peak,
+    T_iqr_width = T_iqr_width,
+    T_median = T_median,
+    T_q995 = T_q995,
+    T_disp = T_disp
+  )
+}
+
+run_quadrat_count_study <- function(
+    W, # Observation window
+    lambda, 
+    phi,
+    s_cscp = 0.05, # LGCP scale will be best-matching
+    grids = c(4, 8, 16, 32),
+    n_sims = 200,
+    seed = NULL
+) {
+  if (!is.null(seed)) set.seed(seed)
+  
+  # Match LGCP scale to CSCP scale
+  s_lgcp <- match_lgcp_scale(phi = phi, s_cscp = s_cscp)
+  
+  # Objects for storing histograms and moments
+  hist_list <- vector("list", length = 2 * n_sims * length(grids))
+  moment_list <- vector("list", length = 2 * n_sims * length(grids))
+  
+  # Index is just for keeping calculated counts and summaries together
+  idx <- 1
+  
+  # Study loop
+  for (rep in seq_len(n_sims)) {
+    # Simulate one LGCP pattern
+    X_lgcp <- sim_lgcp(
+      W = W,
+      lambda = lambda,
+      phi = phi,
+      s = s_lgcp
+    )$pp
+    
+    # Simulate one CSCP pattern
+    X_cscp <- sim_cscp(
+      W = W,
+      lambda = lambda,
+      phi = phi,
+      s = s_cscp,
+      df = 1
+    )$pp
+    
+    # For each grid size
+    for (m in grids) {
+      # Calculate the counts per grid-tile
+      counts_lgcp <- get_quadrat_counts(X_lgcp, nx = m, ny = m)
+      counts_cscp <- get_quadrat_counts(X_cscp, nx = m, ny = m)
+      
+      # Keep track of the counts data plus summaries for each process
+      hist_list[[idx]] <- count_hist_df(counts_lgcp, model = "LGCP", rep = rep, nx = m)
+      moment_list[[idx]] <- count_stat_df(counts_lgcp, model = "LGCP", rep = rep, nx = m)
+      idx <- idx + 1
+      
+      hist_list[[idx]] <- count_hist_df(counts_cscp, model = "CSCP", rep = rep, nx = m)
+      moment_list[[idx]] <- count_stat_df(counts_cscp, model = "CSCP", rep = rep, nx = m)
+      idx <- idx + 1
+    }
+  }
+  
+  # Combine all the data
+  hist_df <- bind_rows(hist_list)
+  moment_df <- bind_rows(moment_list)
+  
+  # Complete missing count values so summaries are comparable
+  # For example if LGCP has counts up to 100 but CSCP only to 50
+  # Then the below code sets all of CSCP counts from 51 to 100 = 0
+  hist_df <- hist_df %>%
+    group_by(nx, ny) %>%
+    tidyr::complete(model, rep, k = 0:max(k), fill = list(freq = 0)) %>%
+    ungroup()
+  
+  # Calculate proportion of each count within each replicate/grid
+  hist_df <- hist_df %>%
+    group_by(model, rep, nx, ny) %>%
+    mutate(prop = freq / sum(freq)) %>%
+    ungroup()
+  
+  # Histogram envelopes across simulations
+  hist_summary <- hist_df %>%
+    group_by(model, nx, ny, k) %>%
+    summarise(
+      mean_prop = mean(prop),
+      med_prop = median(prop),
+      lo_prop = quantile(prop, 0.025),
+      hi_prop = quantile(prop, 0.975),
+      .groups = "drop"
+    )
+  
+  # Statistics summaries across simulations
+  stat_summary <- moment_df %>%
+    group_by(model, nx, ny) %>%
+    summarise(
+      mean_T_q05 = mean(T_q05, na.rm = TRUE),
+      lo_T_q05 = quantile(T_q05, 0.025, na.rm = TRUE),
+      hi_T_q05 = quantile(T_q05, 0.975, na.rm = TRUE),
+  
+      mean_T_peak = mean(T_peak, na.rm = TRUE),
+      lo_T_peak = quantile(T_peak, 0.025, na.rm = TRUE),
+      hi_T_peak = quantile(T_peak, 0.975, na.rm = TRUE),
+  
+      mean_T_iqr_width = mean(T_iqr_width, na.rm = TRUE),
+      lo_T_iqr_width = quantile(T_iqr_width, 0.025, na.rm = TRUE),
+      hi_T_iqr_width = quantile(T_iqr_width, 0.975, na.rm = TRUE),
+  
+      mean_T_median = mean(T_median, na.rm = TRUE),
+      lo_T_median = quantile(T_median, 0.025, na.rm = TRUE),
+      hi_T_median = quantile(T_median, 0.975, na.rm = TRUE),
+  
+      mean_T_q995 = mean(T_q995, na.rm = TRUE),
+      lo_T_q995 = quantile(T_q995, 0.025, na.rm = TRUE),
+      hi_T_q995 = quantile(T_q995, 0.975, na.rm = TRUE),
+  
+      mean_T_disp = mean(T_disp, na.rm = TRUE),
+      lo_T_disp = quantile(T_disp, 0.025, na.rm = TRUE),
+      hi_T_disp = quantile(T_disp, 0.975, na.rm = TRUE),
+  
+      .groups = "drop"
+    )
+  
+  list(
+    hist_df = hist_df,
+    hist_summary = hist_summary,
+    moment_df = moment_df,
+    stat_summary = stat_summary,
+    settings = list(
+      lambda = lambda,
+      phi = phi,
+      s_cscp = s_cscp,
+      s_lgcp = s_lgcp,
+      grids = grids,
+      n_sims = n_sims
+    )
+  )
+}
+
+get_curve_for_pattern <- function(X, grids) {
+  purrr::map_dfr(grids, function(m) {
+    counts <- get_quadrat_counts(X, nx = m, ny = m)
+    tab <- table(counts)
+
+    tibble(
+      nx = m,
+      ny = m,
+      k = as.integer(names(tab)),
+      prop = as.numeric(tab) / length(counts)
+    )
+  })
+}
+
+curve_distance <- function(obs_curve, ref_curve, grids) {
+  total <- 0
+
+  for (m in grids) {
+    obs_m <- obs_curve %>% filter(nx == m)
+    ref_m <- ref_curve %>% filter(nx == m)
+
+    all_k <- sort(unique(c(obs_m$k, ref_m$k)))
+
+    obs_p <- rep(0, length(all_k))
+    ref_p <- rep(0, length(all_k))
+
+    obs_p[match(obs_m$k, all_k)] <- obs_m$prop
+    ref_p[match(ref_m$k, all_k)] <- ref_m$mean_prop
+
+    total <- total + sum(abs(obs_p - ref_p))
+  }
+
+  total
+}
+
+classify_pattern <- function(X, ref_curves, grids) {
+  obs_curve <- get_curve_for_pattern(X, grids)
+
+  d_lgcp <- curve_distance(
+    obs_curve,
+    ref_curves %>% filter(model == "LGCP"),
+    grids
+  )
+
+  d_cscp <- curve_distance(
+    obs_curve,
+    ref_curves %>% filter(model == "CSCP"),
+    grids
+  )
+
+  if (d_lgcp < d_cscp) "LGCP" else "CSCP"
+}
+
+run_grid_power_pilot <- function(
+    W,
+    lambda,
+    phi,
+    s_cscp,
+    grid_sets,
+    n_train = 300,
+    n_test = 200,
+    seed = NULL
+) {
+  if (!is.null(seed)) set.seed(seed)
+
+  all_grids <- sort(unique(unlist(grid_sets)))
+
+  train_study <- run_quadrat_count_study(
+    W = W,
+    lambda = lambda,
+    phi = phi,
+    s_cscp = s_cscp,
+    grids = all_grids,
+    n_sims = n_train,
+    seed = seed
+  )
+
+  ref_curves <- train_study$hist_summary
+  s_lgcp <- train_study$settings$s_lgcp
+
+  results <- list()
+  idx <- 1
+
+  for (rep in seq_len(n_test)) {
+    X_lgcp <- sim_lgcp(
+      W = W,
+      lambda = lambda,
+      phi = phi,
+      s = s_lgcp
+    )$pp
+
+    X_cscp <- sim_cscp(
+      W = W,
+      lambda = lambda,
+      phi = phi,
+      s = s_cscp,
+      df = 1
+    )$pp
+
+    for (set_name in names(grid_sets)) {
+      grids <- grid_sets[[set_name]]
+
+      pred_lgcp <- classify_pattern(X_lgcp, ref_curves, grids)
+      pred_cscp <- classify_pattern(X_cscp, ref_curves, grids)
+
+      results[[idx]] <- tibble(
+        rep = rep,
+        grid_set = set_name,
+        true_model = "LGCP",
+        pred_model = pred_lgcp
+      )
+      idx <- idx + 1
+
+      results[[idx]] <- tibble(
+        rep = rep,
+        grid_set = set_name,
+        true_model = "CSCP",
+        pred_model = pred_cscp
+      )
+      idx <- idx + 1
+    }
+  }
+
+  bind_rows(results) %>%
+    group_by(grid_set) %>%
+    summarise(
+      accuracy = mean(true_model == pred_model),
+      lgcp_accuracy = mean(pred_model[true_model == "LGCP"] == "LGCP"),
+      cscp_accuracy = mean(pred_model[true_model == "CSCP"] == "CSCP"),
+      .groups = "drop"
+    ) %>%
+    arrange(desc(accuracy))
+}
+
+# Convert eta-sets to named grid-sets for a given regime
+make_named_grid_sets_from_eta <- function(W, lambda, eta_sets) {
+  purrr::imap(eta_sets, function(eta, nm) {
+    sort(expected_count_to_grid(W, lambda, eta))
+  })
+}
+
+# Distance classification pilot for ONE parameter regime
+run_eta_grid_pilot_one_regime <- function(
+    W,
+    lambda,
+    phi,
+    s_cscp,
+    eta_sets,
+    n_train = 300,
+    n_test = 200,
+    seed = NULL
+) {
+  if (!is.null(seed)) set.seed(seed)
+
+  grid_sets <- make_named_grid_sets_from_eta(W, lambda, eta_sets)
+  all_grids <- sort(unique(unlist(grid_sets)))
+
+  message(
+    "Running regime: lambda=", lambda,
+    ", phi=", phi,
+    ", s_cscp=", s_cscp,
+    ", grids={", paste(all_grids, collapse = ", "), "}"
+  )
+
+  train_study <- run_quadrat_count_study(
+    W = W,
+    lambda = lambda,
+    phi = phi,
+    s_cscp = s_cscp,
+    grids = all_grids,
+    n_sims = n_train,
+    seed = seed
+  )
+
+  ref_curves <- train_study$hist_summary
+  s_lgcp <- train_study$settings$s_lgcp
+
+  out <- vector("list", length = 2 * n_test * length(grid_sets))
+  idx <- 1
+
+  for (rep in seq_len(n_test)) {
+    X_lgcp <- sim_lgcp(
+      W = W,
+      lambda = lambda,
+      phi = phi,
+      s = s_lgcp
+    )$pp
+
+    X_cscp <- sim_cscp(
+      W = W,
+      lambda = lambda,
+      phi = phi,
+      s = s_cscp,
+      df = 1
+    )$pp
+
+    for (set_name in names(grid_sets)) {
+      grids <- grid_sets[[set_name]]
+
+      pred_lgcp <- classify_pattern(X_lgcp, ref_curves, grids)
+      pred_cscp <- classify_pattern(X_cscp, ref_curves, grids)
+
+      out[[idx]] <- tibble(
+        lambda = lambda,
+        phi = phi,
+        s_cscp = s_cscp,
+        s_lgcp = s_lgcp,
+        rep = rep,
+        eta_set = set_name,
+        eta_values = paste(eta_sets[[set_name]], collapse = ", "),
+        grid_values = paste(grids, collapse = ", "),
+        true_model = "LGCP",
+        pred_model = pred_lgcp
+      )
+      idx <- idx + 1
+
+      out[[idx]] <- tibble(
+        lambda = lambda,
+        phi = phi,
+        s_cscp = s_cscp,
+        s_lgcp = s_lgcp,
+        rep = rep,
+        eta_set = set_name,
+        eta_values = paste(eta_sets[[set_name]], collapse = ", "),
+        grid_values = paste(grids, collapse = ", "),
+        true_model = "CSCP",
+        pred_model = pred_cscp
+      )
+      idx <- idx + 1
+    }
+  }
+
+  bind_rows(out)
+}
+```
+
+```{r include=FALSE, eval=FALSE}
+grid_sets <- list(
+  "10" = c(10),
+  "15" = c(15),
+  "20" = c(20),
+  "25" = c(25),
+  "30" = c(30),
+  "40" = c(40),
+  "60" = c(60),
+  "15_20_25_30" = c(15, 20, 25, 30)
+  # "10_15_20_25_30" = c(10, 15, 20, 25, 30),
+  # "10_15_20" = c(10, 15, 20),
+  # "10_30" = c(10, 30),
+  # "10_30_60" = c(10, 30, 60),
+  # "10_15_20_60" = c(10, 15, 20, 60),
+  # "10_15_20_30_60" = c(10, 15, 20, 30, 60),
+  # "10_15_20_30__35_40_60" = c(10, 15, 20, 30, 35, 40, 60)
+)
+
+grid_power <- run_grid_power_pilot(
+  W = owin(),
+  lambda = 2000,
+  phi = 2,
+  s_cscp = 0.1,
+  grid_sets = grid_sets,
+  n_train = 300,
+  n_test = 200,
+  seed = 789
+)
+
+grid_power
+```
+
+As we saw in the previous section, it is not clear whether there exists a single
+grid resolution, or rule for selecting grid resolutions, that performs well
+across all parameter regimes.
+
+In this section, we therefore focus on selecting a grid (or set of grids) that
+provides robust discrimination between the LGCP and CSCP across a range of
+settings.
+
+To do this, we compare candidate grid sets using a simulation-based pilot
+study. Rather than constructing a formal hypothesis test at this stage, we use a
+simple classifier as a convenient way to quantify how well the two models can be 
+separated. In this context, classification accuracy serves as a proxy for 
+statistical power: a grid strategy with high classification accuracy is one 
+where the models are easily distinguishable.
+
+Since the aim is not to develop an optimal classifier, but to determine whether
+the two processes can be separated using observable quadrat-count behaviour, we
+use a simple distance between empirical quadrat-count distributions as the 
+statistic of classification.
+
+For a given grid resolution $m$, define
+
+$$
+D_m(X; M) = \sum_k \left| \hat p_m(k;X)-\bar p_{M,m}(k) \right|
+$$
+
+where $\hat p_m(k;X)$ is the empirical quadrat-count distribution for the
+observed pattern, and $\bar p_{M,m}(k)$ is the mean quadrat-count distribution
+under model $M$, estimated via simulation. $\bar p_{M,m}(k)$ acts as an
+approximation of the true theoretical distribution of quadrats counts.
+
+:::callout-note
+Why is $\bar p_{M,m}(k)$, the mean of the simulated-pattern quadrat count
+distributions, an approximation of the the true distribution?
+
+[Elaborate]
+:::
+
+:::callout-note
+$\bar p_{M,m}(k)$ is straight nasty notation. Can definitely do better.
+:::
+
+For a set of grid resolutions $\mathcal M$, we define the overall distance
+
+$$
+D(X; M) = \sum_{m \in \mathcal M} D_m(X; M)
+$$
+
+and classify the pattern as the model with the smaller distance.
+
+:::callout-note
+In simpler terms, $D(X; M)$ is the sum of the distances of *each* empirical
+distribution to the true distribution. That is, for every grid resolution within
+the grid-set:
+
+1. Calculate the distance to each of the true distributions.
+
+2. Then add them all up (so we will end up with two sums, representing the distances
+from the CSCP and LGCP truth respectively).
+
+3. Classify based on whichever distance is smallest.
+:::
+
+This classification rule is used only within this pilot study to compare grid
+strategies. In the next section, we use the same distance-based statistic to
+construct a more formal Monte Carlo hypothesis test.
+
+## Relative grid sizing
+
+There is one last thing we need to address before conducting the study.
+
+Rather than selecting grid resolutions directly, we index candidate grids by the
+expected number of points per quadrat,
+
+$$
+\eta_m = \frac{\lambda |W|}{m^2}
+$$
+
+This gives a scale-free way to describe grid coarseness. For example,
+$\eta_m = 20$ corresponds to a grid where each quadrat contains 20 points on
+average, regardless of the size of the observation window.
+
+For a target expected quadrat count $\eta$, the corresponding square grid
+resolution is
+
+$$
+m(\eta) =
+\left\lceil
+\sqrt{\frac{\lambda |W|}{\eta}}
+\right\rceil
+$$
+
+:::callout-note
+Should this be floor instead of ceiling?
+:::
+
+Thus, candidate grid strategies are defined in terms of sets of expected counts,
+such as
+
+$$
+\mathcal E = \{5, 10, 20, 40\},
+$$
+
+rather than fixed values of $m$. This makes the resulting rule easier to apply
+outside the simulation setting, where the observation window and intensity may
+differ.
+
+```{r echo = FALSE}
+expected_count_to_grid <- function(W, lambda, eta) {
+  area_W <- spatstat.geom::area.owin(W)
+  m <- round(sqrt(lambda * area_W / eta))
+  pmax(1, unique(m))
+}
+
+make_grid_sets_from_eta <- function(W, lambda, eta_sets) {
+  purrr::map(eta_sets, ~ expected_count_to_grid(W, lambda, .x))
+}
+```
+
+Below we show an example, where the candidate grid-sets have expected counts
+$\{5 \}$ and $\{5, 20\}$, and $\lambda = 2000$.
+
+```{r}
+eta_sets <- list(
+  "eta_5" = 5,
+  "eta_5_20" = c(5, 20)
+)
+
+grid_sets <- make_grid_sets_from_eta(
+  W = owin(),
+  lambda = 2000,
+  eta_sets = eta_sets
+)
+grid_sets
+```
+
+We can see, we can see the associated grid resolutions for the above expected
+quadrat counts.
+
+## Pilot design
+
+For each parameter regime, we generate independent training and test sets from
+both the CSCP and matched LGCP. The training set is used only to estimate the
+reference quadrat-count distributions $\bar p_{M,m}$. The test set is then
+classified using the distance rule above.
+
+We repeat this over a grid of parameter regimes,
+
+$$
+\lambda \in \{\cdots\}, \qquad
+\phi \in \{\cdots\}, \qquad
+s_{\text{CSCP}} \in \{\cdots\}.
+$$
+
+For each candidate grid strategy $\mathcal E$, we record the classification
+accuracy within each regime, together with its mean, minimum, and interquartile
+width across regimes.
+
+Since the goal is robustness rather than best-case performance, candidate
+strategies are ranked primarily by their worst-case accuracy across regimes.
+Ties are broken using mean accuracy and then interquartile width.
+
+## Pilot
+
+Candidate grid sets:
+
+```{r}
+eta_sets <- list(
+  "eta_2" = 2,
+  "eta_5" = 5,
+  "eta_10" = 10,
+  "eta_20" = 20,
+  "eta_40" = 40,
+  "eta_80" = 80,
+
+  "eta_2_5_10" = c(2, 5, 10),
+  "eta_5_10_20" = c(5, 10, 20),
+  "eta_10_20_40" = c(10, 20, 40),
+  "eta_20_40_80" = c(20, 40, 80),
+
+  "eta_2_5_10_20" = c(2, 5, 10, 20),
+  "eta_5_10_20_40" = c(5, 10, 20, 40),
+  "eta_10_20_40_80" = c(10, 20, 40, 80),
+
+  "eta_2_5_10_20_40" = c(2, 5, 10, 20, 40),
+  "eta_5_10_20_40_80" = c(5, 10, 20, 40, 80),
+  "eta_2_5_10_20_40_80" = c(2, 5, 10, 20, 40, 80)
+)
+```
+
+And regimes:
+
+```{r}
+regimes <- tidyr::crossing(
+  lambda = c(1000, 5000, 10000),
+  phi = c(1, 1.5, 2),
+  s_cscp = c(0.1)
+)
+```
+
+```{r include=FALSE}
+run_eta_grid_pilot <- function(
+    W,
+    regimes,
+    eta_sets,
+    n_train = 300,
+    n_test = 200,
+    seed = 1
+) {
+  purrr::pmap_dfr(
+    regimes,
+    function(lambda, phi, s_cscp) {
+      regime_seed <- seed +
+        100000 * match(lambda, unique(regimes$lambda)) +
+        1000 * match(phi, unique(regimes$phi)) +
+        10 * match(s_cscp, unique(regimes$s_cscp))
+
+      run_eta_grid_pilot_one_regime(
+        W = W,
+        lambda = lambda,
+        phi = phi,
+        s_cscp = s_cscp,
+        eta_sets = eta_sets,
+        n_train = n_train,
+        n_test = n_test,
+        seed = regime_seed
+      )
+    }
+  )
+}
+```
+
+Running the pilot:
+
+```{r message=FALSE, results=FALSE, cache=TRUE}
+eta_grid_results <- run_eta_grid_pilot(
+  W = spatstat.geom::owin(c(0, 1), c(0, 1)),
+  regimes = regimes,
+  eta_sets = eta_sets,
+  n_train = 300,
+  n_test = 100,
+  seed = 789
+)
+```
+
+Summarise by regime:
+
+```{r include=FALSE}
+eta_grid_by_regime <- eta_grid_results %>%
+  group_by(lambda, phi, s_cscp, eta_set, eta_values, grid_values) %>%
+  summarise(
+    accuracy = mean(true_model == pred_model),
+    lgcp_accuracy = mean(pred_model[true_model == "LGCP"] == "LGCP"),
+    cscp_accuracy = mean(pred_model[true_model == "CSCP"] == "CSCP"),
+    .groups = "drop"
+  )
+```
+
+```{r echo=FALSE}
+eta_grid_ranking <- eta_grid_by_regime %>%
+  group_by(eta_set, eta_values) %>%
+  summarise(
+    mean_accuracy = mean(accuracy),
+    min_accuracy = min(accuracy),
+    q25_accuracy = quantile(accuracy, 0.25),
+    median_accuracy = median(accuracy),
+    q75_accuracy = quantile(accuracy, 0.75),
+    iqr_accuracy = IQR(accuracy),
+    sd_accuracy = sd(accuracy),
+    mean_lgcp_accuracy = mean(lgcp_accuracy),
+    mean_cscp_accuracy = mean(cscp_accuracy),
+    .groups = "drop"
+  ) %>%
+  arrange(
+    desc(min_accuracy),
+    desc(mean_accuracy),
+    iqr_accuracy
+  )
+
+grid_lookup <- eta_grid_by_regime %>%
+  distinct(eta_set, eta_values, lambda, grid_values) %>%
+  arrange(eta_set, lambda) %>%
+  group_by(eta_set, eta_values) %>%
+  summarise(
+    induced_grids = paste0(
+      "$\\lambda=", lambda, "$: {", grid_values, "}",
+      collapse = ";"
+    ),
+    .groups = "drop"
+  )
+
+eta_grid_table <- eta_grid_ranking %>%
+  left_join(grid_lookup, by = c("eta_set", "eta_values")) %>%
+  slice_head(n = 8) %>%
+  transmute(
+    `Expected counts per quadrat` = paste0("{", eta_values, "}"),
+    # `Induced grid resolutions` = induced_grids,
+    `Worst-case accuracy` = round(min_accuracy, 3),
+    `Mean accuracy` = round(mean_accuracy, 3),
+    `Median accuracy` = round(median_accuracy, 3),
+    `IQR` = round(iqr_accuracy, 3),
+    `Mean LGCP accuracy` = round(mean_lgcp_accuracy, 3),
+    `Mean CSCP accuracy` = round(mean_cscp_accuracy, 3)
+  )
+
+knitr::kable(
+  eta_grid_table,
+  escape = FALSE,
+  align = "llrrrrrr",
+  caption = "Top candidate grid strategies ranked by worst-case classification accuracy across all parameter regimes."
+)
+```
+
+Best within each regime:
+
+```{r echo=FALSE}
+eta_grid_best_by_regime <- eta_grid_by_regime %>%
+  group_by(lambda, phi, s_cscp) %>%
+  slice_max(
+    order_by = accuracy,
+    n = 1,
+    with_ties = FALSE
+  ) %>%
+  ungroup() %>%
+  transmute(
+    `lambda` = lambda,
+    `phi` = phi,
+    `s_CSCP` = s_cscp,
+    `Best expected counts per quadrat` = paste0("{", eta_values, "}"),
+    `Induced grid resolutions` = paste0("{", grid_values, "}"),
+    `Accuracy` = round(accuracy, 3),
+    `LGCP accuracy` = round(lgcp_accuracy, 3),
+    `CSCP accuracy` = round(cscp_accuracy, 3)
+  )
+
+knitr::kable(
+  eta_grid_best_by_regime,
+  escape = FALSE,
+  align = "rrrllrrr",
+  caption = "Best-performing candidate grid strategy within each parameter regime."
+)
+```
+
+Interesting that when $\phi = 2$ and $\lambda = 5000$, the best grid set is just
+$\{2\}$. 
+
+Nice plot of results:
+
+```{r echo=FALSE}
+top_eta_sets <- eta_grid_ranking$eta_set[1:5]
+
+plot_df <- eta_grid_by_regime %>%
+  dplyr::filter(eta_set %in% top_eta_sets) %>%
+  dplyr::mutate(
+    regime = paste0(
+      "lambda=", lambda,
+      ", phi=", phi,
+      ", s=", s_cscp
+    )
+  )
+
+regime_levels <- plot_df %>%
+  dplyr::distinct(lambda, phi, s_cscp, regime) %>%
+  dplyr::arrange(lambda, phi, s_cscp) %>%
+  dplyr::pull(regime)
+
+plot_df <- plot_df %>%
+  dplyr::mutate(
+    regime = factor(regime, levels = regime_levels)
+  )
+
+cols <- c("steelblue", "tomato", "darkgreen", "purple", "orange")
+names(cols) <- top_eta_sets
+
+plot(
+  NA,
+  xlim = c(1, length(regime_levels)),
+  ylim = range(plot_df$accuracy, 0.5, 1, na.rm = TRUE),
+  xaxt = "n",
+  xlab = "",
+  ylab = "Classification accuracy",
+  main = "Accuracy across parameter regimes"
+)
+
+abline(h = seq(0.5, 1, by = 0.1), col = "grey90", lty = 1)
+abline(h = 0.5, col = "grey50", lty = 2)
+
+axis(
+  1,
+  at = seq_along(regime_levels),
+  labels = seq_along(regime_levels)
+)
+
+for (i in seq_along(top_eta_sets)) {
+  this_set <- top_eta_sets[i]
+
+  d <- plot_df %>%
+    dplyr::filter(eta_set == this_set) %>%
+    dplyr::arrange(regime)
+
+  lines(
+    seq_along(regime_levels),
+    d$accuracy,
+    type = "b",
+    pch = 16,
+    lwd = 2,
+    col = cols[this_set]
+  )
+}
+
+legend_labels <- eta_grid_ranking %>%
+  dplyr::filter(eta_set %in% top_eta_sets) %>%
+  dplyr::arrange(match(eta_set, top_eta_sets)) %>%
+  dplyr::mutate(
+    label = paste0("eta = {", eta_values, "}")
+  ) %>%
+  dplyr::pull(label)
+
+legend(
+  "bottomright",
+  legend = legend_labels,
+  col = cols[top_eta_sets],
+  lwd = 2,
+  pch = 16,
+  bty = "n",
+  cex = 0.8
+)
+
+mtext("Parameter regime index", side = 1, line = 2.2)
+```
+
+```{r echo=FALSE}
+regime_key <- plot_df %>%
+  distinct(regime, lambda, phi, s_cscp) %>%
+  arrange(lambda, phi, s_cscp) %>%
+  mutate(`Regime index` = row_number()) %>%
+  select(
+    `Regime index`,
+    lambda,
+    phi,
+    `s_CSCP` = s_cscp
+  )
+
+knitr::kable(
+  regime_key,
+  align = "rrrr",
+  caption = "Parameter regimes used in the pilot power study."
+)
+```
+

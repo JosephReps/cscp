@@ -1,0 +1,1421 @@
+```{r include=FALSE}
+devtools::load_all()
+library(dplyr)
+library(purrr)
+library(tidyr)
+library(spatstat)
+```
+# Quadrats 2
+
+```{r include=FALSE}
+# All the code from last section, I know I should make this include, sue me
+
+# Calculate quadrat counts using spatstat's quadratcount()
+# Example of splitting observation window into 2x2 grid:
+#
+# > get_quadrat_counts(X_lgcp, 2)
+# [1] 32 21 15 28
+get_quadrat_counts <- function(X, nx, ny = nx) {
+  qc <- quadratcount(X, nx = nx, ny = ny)
+  as.numeric(qc)
+}
+
+# Calculate sample skewness summary
+# Making sure to return NA in the case that all counts 
+#       are the same (sample variance = 0)
+safe_skewness <- function(x) {
+  x <- as.numeric(x)
+  if (length(x) < 2) stop("Require at least 2 quadrats")
+  
+  s2 <- stats::var(x)
+  if (!is.finite(s2) || s2 <= 0) return(NA_real_)
+  
+  # Third moment calculation
+  # m3 = mean((N_j - mean(N))^3)
+  m3 <- mean((x - mean(x))^3)
+  
+  # Return standardised skewness
+  # gamma1 = m3 / s^3 (s sample SD)
+  m3 / (sqrt(s2)^3)
+}
+
+
+# Saves the counts vector from above as a dataframe, with extra sim-info 
+# Example with counts = [1] 32 21 15 28:
+#
+# > count_hist_df(test, "lgcp", 1, 2)
+# # A tibble: 4 × 6
+#   model   rep    nx    ny     k  freq
+#   <chr> <dbl> <dbl> <dbl> <int> <dbl>
+# 1 lgcp      1     2     2    15     1
+# 2 lgcp      1     2     2    21     1
+# 3 lgcp      1     2     2    28     1
+# 4 lgcp      1     2     2    32     1
+count_hist_df <- function(counts, model, rep, nx, ny = nx) {
+  # Tabulating to store more compactly
+  # Helps in the case we are using very fine grid resolution
+  tab <- table(counts)
+  
+  tibble(
+    model = model, # "LGCP" or "CSCP"
+    rep = rep, # replicate number
+    nx = nx, # grid resolution
+    ny = ny, # grid resolution
+    k = as.integer(names(tab)), # The unique count values
+    freq = as.numeric(tab) # How many quadrats had each of the above count values
+  )
+}
+
+# Same as above, but instead of saving the raw counts, it saves the stats info
+count_stat_df <- function(counts, model, rep, nx, ny = nx) {
+  counts <- as.numeric(counts)
+  J <- length(counts)
+
+  # Empirical count distribution
+  tab <- table(counts)
+  props <- as.numeric(tab) / J
+  k_vals <- as.integer(names(tab))
+
+  # Peak height and peak width
+  mode_index <- which.max(props)
+  T_peak <- props[mode_index]
+
+  # Interquartile width
+  q25 <- as.numeric(quantile(counts, 0.25, type = 1))
+  q75 <- as.numeric(quantile(counts, 0.75, type = 1))
+  T_iqr_width <- q75 - q25
+
+  # Lower / central / upper quantiles
+  T_q05 <- as.numeric(quantile(counts, 0.05, type = 1))
+  T_median <- as.numeric(quantile(counts, 0.50, type = 1))
+  T_q995 <- as.numeric(quantile(counts, 0.995, type = 1))
+
+  # Baseline dispersion
+  mean_count <- mean(counts)
+  var_count <- stats::var(counts)
+  T_disp <- if (mean_count > 0) var_count / mean_count else NA_real_
+
+  tibble(
+    model = model,
+    rep = rep,
+    nx = nx,
+    ny = ny,
+    T_q05 = T_q05,
+    T_peak = T_peak,
+    T_iqr_width = T_iqr_width,
+    T_median = T_median,
+    T_q995 = T_q995,
+    T_disp = T_disp
+  )
+}
+
+run_quadrat_count_study <- function(
+    W, # Observation window
+    lambda, 
+    phi,
+    s_cscp = 0.05, # LGCP scale will be best-matching
+    grids = c(4, 8, 16, 32),
+    n_sims = 200,
+    seed = NULL
+) {
+  if (!is.null(seed)) set.seed(seed)
+  
+  # Match LGCP scale to CSCP scale
+  s_lgcp <- match_lgcp_scale(phi = phi, s_cscp = s_cscp)
+  
+  # Objects for storing histograms and moments
+  hist_list <- vector("list", length = 2 * n_sims * length(grids))
+  moment_list <- vector("list", length = 2 * n_sims * length(grids))
+  
+  # Index is just for keeping calculated counts and summaries together
+  idx <- 1
+  
+  # Study loop
+  for (rep in seq_len(n_sims)) {
+    # Simulate one LGCP pattern
+    X_lgcp <- sim_lgcp(
+      W = W,
+      lambda = lambda,
+      phi = phi,
+      s = s_lgcp
+    )$pp
+    
+    # Simulate one CSCP pattern
+    X_cscp <- sim_cscp(
+      W = W,
+      lambda = lambda,
+      phi = phi,
+      s = s_cscp,
+      df = 1
+    )$pp
+    
+    # For each grid size
+    for (m in grids) {
+      # Calculate the counts per grid-tile
+      counts_lgcp <- get_quadrat_counts(X_lgcp, nx = m, ny = m)
+      counts_cscp <- get_quadrat_counts(X_cscp, nx = m, ny = m)
+      
+      # Keep track of the counts data plus summaries for each process
+      hist_list[[idx]] <- count_hist_df(counts_lgcp, model = "LGCP", rep = rep, nx = m)
+      moment_list[[idx]] <- count_stat_df(counts_lgcp, model = "LGCP", rep = rep, nx = m)
+      idx <- idx + 1
+      
+      hist_list[[idx]] <- count_hist_df(counts_cscp, model = "CSCP", rep = rep, nx = m)
+      moment_list[[idx]] <- count_stat_df(counts_cscp, model = "CSCP", rep = rep, nx = m)
+      idx <- idx + 1
+    }
+  }
+  
+  # Combine all the data
+  hist_df <- bind_rows(hist_list)
+  moment_df <- bind_rows(moment_list)
+  
+  # Complete missing count values so summaries are comparable
+  # For example if LGCP has counts up to 100 but CSCP only to 50
+  # Then the below code sets all of CSCP counts from 51 to 100 = 0
+  hist_df <- hist_df %>%
+    group_by(nx, ny) %>%
+    tidyr::complete(model, rep, k = 0:max(k), fill = list(freq = 0)) %>%
+    ungroup()
+  
+  # Calculate proportion of each count within each replicate/grid
+  hist_df <- hist_df %>%
+    group_by(model, rep, nx, ny) %>%
+    mutate(prop = freq / sum(freq)) %>%
+    ungroup()
+  
+  # Histogram envelopes across simulations
+  hist_summary <- hist_df %>%
+    group_by(model, nx, ny, k) %>%
+    summarise(
+      mean_prop = mean(prop),
+      med_prop = median(prop),
+      lo_prop = quantile(prop, 0.025),
+      hi_prop = quantile(prop, 0.975),
+      .groups = "drop"
+    )
+  
+  # Statistics summaries across simulations
+  stat_summary <- moment_df %>%
+    group_by(model, nx, ny) %>%
+    summarise(
+      mean_T_q05 = mean(T_q05, na.rm = TRUE),
+      lo_T_q05 = quantile(T_q05, 0.025, na.rm = TRUE),
+      hi_T_q05 = quantile(T_q05, 0.975, na.rm = TRUE),
+  
+      mean_T_peak = mean(T_peak, na.rm = TRUE),
+      lo_T_peak = quantile(T_peak, 0.025, na.rm = TRUE),
+      hi_T_peak = quantile(T_peak, 0.975, na.rm = TRUE),
+  
+      mean_T_iqr_width = mean(T_iqr_width, na.rm = TRUE),
+      lo_T_iqr_width = quantile(T_iqr_width, 0.025, na.rm = TRUE),
+      hi_T_iqr_width = quantile(T_iqr_width, 0.975, na.rm = TRUE),
+  
+      mean_T_median = mean(T_median, na.rm = TRUE),
+      lo_T_median = quantile(T_median, 0.025, na.rm = TRUE),
+      hi_T_median = quantile(T_median, 0.975, na.rm = TRUE),
+  
+      mean_T_q995 = mean(T_q995, na.rm = TRUE),
+      lo_T_q995 = quantile(T_q995, 0.025, na.rm = TRUE),
+      hi_T_q995 = quantile(T_q995, 0.975, na.rm = TRUE),
+  
+      mean_T_disp = mean(T_disp, na.rm = TRUE),
+      lo_T_disp = quantile(T_disp, 0.025, na.rm = TRUE),
+      hi_T_disp = quantile(T_disp, 0.975, na.rm = TRUE),
+  
+      .groups = "drop"
+    )
+  
+  list(
+    hist_df = hist_df,
+    hist_summary = hist_summary,
+    moment_df = moment_df,
+    stat_summary = stat_summary,
+    settings = list(
+      lambda = lambda,
+      phi = phi,
+      s_cscp = s_cscp,
+      s_lgcp = s_lgcp,
+      grids = grids,
+      n_sims = n_sims
+    )
+  )
+}
+```
+
+```{r include=FALSE}
+# Plotting shit, might need to revamp these for this section...
+plot_quadrat_histograms_grid_scan <- function(study, max_k = NULL) {
+  hist_sum <- study$hist_summary
+  grids <- sort(unique(hist_sum$nx))
+  n_grids <- length(grids)
+
+  if (is.null(max_k)) {
+    max_k_by_grid <- sapply(grids, function(g) {
+      sub <- hist_sum[hist_sum$nx == g, ]
+      keep <- with(sub, hi_prop > 0.002 | mean_prop > 0.001)
+      if (!any(keep)) max(sub$k) else max(sub$k[keep])
+    })
+  } else {
+    max_k_by_grid <- rep(max_k, n_grids)
+  }
+
+  global_ymax <- max(
+    hist_sum$hi_prop[hist_sum$k <= max(max_k_by_grid)],
+    na.rm = TRUE
+  )
+
+  n_col <- 3
+  n_row <- ceiling(n_grids / n_col)
+
+  op <- par(
+    mfrow = c(n_row, n_col),
+    mar = c(3, 3, 2, 1),
+    oma = c(2, 2.5, 0, 0)
+  )
+
+  for (i in seq_along(grids)) {
+    g <- grids[i]
+
+    sub <- hist_sum[
+      hist_sum$nx == g & hist_sum$k <= max_k_by_grid[i],
+    ]
+
+    lgcp <- sub[sub$model == "LGCP", ]
+    cscp <- sub[sub$model == "CSCP", ]
+
+    plot(
+      range(sub$k), c(0, global_ymax),
+      type = "n",
+      axes = FALSE,
+      xlab = "",
+      ylab = "",
+      main = paste0(g, " x ", g)
+    )
+
+    polygon(
+      c(cscp$k, rev(cscp$k)),
+      c(cscp$lo_prop, rev(cscp$hi_prop)),
+      border = NA,
+      col = adjustcolor("tomato", alpha.f = 0.2)
+    )
+
+    polygon(
+      c(lgcp$k, rev(lgcp$k)),
+      c(lgcp$lo_prop, rev(lgcp$hi_prop)),
+      border = NA,
+      col = adjustcolor("steelblue", alpha.f = 0.2)
+    )
+
+    lines(cscp$k, cscp$mean_prop, lwd = 2, col = "tomato")
+    lines(lgcp$k, lgcp$mean_prop, lwd = 2, col = "steelblue")
+
+    axis(1)
+    axis(2)
+    box()
+
+    if (i == 1) {
+      legend(
+        "topright",
+        legend = c("LGCP", "CSCP"),
+        col = c("steelblue", "tomato"),
+        lwd = 2,
+        bty = "n"
+      )
+    }
+  }
+
+  mtext("Cell count", side = 1, outer = TRUE, line = 0.8)
+  mtext("Proportion of cells", side = 2, outer = TRUE, line = 1.2)
+
+  par(op)
+}
+
+
+plot_quadrat_statistics <- function(study) {
+  ss <- study$stat_summary
+  grids <- sort(unique(ss$nx))
+
+  lgcp <- ss[ss$model == "LGCP", ]
+  cscp <- ss[ss$model == "CSCP", ]
+
+  op <- par(mfrow = c(2, 3), mar = c(4, 4, 3, 1))
+
+  plot_one <- function(mean_col, lo_col, hi_col, ylab, main) {
+    y_lim <- range(
+      lgcp[[lo_col]], lgcp[[hi_col]],
+      cscp[[lo_col]], cscp[[hi_col]],
+      na.rm = TRUE
+    )
+
+    plot(
+      grids, lgcp[[mean_col]],
+      type = "b", pch = 16, lwd = 2, col = "steelblue",
+      ylim = y_lim,
+      xlab = "Grid size m",
+      ylab = ylab,
+      main = main
+    )
+
+    arrows(
+      grids, lgcp[[lo_col]],
+      grids, lgcp[[hi_col]],
+      angle = 90, code = 3, length = 0.05,
+      col = "steelblue"
+    )
+
+    lines(
+      grids, cscp[[mean_col]],
+      type = "b", pch = 16, lwd = 2, col = "tomato"
+    )
+
+    arrows(
+      grids, cscp[[lo_col]],
+      grids, cscp[[hi_col]],
+      angle = 90, code = 3, length = 0.05,
+      col = "tomato"
+    )
+
+    legend(
+      "topright",
+      legend = c("LGCP", "CSCP"),
+      col = c("steelblue", "tomato"),
+      lwd = 2,
+      pch = 16,
+      bty = "n"
+    )
+  }
+
+  plot_one(
+    "mean_T_q05", "lo_T_q05", "hi_T_q05",
+    expression(T[0.05]), "5% quantile"
+  )
+
+  plot_one(
+    "mean_T_peak", "lo_T_peak", "hi_T_peak",
+    expression(T[peak]), "Peak height"
+  )
+
+  plot_one(
+    "mean_T_iqr_width", "lo_T_iqr_width", "hi_T_iqr_width",
+    expression(T[IQR]), "Interquartile width"
+  )
+  
+  plot_one(
+    "mean_T_median", "lo_T_median", "hi_T_median",
+    expression(T[median]), "Median"
+  )
+
+  plot_one(
+    "mean_T_q995", "lo_T_q995", "hi_T_q995",
+    expression(T[0.995]), "99.5% quantile"
+  )
+
+  plot_one(
+    "mean_T_disp", "lo_T_disp", "hi_T_disp",
+    expression(T[disp]), "Index of dispersion"
+  )
+
+  par(op)
+}
+
+plot_lambda_histograms <- function(lambda_scan, grid_choice, max_k = NULL) {
+  sub_all <- lambda_scan$hist_summary %>%
+    dplyr::filter(nx == grid_choice)
+
+  lambdas <- sort(unique(sub_all$lambda))
+
+  get_max_k <- function(s) {
+    if (!is.null(max_k)) return(max_k)
+
+    keep <- with(s, hi_prop > 0.002 | mean_prop > 0.001)
+
+    if (!any(keep)) {
+      max(s$k, na.rm = TRUE)
+    } else {
+      max(s$k[keep], na.rm = TRUE)
+    }
+  }
+
+  max_k_by_lambda <- sapply(lambdas, function(lam) {
+    get_max_k(sub_all[sub_all$lambda == lam, ])
+  })
+
+  op <- par(
+    mfrow = c(1, length(lambdas)),
+    mar = c(3, 2, 2, 1),
+    oma = c(2, 2.5, 0, 0)
+  )
+
+  for (i in seq_along(lambdas)) {
+    lam <- lambdas[i]
+
+    s <- sub_all %>%
+      dplyr::filter(lambda == lam, k <= max_k_by_lambda[i])
+
+    lgcp <- s[s$model == "LGCP", ]
+    cscp <- s[s$model == "CSCP", ]
+
+    ymax <- max(s$hi_prop, na.rm = TRUE)
+
+    plot(
+      range(s$k), c(0, ymax),
+      type = "n",
+      axes = FALSE,
+      main = paste0(expression(lambda), " = ", lam),
+      xlab = "",
+      ylab = ""
+    )
+
+    polygon(
+      c(cscp$k, rev(cscp$k)),
+      c(cscp$lo_prop, rev(cscp$hi_prop)),
+      col = adjustcolor("tomato", 0.2),
+      border = NA
+    )
+
+    polygon(
+      c(lgcp$k, rev(lgcp$k)),
+      c(lgcp$lo_prop, rev(lgcp$hi_prop)),
+      col = adjustcolor("steelblue", 0.2),
+      border = NA
+    )
+
+    lines(cscp$k, cscp$mean_prop, col = "tomato", lwd = 2)
+    lines(lgcp$k, lgcp$mean_prop, col = "steelblue", lwd = 2)
+
+    axis(1)
+    axis(2)
+    box()
+
+    if (i == 1) {
+      legend(
+        "topright",
+        legend = c("LGCP", "CSCP"),
+        col = c("steelblue", "tomato"),
+        lwd = 2,
+        bty = "n"
+      )
+    }
+  }
+
+  mtext("Cell count", side = 1, outer = TRUE, line = 0.8)
+  mtext("Proportion of cells", side = 2, outer = TRUE, line = 1.2)
+
+  par(op)
+}
+
+plot_lambda_stat_differences_all_grids <- function(
+    lambda_scan,
+    grid_choices = c(10, 30, 60)
+) {
+  ss <- lambda_scan$stat_summary %>%
+    dplyr::filter(nx %in% grid_choices)
+
+  stat_info <- list(
+    list(mean = "mean_T_q05",        ylab = expression(Delta*T[0.05]),  main = "5% quantile"),
+    list(mean = "mean_T_peak",       ylab = expression(Delta*T[peak]),  main = "Peak height"),
+    list(mean = "mean_T_iqr_width",  ylab = expression(Delta*T[IQR]),   main = "Interquartile width"),
+    list(mean = "mean_T_median",     ylab = expression(Delta*T[median]), main = "Median"),
+    list(mean = "mean_T_q995",       ylab = expression(Delta*T[0.995]), main = "99.5% quantile"),
+    list(mean = "mean_T_disp",       ylab = expression(Delta*T[disp]),  main = "Index of dispersion")
+  )
+
+  cols <- c("black", "grey40", "grey70")
+  pchs <- c(16, 17, 15)
+
+  op <- par(
+    mfrow = c(2, 3),
+    mar = c(3.0, 3.0, 1.0, 0.6),
+    oma = c(2.6, 2.8, 1.2, 0.5),
+    mgp = c(1.7, 0.5, 0),
+    tcl = -0.25
+  )
+  on.exit(par(op))
+
+  for (info in stat_info) {
+
+    diff_list <- lapply(grid_choices, function(g) {
+      lgcp <- ss %>%
+        dplyr::filter(model == "LGCP", nx == g) %>%
+        dplyr::arrange(lambda)
+
+      cscp <- ss %>%
+        dplyr::filter(model == "CSCP", nx == g) %>%
+        dplyr::arrange(lambda)
+
+      data.frame(
+        nx = g,
+        lambda = lgcp$lambda,
+        diff = lgcp[[info$mean]] - cscp[[info$mean]]
+      )
+    })
+
+    d_all <- do.call(rbind, diff_list)
+
+    y_lim <- range(d_all$diff, 0, na.rm = TRUE)
+    pad <- 0.08 * diff(y_lim)
+    if (pad == 0) pad <- 1
+    y_lim <- y_lim + c(-pad, pad)
+
+    plot(
+      range(d_all$lambda, na.rm = TRUE),
+      y_lim,
+      type = "n",
+      axes = FALSE,
+      xlab = "",
+      ylab = "",
+      main = ""
+    )
+
+    abline(h = 0, lty = 2, col = "grey60")
+
+    for (ii in seq_along(grid_choices)) {
+      g <- grid_choices[ii]
+      d <- d_all[d_all$nx == g, ]
+
+      lines(
+        d$lambda,
+        d$diff,
+        type = "b",
+        pch = pchs[ii],
+        lwd = 2,
+        col = cols[ii]
+      )
+    }
+
+    usr <- par("usr")
+    text(
+      x = usr[1] + 0.04 * diff(usr[1:2]),
+      y = usr[4] - 0.06 * diff(usr[3:4]),
+      labels = info$main,
+      adj = c(0, 1),
+      cex = 0.9
+    )
+
+    axis(1)
+    axis(2)
+    box()
+  }
+
+  legend(
+    "top",
+    inset = -0.02,
+    legend = paste0("m = ", grid_choices),
+    col = cols,
+    pch = pchs,
+    lwd = 2,
+    horiz = TRUE,
+    bty = "n",
+    xpd = NA
+  )
+
+  mtext(expression(lambda), side = 1, outer = TRUE, line = 1.4)
+  mtext(expression(T[LGCP] - T[CSCP]), side = 2, outer = TRUE, line = 1.6)
+}
+
+plot_lambda_histograms_3x3 <- function(
+    lambda_scan,
+    grid_choices = c(10, 30, 60),
+    lambda_choices = NULL,
+    max_k = NULL
+) {
+  hist_sum <- lambda_scan$hist_summary
+
+  if (is.null(lambda_choices)) {
+    lambda_choices <- sort(unique(hist_sum$lambda))
+  }
+
+  hist_sum <- hist_sum %>%
+    dplyr::filter(
+      nx %in% grid_choices,
+      lambda %in% lambda_choices
+    )
+
+  get_max_k <- function(s) {
+    if (nrow(s) == 0) return(0)
+
+    keep <- with(s, hi_prop > 0.002 | mean_prop > 0.001)
+
+    if (!any(keep, na.rm = TRUE)) {
+      max(s$k, na.rm = TRUE)
+    } else {
+      max(s$k[keep], na.rm = TRUE)
+    }
+  }
+
+  max_k_lookup <- expand.grid(
+    nx = grid_choices,
+    lambda = lambda_choices
+  )
+
+  max_k_lookup$max_k <- mapply(function(g, lam) {
+    s <- hist_sum[hist_sum$nx == g & hist_sum$lambda == lam, ]
+    get_max_k(s)
+  }, max_k_lookup$nx, max_k_lookup$lambda)
+
+  ## Row-dependent y limits
+  ymax_lookup <- data.frame(
+    nx = grid_choices,
+    ymax = NA_real_
+  )
+
+  for (ii in seq_along(grid_choices)) {
+    g <- grid_choices[ii]
+    row_ymax <- 0
+
+    for (lam in lambda_choices) {
+      mk <- max_k_lookup$max_k[
+        max_k_lookup$nx == g &
+          max_k_lookup$lambda == lam
+      ]
+
+      s <- hist_sum[
+        hist_sum$nx == g &
+          hist_sum$lambda == lam &
+          hist_sum$k <= mk,
+      ]
+
+      if (nrow(s) > 0) {
+        row_ymax <- max(row_ymax, s$hi_prop, na.rm = TRUE)
+      }
+    }
+
+    ymax_lookup$ymax[ymax_lookup$nx == g] <- row_ymax
+  }
+
+  op <- par(
+    mfrow = c(length(grid_choices), length(lambda_choices)),
+    mar = c(1.4, 1.6, 0.4, 0.4),
+    oma = c(3, 3.5, 1.2, 0.5),
+    mgp = c(1.5, 0.35, 0),
+    tcl = -0.25
+  )
+
+  on.exit(par(op))
+
+  for (g in grid_choices) {
+    for (lam in lambda_choices) {
+      mk <- max_k_lookup$max_k[
+        max_k_lookup$nx == g &
+          max_k_lookup$lambda == lam
+      ]
+
+      s <- hist_sum[
+        hist_sum$nx == g &
+          hist_sum$lambda == lam &
+          hist_sum$k <= mk,
+      ]
+
+      if (nrow(s) == 0 || all(!is.finite(s$k))) {
+        plot.new()
+        text(
+          0.5, 0.95,
+          paste0("m = ", g, ",  λ = ", lam, "\n(no data)"),
+          adj = c(0.5, 1),
+          cex = 0.85
+        )
+        next
+      }
+
+      lgcp <- s[s$model == "LGCP", ]
+      cscp <- s[s$model == "CSCP", ]
+
+      row_ymax <- ymax_lookup$ymax[ymax_lookup$nx == g]
+
+      plot(
+        range(s$k), c(0, row_ymax),
+        type = "n",
+        axes = FALSE,
+        xlab = "",
+        ylab = "",
+        main = ""
+      )
+
+      polygon(
+        c(cscp$k, rev(cscp$k)),
+        c(cscp$lo_prop, rev(cscp$hi_prop)),
+        col = adjustcolor("tomato", alpha.f = 0.2),
+        border = NA
+      )
+
+      polygon(
+        c(lgcp$k, rev(lgcp$k)),
+        c(lgcp$lo_prop, rev(lgcp$hi_prop)),
+        col = adjustcolor("steelblue", alpha.f = 0.2),
+        border = NA
+      )
+
+      lines(cscp$k, cscp$mean_prop, col = "tomato", lwd = 2)
+      lines(lgcp$k, lgcp$mean_prop, col = "steelblue", lwd = 2)
+
+      ## Title inside plot window
+      usr <- par("usr")
+      text(
+        x = usr[1] + 0.04 * diff(usr[1:2]),
+        y = usr[4] - 0.06 * diff(usr[3:4]),
+        labels = paste0("m = ", g, ",  λ = ", lam),
+        adj = c(0, 1),
+        cex = 1
+      )
+
+      axis(1)
+      axis(2)
+      box()
+    }
+  }
+
+  legend(
+    "bottomright",
+    inset = -0.02,
+    legend = c("LGCP", "CSCP"),
+    col = c("steelblue", "tomato"),
+    lwd = 2,
+    horiz = TRUE,
+    bty = "n",
+    xpd = NA
+  )
+
+  mtext("Cell count", side = 1, outer = TRUE, line = 1.5)
+  mtext("Proportion of cells", side = 2, outer = TRUE, line = 2.2)
+}
+
+plot_phi_histograms_3x3 <- function(
+    phi_scan,
+    grid_choices = c(10, 30, 60),
+    phi_choices = NULL,
+    max_k = NULL
+) {
+  hist_sum <- phi_scan$hist_summary
+
+  if (is.null(phi_choices)) {
+    phi_choices <- sort(unique(hist_sum$phi))
+  }
+
+  hist_sum <- hist_sum %>%
+    dplyr::filter(
+      nx %in% grid_choices,
+      phi %in% phi_choices
+    )
+
+  get_max_k <- function(s) {
+    if (nrow(s) == 0) return(0)
+    if (!is.null(max_k)) return(max_k)
+
+    keep <- with(s, hi_prop > 0.002 | mean_prop > 0.001)
+
+    if (!any(keep, na.rm = TRUE)) {
+      max(s$k, na.rm = TRUE)
+    } else {
+      max(s$k[keep], na.rm = TRUE)
+    }
+  }
+
+  max_k_lookup <- expand.grid(
+    nx = grid_choices,
+    phi = phi_choices
+  )
+
+  max_k_lookup$max_k <- mapply(function(g, ph) {
+    s <- hist_sum[hist_sum$nx == g & hist_sum$phi == ph, ]
+    get_max_k(s)
+  }, max_k_lookup$nx, max_k_lookup$phi)
+
+  ymax_lookup <- data.frame(
+    nx = grid_choices,
+    ymax = NA_real_
+  )
+
+  for (ii in seq_along(grid_choices)) {
+    g <- grid_choices[ii]
+    row_ymax <- 0
+
+    for (ph in phi_choices) {
+      mk <- max_k_lookup$max_k[
+        max_k_lookup$nx == g &
+          max_k_lookup$phi == ph
+      ]
+
+      s <- hist_sum[
+        hist_sum$nx == g &
+          hist_sum$phi == ph &
+          hist_sum$k <= mk,
+      ]
+
+      if (nrow(s) > 0) {
+        row_ymax <- max(row_ymax, s$hi_prop, na.rm = TRUE)
+      }
+    }
+
+    ymax_lookup$ymax[ymax_lookup$nx == g] <- row_ymax
+  }
+
+  op <- par(
+    mfrow = c(length(grid_choices), length(phi_choices)),
+    mar = c(1.4, 1.6, 0.4, 0.4),
+    oma = c(3, 3.5, 1.2, 0.5),
+    mgp = c(1.5, 0.35, 0),
+    tcl = -0.25
+  )
+  on.exit(par(op))
+
+  for (g in grid_choices) {
+    for (ph in phi_choices) {
+      mk <- max_k_lookup$max_k[
+        max_k_lookup$nx == g &
+          max_k_lookup$phi == ph
+      ]
+
+      s <- hist_sum[
+        hist_sum$nx == g &
+          hist_sum$phi == ph &
+          hist_sum$k <= mk,
+      ]
+
+      if (nrow(s) == 0 || all(!is.finite(s$k))) {
+        plot.new()
+        text(
+          0.5, 0.95,
+          paste0("m = ", g, ",  phi = ", ph, "\n(no data)"),
+          adj = c(0.5, 1),
+          cex = 0.85
+        )
+        next
+      }
+
+      lgcp <- s[s$model == "LGCP", ]
+      cscp <- s[s$model == "CSCP", ]
+
+      row_ymax <- ymax_lookup$ymax[ymax_lookup$nx == g]
+
+      plot(
+        range(s$k), c(0, row_ymax),
+        type = "n",
+        axes = FALSE,
+        xlab = "",
+        ylab = "",
+        main = ""
+      )
+
+      polygon(
+        c(cscp$k, rev(cscp$k)),
+        c(cscp$lo_prop, rev(cscp$hi_prop)),
+        col = adjustcolor("tomato", alpha.f = 0.2),
+        border = NA
+      )
+
+      polygon(
+        c(lgcp$k, rev(lgcp$k)),
+        c(lgcp$lo_prop, rev(lgcp$hi_prop)),
+        col = adjustcolor("steelblue", alpha.f = 0.2),
+        border = NA
+      )
+
+      lines(cscp$k, cscp$mean_prop, col = "tomato", lwd = 2)
+      lines(lgcp$k, lgcp$mean_prop, col = "steelblue", lwd = 2)
+
+      usr <- par("usr")
+      text(
+        x = usr[1] + 0.04 * diff(usr[1:2]),
+        y = usr[4] - 0.06 * diff(usr[3:4]),
+        labels = bquote(m == .(g) * "," ~~ phi == .(ph)),
+        adj = c(0, 1),
+        cex = 1
+      )
+
+      axis(1)
+      axis(2)
+      box()
+    }
+  }
+
+  legend(
+    "right",
+    inset = -0.02,
+    legend = c("LGCP", "CSCP"),
+    col = c("steelblue", "tomato"),
+    lwd = 2,
+    horiz = TRUE,
+    bty = "n",
+    xpd = NA
+  )
+
+  mtext("Cell count", side = 1, outer = TRUE, line = 1.5)
+  mtext("Proportion of cells", side = 2, outer = TRUE, line = 2.2)
+}
+```
+
+*Choosing quadrat resolutions for testing?*
+
+:::callout-note
+I think the primary goals of this section should be:
+
+1. It is not immediately clear whether there exists a single grid size for any given 
+parameter setting, which provides the best separation between the two curves
+
+2. Different grid sizes emphasise the different aspects of the seperation
+
+And I guess secondary goals might be:
+
+1. Demonstrating *how* "turning the knobs" effects the two curves
+
+2. Demonstrating how the scale parameter effects the two curves
+:::
+
+## Aim
+
+The goal of this section is to explore how the quadrat-count distribution is
+affected by both the parameters of the latent field and the grid resolution used.
+
+In particular, we investigate how changes in clustering strength, clustering
+scale, intensity and grid size alter the separation between the CSCP and LGCP
+quadrat-count distributions.
+
+This section is primarily visual and exploratory. Its purpose is to identify
+which parameter regimes and grid resolutions appear most promising for
+distinguishing the two models, before carrying out a more principled assessment
+of classification power in the following section.
+
+## Effect of grid resolution
+
+Given a grid of $m \times m$ quadrats, we obtain a collection of counts
+
+$$
+\{N_1, \dots, N_J\}, \quad J = m^2,
+$$
+
+where each $N_j$ represents the number of points observed in quadrat $B_j$.
+
+As in the last section, we summarise these counts through their empirical 
+distribution, that is, the proportion of quadrats with count $k$,
+
+$$
+\hat p_m(k) = \frac{1}{J} \sum_{j=1}^J \mathbf{1}\{N_j = k\}.
+$$
+
+This provides a discrete approximation to the distribution of local point
+intensity at the scale determined by the grid.
+
+The choice of grid resolution plays a key role in this representation:
+
+- *Finer grids* (large $ m $) produce many small quadrats, leading to
+  noisier counts that reflect local variability in the process.
+
+- *Coarser grids* (small $ m $) aggregate over larger regions, smoothing
+  local fluctuations and emphasising broader clustering structure.
+
+As a result, differences between the LGCP and CSCP may appear more clearly at
+some grid resolutions than others.
+
+## Grid resolution setup
+
+We begin by fixing the model parameters and varying only the quadrat grid
+resolution. The aim is to isolate the effect of grid resolution on the quadrat
+count distribution, and to understand how the apparent differences between the
+LGCP and CSCP change across scales.
+
+We use three different grid resolutions to reflect a coarse, intermediate and fine
+partitioning of the window:
+
+- **Coarse** - 15x15
+
+- **Intermediate** - 30x30
+
+- **Fine** - 45x45
+
+As in the last section, we also fix 
+
+$$
+\lambda = 25000, \qquad \phi = 1, \qquad s_{\text{CSCP}} = 0.1,
+$$
+
+and use the corresponding matched LGCP scale parameter. As in the last section,
+these parameter settings are chosen to represent a regime where clustering is clearly 
+present, and where the expected number of points is sufficiently large to ensure 
+that quadrat counts are informative across a range of grid resolutions.
+
+An example of two of the point patterns, partitioned into quadrats is provided 
+below:
+
+```{r echo=FALSE}
+example_lambda <- 25000
+example_phi <- 1
+example_s_cscp <- 0.05
+example_s_lgcp <- match_lgcp_scale(phi = example_phi, s_cscp = example_s_cscp)
+
+W <- owin(c(0, 1), c(0, 1))
+set.seed(1)
+
+ex_lgcp <- sim_lgcp(
+  W = W,
+  lambda = example_lambda,
+  phi = example_phi,
+  s = example_s_lgcp
+)$pp
+
+ex_cscp <- sim_cscp(
+  W = W,
+  lambda = example_lambda,
+  phi = example_phi,
+  s = example_s_cscp,
+  df = 1
+)$pp
+
+par(mfrow = c(1, 2), mar = c(0,0,2,0))
+plot(ex_cscp, pch = 16, cex = 0.35, main = "CSCP")
+plot(ex_lgcp, pch = 16, cex = 0.35, main = "LGCP")
+```
+
+We run the study as below:
+
+```{r cache=TRUE}
+grid_study <- run_quadrat_count_study(
+  W = owin(),
+  lambda = 25000,
+  phi = 1,
+  s_cscp = 0.1,
+  grids = c(15, 30, 45),
+  n_sims = 200,
+  seed = 123
+)
+```
+
+The following figure shows the mean quadrat count distributions for each grid
+resolution, with pointwise Monte Carlo intervals.
+
+```{r echo=FALSE}
+plot_quadrat_histograms_grid_scan(grid_study)
+```
+
+To aid interpretation, we also track several scalar summaries of the count
+distribution.
+
+```{r echo=FALSE}
+plot_quadrat_statistics(grid_study)
+```
+
+Several clear patterns emerge.
+
+As the grid becomes finer, the average number of points per quadrat decreases.
+This shifts the count distributions toward smaller values and increases the
+importance of discreteness. At the finest resolutions, most quadrats contain 
+only a small number of points, often close to zero or one. This makes the 
+distributions more sensitive to random variation, and less stable across simulations.
+
+At the coarsest resolutions, quadrat counts are large, but each cell averages
+over a substantial region of the intensity surface. Because each quadrat covers 
+a larger region, the counts average over local fluctuations in the intensity. 
+This makes the two distributions appear more similar overall.
+
+Between these extremes, at the intermediate grid resolution, the differences 
+between the LGCP and CSCP appear most clearly visible (subjective, and quite 
+strong statement, not sure if justified tbh). In particular:
+
+- Moderate grid resolution shows differences in the overall shape of the
+  distribution, including peak height and spread.
+
+- Coarser grid resolutions can produce larger raw differences in lower-tail
+  (near-zero) summaries, but these differences are accompanied by substantially 
+  greater Monte Carlo variability.
+
+This highlights an important point: large differences alone are not sufficient
+for choosing a grid resolution. A useful grid should produce differences that
+are both substantial and stable across simulations.
+
+Taken together, these results suggest that different grid resolutions highlight
+different features of the quadrat count distribution. While intermediate grids
+appear to offer a useful balance between signal and stability, the evidence here
+is not sufficient to identify a single clearly optimal choice.
+
+A more formal comparison of classification performance across grid resolutions
+is therefore required, which we undertake in the following section.
+
+We now investigate how this behaviour changes as the model parameters vary. In
+particular, we now examine the effect of overall intensity $\lambda$.
+
+## Effect of intensity
+
+We now investigate how the effectiveness of different grid resolutions depends
+on the overall intensity $\lambda$.
+
+This is important because the quadrat count distribution depends not only on
+the structure of the intensity field, but also on the expected number of points
+per quadrat. For a grid with $m \times m$ cells over a window $W$, the
+expected number of points per quadrat is approximately
+
+$$
+\bar n_q = \frac{\lambda |W|}{m^2}
+$$
+
+Thus, the same grid resolution can correspond to very different distributions
+depending on the value of $\lambda$. A grid that is too fine at low intensity
+may become appropriate at higher intensity, as the counts per quadrat increase.
+
+```{r include=FALSE}
+run_quadrat_lambda_scan <- function(
+    W,
+    lambda_vals,
+    phi = 1,
+    s_cscp = 0.1,
+    grids = c(15, 30, 45),
+    n_sims = 200,
+    seed = NULL
+) {
+  hist_out <- vector("list", length(lambda_vals))
+  stat_out <- vector("list", length(lambda_vals))
+  settings_out <- vector("list", length(lambda_vals))
+
+  for (i in seq_along(lambda_vals)) {
+    lambda_i <- lambda_vals[i]
+
+    study_i <- run_quadrat_count_study(
+      W = W,
+      lambda = lambda_i,
+      phi = phi,
+      s_cscp = s_cscp,
+      grids = grids,
+      n_sims = n_sims,
+      seed = if (is.null(seed)) NULL else seed + i - 1
+    )
+
+    hist_out[[i]] <- study_i$hist_summary %>%
+      mutate(
+        lambda = lambda_i,
+        phi = phi,
+        s_cscp = s_cscp,
+        s_lgcp = study_i$settings$s_lgcp
+      )
+
+    stat_out[[i]] <- study_i$stat_summary %>%
+      mutate(
+        lambda = lambda_i,
+        phi = phi,
+        s_cscp = s_cscp,
+        s_lgcp = study_i$settings$s_lgcp
+      )
+
+    settings_out[[i]] <- study_i$settings
+  }
+
+  list(
+    hist_summary = bind_rows(hist_out),
+    stat_summary = bind_rows(stat_out),
+    settings = settings_out
+  )
+}
+```
+
+```{r cache=TRUE}
+lambda_scan <- run_quadrat_lambda_scan(
+  W = owin(),
+  lambda_vals = c(5000, 25000, 100000),
+  phi = 1,
+  s_cscp = 0.1,
+  grids = c(15, 30, 45),
+  n_sims = 200,
+  seed = 123
+)
+```
+
+```{r echo=FALSE}
+plot_lambda_histograms_3x3(
+  lambda_scan,
+  grid_choices = c(15, 30, 45),
+  lambda_choices = c(5000, 25000, 100000)
+)
+```
+
+```{r echo=FALSE}
+# plot_lambda_stat_differences_all_grids(
+#   lambda_scan,
+#   grid_choices = c(15, 30, 60)
+# )
+```
+
+As $\lambda$ increases, the expected number of points per quadrat increases
+for any fixed grid resolution. This reduces discreteness and stabilises the
+quadrat count distributions, making differences between the LGCP and CSCP more
+clearly visible.
+
+At low values of $\lambda$, many quadrats contain few points. In this regime,
+Poisson variability dominates, and the differences between the two models are
+more difficult to detect, particularly for finer grids.
+
+As $\lambda$ increases, the same grid resolutions become more informative.
+Differences in both the lower tail and the overall shape of the distribution
+become more stable, and the Monte Carlo variability decreases.
+
+This shows that grid resolution cannot be chosen independently of $\lambda$.
+Instead, it should be interpreted relative to the expected number of points per
+quadrat. In particular, useful grid resolutions are those for which quadrat
+counts are sufficiently large to avoid excessive discreteness, but not so large
+that spatial averaging removes local structure.
+
+These results suggest that the appropriate grid resolution becomes finer as
+$\lambda$ increases. Equivalently, grid choice should be guided by the
+expected count per quadrat, rather than the absolute number of grid cells.
+
+:::callout-note
+This is so mind numbing at this point. I dont even see the point if I'm being honest, 
+I would rather just jump straight to a study of power. 
+
+I understand we have to motivate our choices for candidate grid resolutions, but
+I'm so bored of plotting these and adding commentary jeesus
+:::
+
+## How this changes with $\phi$
+
+We next investigate how the effectiveness of different grid resolutions changes
+with the clustering strength $\phi$. Here $\lambda$ and
+$s_{\text{CSCP}}$ are fixed, while $\phi$ is varied.
+
+This is important because $\phi$ controls the strength of second-order
+clustering in both models. Larger values of $\phi$ produce stronger local
+variation in the intensity field, which may make differences between the LGCP
+and CSCP count distributions easier to detect.
+
+For each value of $\phi$, the LGCP scale parameter is re-matched to the CSCP
+scale parameter so that the models remain comparable at the level of the pair
+correlation function.
+
+blah blah blah you get the idea...
+
+```{r include=FALSE}
+run_quadrat_phi_scan <- function(
+    W,
+    phi_vals,
+    lambda = 25000,
+    s_cscp = 0.1,
+    grids = c(10, 30, 60),
+    n_sims = 200,
+    seed = NULL
+) {
+  hist_out <- vector("list", length(phi_vals))
+  stat_out <- vector("list", length(phi_vals))
+  settings_out <- vector("list", length(phi_vals))
+
+  for (i in seq_along(phi_vals)) {
+    phi_i <- phi_vals[i]
+
+    study_i <- run_quadrat_count_study(
+      W = W,
+      lambda = lambda,
+      phi = phi_i,
+      s_cscp = s_cscp,
+      grids = grids,
+      n_sims = n_sims,
+      seed = if (is.null(seed)) NULL else seed + i - 1
+    )
+
+    hist_out[[i]] <- study_i$hist_summary %>%
+      mutate(
+        lambda = lambda,
+        phi = phi_i,
+        s_cscp = s_cscp,
+        s_lgcp = study_i$settings$s_lgcp
+      )
+
+    stat_out[[i]] <- study_i$stat_summary %>%
+      mutate(
+        lambda = lambda,
+        phi = phi_i,
+        s_cscp = s_cscp,
+        s_lgcp = study_i$settings$s_lgcp
+      )
+
+    settings_out[[i]] <- study_i$settings
+  }
+
+  list(
+    hist_summary = bind_rows(hist_out),
+    stat_summary = bind_rows(stat_out),
+    settings = settings_out
+  )
+}
+```
+
+```{r cache=TRUE}
+phi_scan <- run_quadrat_phi_scan(
+  W = owin(),
+  phi_vals = c(0.5, 1.25, 2),
+  lambda = 25000,
+  s_cscp = 0.1,
+  grids = c(15, 30, 45),
+  n_sims = 200,
+  seed = 456
+)
+```
+
+```{r echo=FALSE}
+plot_phi_histograms_3x3(
+  phi_scan,
+  grid_choices = c(15, 30, 45),
+  phi_choices = c(0.5, 1.25, 2)
+)
+```
+
+Same story again: no clear best grid resolution, phi has a noticable effect, 
+yada yada yada.
+
+## Brief scale check
+
+Will need to demonstrate how scale effects things, I'm sick of slaving away here.
+
+Just too much plotting code, slowly osing my sanity. Will finish at a later date.
+
+## Key takeaways
+
+The results of this section show that it is unclear whether there is a single 
+quadrat resolution that is uniformly optimal across parameter settings.
+
+Different grid resolutions highlight different features of the quadrat count
+distribution:
+
+- Moderate grids reveal differences in overall shape, including peak height
+  and spread.
+
+- Coarser grids tend to exaggerate differences in the lower tail, but these
+  effects are often less stable across simulations.
+
+- Finer grids produce many small counts, making the distributions more sensitive
+  to random variation unless the intensity is sufficiently large.
+
+Moreover, the effectiveness of a given grid depends on the underlying parameters,
+particularly the intensity $\lambda$, through the expected number of points per
+quadrat.
+
+Taken together, these results suggest that selecting a single "optimal" grid
+resolution is not appropriate. Instead, grid choice should be treated as part of
+the design of the test statistic itself.
+
+In practice, one could tailor the grid choice to a fitted model by estimating
+parameters and selecting the grid (or set of grids) with the highest power for
+that regime. However, this introduces additional complexity and is not considered
+further here.
+
+Instead, we aim to select a fixed set of grid resolutions that performs well
+across a range of clustering regimes, and use this set for the remainder of the
+thesis. In the next section, we conduct a formal power study to assess the
+performance of candidate grid choices and determine an appropriate selection.
+
+:::callout-note
+Think this is slightly too verbose.
+
+Basically, we will be testing a *bunch* of candidates, and seeing how they perform
+across multiple parameter regimes. 
+
+Then for this thesis, we will choose the one which seems the most robust across 
+all regimes.
+
+In practice, it would be better to fit your model, and then do a power-test to 
+figure out which grid set has the greatest power for your fitted model, and then
+use this in your MC hypothesis test. 
+
+Note that it is important if you were to perform the grid-selection using a power
+study, that you only use the fitted parameters, and never compare grid performance
+on the observed data.
+:::
+
+
+
+
